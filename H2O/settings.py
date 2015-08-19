@@ -75,7 +75,7 @@ DATABASES = {
         'USER': 'h2o_user',
         'PASSWORD': '1g2Az8_lJ',
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': os.environ.get('DB_PORT', 5432),
     }
 }
 

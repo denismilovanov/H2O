@@ -3,6 +3,10 @@ from views_helpers import created, bad_request, unavailable, forbidden, unauthor
 from models import *
 from models.exceptions import *
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 # decorator for all methods
 def authorization_needed(func):
     def inner(*k, **v):
@@ -38,6 +42,8 @@ def authorization_needed(func):
 # session
 @api_view(['POST', 'PATCH'])
 def session(request):
+    logger.debug('session')
+
     # new session
     if request.method == 'POST':
         #input
@@ -46,8 +52,10 @@ def session(request):
             network_id = credentials['network_id']
             user_id = credentials['user_id']
             access_token = credentials['access_token']
+            logger.debug(credentials)
 
             invite_code = request.data['invite_code']
+            logger.debug(invite_code)
         except Exception, e:
             return internal_server_error(e)
 
@@ -94,6 +102,8 @@ def session(request):
 @api_view(['GET'])
 @authorization_needed
 def user(request, user_uuid, user):
+    logger.debug('user')
+
     user = User.find_by_user_uuid(user_uuid, scope='public_profile')
 
     if not user: # or user['is_deleted']:

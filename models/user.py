@@ -1,5 +1,6 @@
 from decorators import *
 from models.invite import Invite
+from models.user_network import UserNetwork
 from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException, FacebookException, NotImplementedException
 from models.facebook_wrapper import FacebookWrapper
 
@@ -142,3 +143,15 @@ class User:
     @raw_queries()
     def drop_refresh_tokens(db):
         pass
+
+    @staticmethod
+    @raw_queries()
+    def get_all(limit, offset, scope, db):
+        users = db.select_table('''
+            SELECT ''' + User.scope(scope) + ''' FROM main.get_users(%(limit)s, %(offset)s);
+        ''', limit=limit, offset=offset)
+
+        for user in users:
+            user['networks'] = UserNetwork.get_user_networks(user['id'])
+
+        return users

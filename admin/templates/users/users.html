@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Пользователи
+        </div>
+        <table class="table" id="users">
+            <tr>
+                <th>ID</th>
+                <th>UUID</th>
+                <th>Имя</th>
+                <th>Facebook</th>
+                <th>Регистрация</th>
+            </tr>
+            {% for user in users %}
+                <td>{{ user.id }}</td>
+                <td>{{ user.uuid }}</td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td><a href="//facebook.com/{{ user.networks.facebook.user_network_id }}">{{ user.networks.facebook.user_network_id }}</a></td>
+                <td>{{ user.registered_at }}</td>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}
+
+
+

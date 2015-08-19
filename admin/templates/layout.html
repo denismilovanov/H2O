@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>H2O</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static "css/common.css" %}">
+        <script src="/static/js/common.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+
+        <div id="message-wrapper">
+            <div id="message" class="alert alert-info" role="alert">
+                &nbsp;
+            </div>
+        </div>
+
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/admin">
+                    <b>
+                        H<sub>2</sub>O
+                    </b>
+                    </a>
+                </div>
+
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Пользователи
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/admin/users">Список и поиск</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+
+        <div class="panel panel-default" style="padding: 10px; margin-top: -10px; margin-bottom:10px;">
+            {% block content %}{% endblock %}
+        </div>
+
+    </body>
+</html>
+

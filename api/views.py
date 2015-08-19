@@ -61,7 +61,7 @@ def session(request):
             invite_code = request.data.get('invite_code')
             logger.debug(invite_code)
         except Exception, e:
-            return internal_server_error(e)
+            return bad_request(e)
 
         # connecting to facebook
         try:

@@ -53,13 +53,11 @@ def session(request):
     if request.method == 'POST':
         #input
         try:
-            credentials = request.data['credentials']
-            network_id = credentials['network_id']
-            access_token = credentials['access_token']
-            logger.debug(credentials)
-
+            network_id = request.data.get('network_id')
+            access_token = request.data.get('access_token')
             invite_code = request.data.get('invite_code')
-            logger.debug(invite_code)
+
+            logger.debug(request.data)
         except Exception, e:
             return bad_request(e)
 

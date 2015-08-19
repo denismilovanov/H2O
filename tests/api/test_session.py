@@ -11,11 +11,8 @@ class SessionTestCase(APITestCase):
         format = 'json'
 
         data = {
-            'credentials': {
-                'network_id': 1,
-                'access_token': 'CAAGm0PX4ZCpsBACYSbzxuNLz3WsSbfuBsaRYiAyc9f9rct8XpOZBQWqvZCLQZB3pFx2HndBWwfsMVBD9y9FfPdedyCnDbKi9waToV40t7Rkc76W05yarc59N5qbkNzb0ScI8aluCVCZC7We9MQm8Tf306BVmAYojd3yp6dK28O8c5p1tZBDHRIJevu8VDkf9NBbfZB1dNXSZA77DYoXOEyWy',
-                'user_id': 10153386713348088,
-            },
+            'network_id': 1,
+            'access_token': 'CAAFs4iZCHulQBAP1qjTQISAFW60aA8MZBtZBWxUi5gGR5LZBZAZAftPwzZBaQXZChgbEAMByI7eAySOuLVm8piCV9sVetT94v2cqVkpFoaaSzjc6HqxByBW1DozJYeMhkuL0IumCEqKVeo1bJNxmTI4EBkHaDuZBZCLNERZAWoMlZAkXlQFbKTOMbh027jEHpjlOOfjZCzseskfkZAaSGUbFz61q3laeclW3P4Ujn8gpJS7AyqLQZDZD',
             'invite_code': 'Q123',
         }
 

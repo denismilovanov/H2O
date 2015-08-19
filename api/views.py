@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 # decorator for all methods
 def authorization_needed(func):
     def inner(*k, **v):
+        logger.debug('METHOD: authorization_needed')
+
         request = k[0]
 
         # get token
@@ -17,6 +19,8 @@ def authorization_needed(func):
             access_token = request.META.get('HTTP_ACCESS_TOKEN')
             if not access_token:
                 access_token = request.META['headers']['Access-Token']
+
+            logger.debug('access token ' + str(access_token))
         except Exception, e:
             return unauthorized(e)
 
@@ -42,7 +46,7 @@ def authorization_needed(func):
 # session
 @api_view(['POST', 'PATCH'])
 def session(request):
-    logger.debug('session')
+    logger.debug('METHOD: session')
 
     # new session
     if request.method == 'POST':
@@ -102,7 +106,7 @@ def session(request):
 @api_view(['GET'])
 @authorization_needed
 def user(request, user_uuid, user):
-    logger.debug('user')
+    logger.debug('METHOD: user')
 
     user = User.find_by_user_uuid(user_uuid, scope='public_profile')
 

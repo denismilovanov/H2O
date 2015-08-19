@@ -47,6 +47,7 @@ def authorization_needed(func):
 @api_view(['POST', 'PATCH'])
 def session(request):
     logger.debug('METHOD: session')
+    logger.debug(request.data)
 
     # new session
     if request.method == 'POST':
@@ -58,7 +59,7 @@ def session(request):
             access_token = credentials['access_token']
             logger.debug(credentials)
 
-            invite_code = request.data['invite_code']
+            invite_code = request.data.get('invite_code')
             logger.debug(invite_code)
         except Exception, e:
             return internal_server_error(e)

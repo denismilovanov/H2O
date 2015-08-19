@@ -10,15 +10,16 @@ class FacebookWrapper:
     def get_user_data(access_token):
         logger.debug(access_token)
         try:
-            graph = facebook.GraphAPI(access_token=access_token)
+            graph = facebook.GraphAPI(access_token=access_token, version="2.4")
             logger.debug(graph)
             profile = graph.get_object('me')
             logger.debug(profile)
         except Exception, e:
+            logger.debug(e)
             # ok, let's raise
             raise FacebookException(e)
 
         return {
-            'first_name': profile['first_name'],
-            'last_name': profile['last_name'],
+            'first_name': profile['name'],
+            'last_name': '',
         }

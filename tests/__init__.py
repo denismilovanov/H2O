@@ -1,0 +1,4 @@
+'''
+Usage:
+    ./manage.py test
+'''

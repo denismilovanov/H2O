@@ -1,6 +1,6 @@
 from decorators import *
 from models.invite import Invite
-from models.exceptions import InviteCodeAlreadyTakenException, FacebookException, NotImplementedException
+from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException, FacebookException, NotImplementedException
 from models.facebook_wrapper import FacebookWrapper
 
 import logging
@@ -14,13 +14,15 @@ class User:
         if network_id == 1:
             return FacebookWrapper.get_user_data(access_token)
         else:
-            raise NotImplementedException('Not implemented, network_id = ' + str(network_id))
+            raise NotImplementedException
 
 
     # create or select user by network credentials
     @staticmethod
     @raw_queries()
     def upsert(user_data, network_id, user_id, access_token, invite_code, db):
+        logger.debug('upsert')
+
         # search
         user_uuid = db.select_field('''
             SELECT main.find_user_by_network(%(network_id)s, %(user_id)s);
@@ -34,9 +36,13 @@ class User:
             invite = Invite.get_invite_code(invite_code)
             logger.debug(invite)
 
+            if not invite:
+                # there is no code
+                raise InviteCodeDoesNotExistException
+
             if invite['is_used']:
                 # invite is used
-                raise InviteCodeAlreadyTakenException('Invite code is already used')
+                raise InviteCodeAlreadyTakenException
 
             # create
             user_uuid = db.select_field('''
@@ -61,6 +67,8 @@ class User:
     @staticmethod
     @raw_queries()
     def get_session(user_uuid, db):
+        logger.debug('get_session')
+
         access_token = db.select_field('''
             SELECT main.get_access_token(%(user_uuid)s);
         ''', user_uuid=user_uuid)
@@ -79,6 +87,8 @@ class User:
     @staticmethod
     @raw_queries()
     def find_by_access_token(access_token, db):
+        logger.debug('find_by_access_token')
+
         uuid = db.select_field('''
             SELECT main.get_user_uuid_by_access_token(%(access_token)s);
         ''', access_token=access_token)
@@ -99,6 +109,8 @@ class User:
     @staticmethod
     @raw_queries()
     def find_by_user_uuid(user_uuid, scope, db):
+        logger.debug('find_by_user_uuid')
+
         user = db.select_record('''
             SELECT ''' + User.scope(scope) + ''' FROM main.get_user_by_uuid(%(user_uuid)s);
         ''', user_uuid=user_uuid)
@@ -112,6 +124,8 @@ class User:
     @staticmethod
     @raw_queries()
     def refresh_access_token(refresh_token, db):
+        logger.debug('refresh_access_token')
+
         access_token = db.select_field('''
             SELECT main.refresh_access_token(%(refresh_token)s);
         ''', refresh_token=refresh_token)

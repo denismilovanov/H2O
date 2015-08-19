@@ -13,15 +13,13 @@ class SessionTestCase(APITestCase):
         data = {
             'credentials': {
                 'network_id': 1,
-                'access_token': 'CAAGm0PX4ZCpsBAOi6acVijldkNXHSTzLikTdrKGp5uMzpTDXmZAR5vKHZCLyAQ1biZAGya68y6d2qExuhaGJZCnEfvigNs3OqIkzglULlhNkoGSI7d7SLfgTnQBH1BLGhekA2G9SKiE6AVFOXZCMzj3l7nWlYaFEeVNJGTuZAKYZAZCH0GGT9zKMP2wjEYP1f0LiAzeZAVdSjpSAZDZD',
+                'access_token': 'CAAGm0PX4ZCpsBACYSbzxuNLz3WsSbfuBsaRYiAyc9f9rct8XpOZBQWqvZCLQZB3pFx2HndBWwfsMVBD9y9FfPdedyCnDbKi9waToV40t7Rkc76W05yarc59N5qbkNzb0ScI8aluCVCZC7We9MQm8Tf306BVmAYojd3yp6dK28O8c5p1tZBDHRIJevu8VDkf9NBbfZB1dNXSZA77DYoXOEyWy',
                 'user_id': 10153386713348088,
             },
             'invite_code': 'Q123',
         }
 
         response = method(session_controller, data, format=format)
-        print response.content
-        print response.status_code
         self.assertTrue(response.status_code == status.HTTP_201_CREATED)
 
         response = method(session_controller, data, format=format)

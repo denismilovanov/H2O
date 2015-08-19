@@ -12,7 +12,7 @@ class FacebookWrapper:
         try:
             graph = facebook.GraphAPI(access_token=access_token)
             logger.debug(graph)
-            profile = graph.get_object("me")
+            profile = graph.get_object('me')
             logger.debug(profile)
         except Exception, e:
             # ok, let's raise

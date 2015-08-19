@@ -1,5 +1,4 @@
 from decorators import *
-from models.exceptions import InviteCodeDoesNotExistException
 
 class Invite:
     @staticmethod
@@ -10,7 +9,7 @@ class Invite:
         ''', invite_code=invite_code)
 
         if not code['code']:
-            raise InviteCodeDoesNotExistException()
+            return None
 
         return code
 

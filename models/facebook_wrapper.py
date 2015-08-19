@@ -12,6 +12,7 @@ class FacebookWrapper:
         try:
             graph = facebook.GraphAPI(access_token=access_token, version="2.4")
             logger.debug(graph)
+
             profile = graph.get_object('me')
             logger.debug(profile)
         except Exception, e:
@@ -22,4 +23,5 @@ class FacebookWrapper:
         return {
             'first_name': profile['name'],
             'last_name': '',
+            'id': profile['id'],
         }

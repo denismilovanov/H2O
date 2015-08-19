@@ -55,7 +55,6 @@ def session(request):
         try:
             credentials = request.data['credentials']
             network_id = credentials['network_id']
-            user_id = credentials['user_id']
             access_token = credentials['access_token']
             logger.debug(credentials)
 
@@ -66,7 +65,7 @@ def session(request):
 
         # connecting to facebook
         try:
-            user_data = User.get_user_via_network(network_id, user_id, access_token)
+            user_data = User.get_user_via_network(network_id, access_token)
         except FacebookException, e:
             return unavailable(e)
         except Exception, e:
@@ -74,7 +73,7 @@ def session(request):
 
         # creating or getting user
         try:
-            user = User.upsert(user_data, network_id, user_id, access_token, invite_code)
+            user = User.upsert(user_data, network_id, access_token, invite_code)
         except (InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException), e:
             return forbidden(e)
         except Exception, e:

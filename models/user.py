@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class User:
     # get names from social network
     @staticmethod
-    def get_user_via_network(network_id, user_id, access_token):
+    def get_user_via_network(network_id, access_token):
         if str(network_id) == '1':
             return FacebookWrapper.get_user_data(access_token)
         else:
@@ -21,8 +21,10 @@ class User:
     # create or select user by network credentials
     @staticmethod
     @raw_queries()
-    def upsert(user_data, network_id, user_id, access_token, invite_code, db):
+    def upsert(user_data, network_id, access_token, invite_code, db):
         logger.debug('upsert')
+
+        user_id = user_data['id']
 
         # search
         user_uuid = db.select_field('''

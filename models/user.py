@@ -11,7 +11,7 @@ class User:
     # get names from social network
     @staticmethod
     def get_user_via_network(network_id, user_id, access_token):
-        if network_id == 1:
+        if str(network_id) == '1':
             return FacebookWrapper.get_user_data(access_token)
         else:
             raise NotImplementedException

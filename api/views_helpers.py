@@ -14,13 +14,13 @@ class JSONResponse(HttpResponse):
 
 def bad_request(e):
     v = {
-        'error': e,
+        'error': str(e),
     }
     return HttpResponse(v, status=status.HTTP_400_BAD_REQUEST)
 
 def internal_server_error(e):
     v = {
-        'error': e,
+        'error': str(e),
     }
     return JSONResponse(v, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

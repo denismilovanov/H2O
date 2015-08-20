@@ -50,19 +50,26 @@ class User:
 
             # create
             user_uuid = db.select_field('''
-                SELECT main.add_user(%(name)s, %(avatar_url)s);
+                SELECT main.upsert_user(NULL, %(name)s, %(avatar_url)s);
             ''', name=user_data['name'], avatar_url=user_data['avatar_url'])
             logger.debug(user_uuid)
-
-            # add network
-            db.select_field('''
-                SELECT main.add_user_network(%(user_uuid)s, %(network_id)s, %(user_id)s, %(access_token)s);
-            ''', user_uuid=user_uuid, network_id=network_id, user_id=user_id, access_token=access_token)
 
             is_new = True
 
             Invite.use_invite_code(invite_code, user_uuid)
 
+        else:
+            # update information
+            db.select_field('''
+                SELECT main.upsert_user(%(user_uuid)s, %(name)s, %(avatar_url)s);
+            ''', user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'])
+
+        # upsert network
+        db.select_field('''
+            SELECT main.upsert_user_network(%(user_uuid)s, %(network_id)s, %(user_id)s, %(access_token)s);
+        ''', user_uuid=user_uuid, network_id=network_id, user_id=user_id, access_token=access_token)
+
+        # that was all
         return {
             'user_uuid': user_uuid,
             'is_new': is_new,

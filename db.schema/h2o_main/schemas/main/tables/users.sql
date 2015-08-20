@@ -6,8 +6,8 @@ CREATE TABLE main.users (
     uuid uuid NOT NULL UNIQUE DEFAULT public.uuid_generate_v4(),
     name varchar(255) NOT NULL,
     registered_at timestamptz NOT NULL DEFAULT now(),
-    status main.user_status NOT NULL DEFAULT 'i_do_not_need_money',
-    visibility main.user_visibility NOT NULL DEFAULT 'visible',
+    status main.user_status NOT NULL DEFAULT 'i_have_enough_money',
+    visibility main.user_visibility NOT NULL DEFAULT 'visible_for_all',
     avatar_url varchar NULL
 );
 

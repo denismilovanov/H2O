@@ -15,6 +15,15 @@ class FacebookWrapper:
 
             profile = graph.get_object('me')
             logger.debug(profile)
+
+            avatar = graph.get_object(profile['id'] + '/picture?type=large')
+            avatar_url = None
+
+            try:
+                avatar_url = avatar['url']
+            except Exception, e:
+                pass
+
         except Exception, e:
             logger.debug(e)
             # ok, let's raise

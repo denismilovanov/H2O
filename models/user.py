@@ -125,7 +125,7 @@ class User:
 
     @staticmethod
     def scope(scope):
-        if scope == 'public_profile':
+        if scope == 'public_profile' or scope == 'public_all':
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility'])
         else:
             return '*'
@@ -176,8 +176,9 @@ class User:
             SELECT ''' + User.scope(scope) + ''' FROM main.get_users(%(limit)s, %(offset)s);
         ''', limit=limit, offset=offset)
 
-        for user in users:
-            user['networks'] = UserNetwork.get_user_networks(user['id'])
+        if scope == 'admin':
+            for user in users:
+                user['networks'] = UserNetwork.get_user_networks(user['id'])
 
         return users
 

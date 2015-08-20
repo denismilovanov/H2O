@@ -23,6 +23,12 @@ class SessionTestCase(MyAPITestCase):
 
         controller = self.invite_codes_controller
         response = self.client.get(controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+
+        # all
+
+        controller = self.user_controller
+        response = self.client.get(controller, {}, format=self.format, headers=headers)
         print response.content
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 

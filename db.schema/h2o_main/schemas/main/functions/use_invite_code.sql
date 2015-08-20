@@ -14,7 +14,7 @@ BEGIN
     UPDATE main.invite_codes
         SET is_used = 't',
             invited_user_id = (SELECT id FROM main.get_user_by_uuid(u_user_uuid))
-        WHERE code = s_invite_code;
+        WHERE invite_code = s_invite_code;
 
 END
 $BODY$

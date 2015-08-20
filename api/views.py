@@ -133,3 +133,19 @@ def profile(request, user):
 
     return no_content()
 
+# invite codes list
+@api_view(['GET'])
+@authorization_needed
+def invite_codes(request, user):
+    logger.debug('METHOD: invite_codes')
+
+    return ok(invite_codes=Invite.get_invite_codes_by_user_id(user['id'], scope='public_invite_codes'))
+
+
+# update invite code
+@api_view(['PATCH'])
+@authorization_needed
+def invite_code(request, invite_code, user):
+    logger.debug('METHOD: invite_code')
+
+    return no_content()

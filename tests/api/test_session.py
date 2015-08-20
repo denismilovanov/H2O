@@ -19,9 +19,16 @@ class SessionTestCase(MyAPITestCase):
         response = self.client.get(user_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
+        # my codes
+
+        controller = self.invite_codes_controller
+        response = self.client.get(controller, {}, format=self.format, headers=headers)
+        print response.content
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+
         # not found
 
-        user_controller = '/v1/user/00000000-0000-0000-0000-000000000000'
+        user_controller = self.user_controller + '00000000-0000-0000-0000-000000000000'
         response = self.client.get(user_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_404_NOT_FOUND)
 

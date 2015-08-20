@@ -12,9 +12,9 @@ BEGIN
 
     SELECT * INTO r_code
         FROM main.invite_codes
-        WHERE code = s_invite_code;
+        WHERE invite_code = s_invite_code;
 
-    IF r_code.code IS NULL THEN
+    IF r_code.invite_code IS NULL THEN
         RETURN NULL;
     END IF;
 

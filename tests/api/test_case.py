@@ -25,7 +25,8 @@ class MyAPITestCase(APITestCase):
 
     session_controller = '/v1/session'
     profile_controller = '/v1/profile'
-    user_controller = '/v1/user/'
+    user_controller = '/v1/users/'
+    invite_codes_controller = '/v1/invite_codes'
     format = 'json'
 
 

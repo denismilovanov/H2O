@@ -54,9 +54,17 @@ class User:
             ''', name=user_data['name'], avatar_url=user_data['avatar_url'])
             logger.debug(user_uuid)
 
-            is_new = True
-
+            # use code
             Invite.use_invite_code(invite_code, user_uuid)
+
+            # create codes
+            user_id = db.select_field('''
+                SELECT id FROM main.get_user_by_uuid(%(user_uuid)s);
+            ''', user_uuid=user_uuid)
+            Invite.create_invite_codes_for_user_id(user_id, 3)
+
+            # newness flag
+            is_new = True
 
         else:
             # update information

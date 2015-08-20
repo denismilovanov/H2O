@@ -23,6 +23,7 @@ class User:
     @raw_queries()
     def upsert(user_data, network_id, access_token, invite_code, db):
         logger.debug('upsert')
+        logger.debug(user_data)
 
         user_id = user_data['id']
 
@@ -49,8 +50,8 @@ class User:
 
             # create
             user_uuid = db.select_field('''
-                SELECT main.add_user(%(first_name)s, %(last_name)s);
-            ''', first_name=user_data['first_name'], last_name=user_data['last_name'])
+                SELECT main.add_user(%(name)s, %(avatar_url)s);
+            ''', name=user_data['name'], avatar_url=user_data['avatar_url'])
             logger.debug(user_uuid)
 
             # add network
@@ -65,6 +66,8 @@ class User:
         return {
             'user_uuid': user_uuid,
             'is_new': is_new,
+            'avatar_url': user_data['avatar_url'],
+            'name': user_data['name'],
         }
 
     @staticmethod
@@ -105,7 +108,7 @@ class User:
     @staticmethod
     def scope(scope):
         if scope == 'public_profile':
-            return ', '.join(['uuid', 'first_name', 'last_name'])
+            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility'])
         else:
             return '*'
 
@@ -157,3 +160,8 @@ class User:
             user['networks'] = UserNetwork.get_user_networks(user['id'])
 
         return users
+
+    @staticmethod
+    @raw_queries()
+    def update_profile(user_uuid, status, db):
+        return True

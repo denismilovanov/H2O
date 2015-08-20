@@ -12,8 +12,6 @@ class UserNetwork:
             SELECT * FROM main.get_user_networks(%(user_id)s);
         ''', user_id=user_id)
 
-        print facebook
-
         return {
             'facebook': facebook
         }

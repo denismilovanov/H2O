@@ -21,7 +21,7 @@ class FacebookWrapper:
             raise FacebookException(e)
 
         return {
-            'first_name': profile['name'],
-            'last_name': '',
+            'name': profile['name'],
+            'avatar_url': None,
             'id': profile['id'],
         }

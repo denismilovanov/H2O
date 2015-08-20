@@ -2,8 +2,8 @@
 -- добавление пользователя
 
 CREATE OR REPLACE FUNCTION main.add_user(
-    s_first_name varchar,
-    s_last_name varchar
+    s_name varchar,
+    s_avatar_url varchar
 )
     RETURNS uuid AS
 $BODY$
@@ -12,8 +12,8 @@ DECLARE
 BEGIN
 
     INSERT INTO main.users
-        (first_name, last_name, invite_code)
-        SELECT s_first_name, s_last_name, ''
+        (name, avatar_url)
+        SELECT s_name, s_avatar_url
         RETURNING uuid, id INTO r_user;
 
     INSERT INTO main.users_sessions
@@ -27,6 +27,6 @@ $BODY$
 
 
 GRANT EXECUTE ON FUNCTION main.add_user(
-    s_first_name varchar,
-    s_last_name varchar
+    s_name varchar,
+    s_avatar_url varchar
 ) TO h2o_user;

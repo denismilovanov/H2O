@@ -148,4 +148,28 @@ def invite_codes(request, user):
 def invite_code(request, invite_code, user):
     logger.debug('METHOD: invite_code')
 
+    #input
+    try:
+        email = request.data['email']
+    except Exception, e:
+        return bad_request(e)
+
+    # get code
+    code = Invite.get_invite_code(invite_code)
+    logger.debug(code)
+
+    if not code or code['status'] != 'free':
+        # there is no code available
+        return not_found(invite_code)
+
+    if code['owner_id'] != user['id']:
+        # code is not mine
+        return forbidden(invite_code)
+
+    # making invite
+    try:
+        Invite.invite_user_via_invite_code_and_email(invite_code, email)
+    except InvalidEmail, e:
+        return bad_request(e)
+
     return no_content()

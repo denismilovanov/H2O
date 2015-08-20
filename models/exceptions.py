@@ -17,3 +17,8 @@ class NotImplementedException(Exception):
     def __str__(self):
         return 'NOT_IMPLEMENTED'
     pass
+
+class InvalidEmail(Exception):
+    def __str__(self):
+        return 'INVALID_EMAIL'
+    pass

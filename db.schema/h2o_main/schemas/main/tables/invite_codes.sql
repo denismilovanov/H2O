@@ -12,5 +12,8 @@ CREATE TABLE main.invite_codes (
     email varchar NULL
 );
 
+CREATE UNIQUE INDEX invite_codes_email_ukey
+    ON main.invite_codes
+    USING btree(lower(email));
 
 

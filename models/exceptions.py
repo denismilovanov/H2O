@@ -22,3 +22,8 @@ class InvalidEmail(Exception):
     def __str__(self):
         return 'INVALID_EMAIL'
     pass
+
+class EmailIsAlreadyUsed(Exception):
+    def __str__(self):
+        return 'EMAIL_IS_ALREADY_USED'
+    pass

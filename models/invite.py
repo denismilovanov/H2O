@@ -1,5 +1,5 @@
 from decorators import *
-from models.exceptions import InvalidEmail
+from models.exceptions import InvalidEmail, EmailIsAlreadyUsed
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -62,8 +62,11 @@ class Invite:
         if not email or not validate_email(email):
             raise InvalidEmail()
 
-        db.select_field('''
-            SELECT main.invite_user_via_invite_code_and_email(%(invite_code)s, %(email)s);
-        ''', invite_code=invite_code, email=email)
+        try:
+            db.select_field('''
+                SELECT main.invite_user_via_invite_code_and_email(%(invite_code)s, %(email)s);
+            ''', invite_code=invite_code, email=email)
+        except Exception, e:
+            raise EmailIsAlreadyUsed()
 
         return True

@@ -171,5 +171,7 @@ def invite_code(request, invite_code, user):
         Invite.invite_user_via_invite_code_and_email(invite_code, email)
     except InvalidEmail, e:
         return bad_request(e)
+    except EmailIsAlreadyUsed, e:
+        return not_acceptable(e)
 
     return no_content()

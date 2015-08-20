@@ -85,9 +85,12 @@ class User:
         ''', user_uuid=user_uuid)
         logger.debug(refresh_token)
 
+        from H2O.settings import ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN
         return {
             'access_token': access_token,
             'refresh_token': refresh_token,
+            'access_token_expires_in': ACCESS_TOKEN_EXPIRES_IN,
+            'refresh_token_expires_in': REFRESH_TOKEN_EXPIRES_IN,
         }
 
     @staticmethod

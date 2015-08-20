@@ -27,6 +27,7 @@ def internal_server_error(e):
     return JSONResponse(v, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def created(**v):
+    logger.debug('CREATED')
     logger.debug(v)
     return JSONResponse(v, status=status.HTTP_201_CREATED)
 
@@ -70,4 +71,6 @@ def no_content():
     return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 def ok(**v):
+    logger.debug('OK')
+    logger.debug(v)
     return JSONResponse(v)

@@ -98,7 +98,8 @@ def session(request):
         if not access_token:
             return unauthorized('Refresh token is old')
 
-        return ok(access_token=access_token)
+        from H2O.settings import ACCESS_TOKEN_EXPIRES_IN
+        return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
 
 # profile
 @api_view(['GET'])

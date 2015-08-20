@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+REFRESH_TOKEN_EXPIRES_IN = 86400
+ACCESS_TOKEN_EXPIRES_IN = 3600
 
 # Application definition
 

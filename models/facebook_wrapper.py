@@ -31,6 +31,6 @@ class FacebookWrapper:
 
         return {
             'name': profile['name'],
-            'avatar_url': None,
+            'avatar_url': avatar_url,
             'id': profile['id'],
         }

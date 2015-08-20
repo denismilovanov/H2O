@@ -2,12 +2,19 @@
 
 {% block content %}
 
+    <style>
+        .table td {
+            vertical-align: middle !important;
+        }
+    </style>
+
     <div class="panel panel-default">
         <div class="panel-heading">
             Пользователи
         </div>
         <table class="table" id="users">
             <tr>
+                <th></th>
                 <th>ID</th>
                 <th>UUID</th>
                 <th>Имя</th>
@@ -16,9 +23,10 @@
             </tr>
             {% for user in users %}
             <tr>
+                <td><img src="{{ user.avatar_url }}" width="50" /></td>
                 <td>{{ user.id }}</td>
                 <td>{{ user.uuid }}</td>
-                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>{{ user.name }} {{ user.name }}</td>
                 <td><a href="//facebook.com/{{ user.networks.facebook.user_network_id }}">{{ user.networks.facebook.user_network_id }}</a></td>
                 <td>{{ user.registered_at }}</td>
             </tr>

@@ -14,7 +14,7 @@ class InviteCodesTestCase(MyAPITestCase):
         response = self.client.get(controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
-        invite_codes = json.loads(response.content)['invite_codes']
+        invite_codes = json.loads(response.content)
         invite_code = invite_codes[0]
 
         # update

@@ -74,3 +74,8 @@ def ok(**v):
     logger.debug('OK')
     logger.debug(v)
     return JSONResponse(v)
+
+def ok_raw(v):
+    logger.debug('OK')
+    logger.debug(v)
+    return JSONResponse(v)

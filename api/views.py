@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view
-from views_helpers import created, bad_request, unavailable, forbidden, unauthorized, ok, internal_server_error, not_found, not_acceptable, no_content
+from views_helpers import created, bad_request, unavailable, forbidden, unauthorized, ok, ok_raw, internal_server_error, not_found, not_acceptable, no_content
 from models import *
 from models.exceptions import *
 
@@ -139,7 +139,7 @@ def profile(request, user):
 def invite_codes(request, user):
     logger.debug('METHOD: invite_codes')
 
-    return ok(invite_codes=Invite.get_invite_codes_by_user_id(user['id'], scope='public_invite_codes'))
+    return ok_raw(Invite.get_invite_codes_by_user_id(user['id'], scope='public_invite_codes'))
 
 
 # update invite code

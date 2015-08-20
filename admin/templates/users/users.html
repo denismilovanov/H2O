@@ -15,11 +15,13 @@
                 <th>Регистрация</th>
             </tr>
             {% for user in users %}
+            <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.uuid }}</td>
                 <td>{{ user.first_name }} {{ user.last_name }}</td>
                 <td><a href="//facebook.com/{{ user.networks.facebook.user_network_id }}">{{ user.networks.facebook.user_network_id }}</a></td>
                 <td>{{ user.registered_at }}</td>
+            </tr>
             {% endfor %}
         </table>
     </div>

@@ -114,3 +114,22 @@ def user(request, user_uuid, user):
 
     return ok(user=user)
 
+# profile
+@api_view(['PATCH'])
+@authorization_needed
+def profile(request, user):
+    logger.debug('METHOD: profile')
+
+    #input
+    try:
+        visibility = request.data.get('visibility')
+        status = request.data.get('status')
+
+        logger.debug(request.data)
+    except Exception, e:
+        return bad_request(e)
+
+    User.update_profile(user['id'], visibility, status)
+
+    return no_content()
+

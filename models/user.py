@@ -162,6 +162,8 @@ class User:
     @staticmethod
     @raw_queries()
     def get_all(limit, offset, scope, db):
+        logger.debug('get_all')
+
         users = db.select_table('''
             SELECT ''' + User.scope(scope) + ''' FROM main.get_users(%(limit)s, %(offset)s);
         ''', limit=limit, offset=offset)
@@ -173,5 +175,11 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def update_profile(user_uuid, status, db):
+    def update_profile(user_id, visibility, status, db):
+        logger.debug('update_profile')
+
+        db.select_field('''
+            SELECT main.update_user_profile(%(user_id)s, %(visibility)s, %(status)s);
+        ''', user_id=user_id, visibility=visibility, status=status)
+
         return True

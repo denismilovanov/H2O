@@ -26,12 +26,12 @@ class User:
         logger.debug('upsert')
         logger.debug(user_data)
 
-        user_id = user_data['id']
+        user_network_id = user_data['id']
 
         # search
         user_uuid = db.select_field('''
-            SELECT main.find_user_by_network(%(network_id)s, %(user_id)s);
-        ''', network_id=network_id, user_id=user_id)
+            SELECT main.find_user_by_network(%(network_id)s, %(user_network_id)s);
+        ''', network_id=network_id, user_network_id=user_network_id)
         logger.debug(user_uuid)
 
         is_new = False
@@ -79,7 +79,7 @@ class User:
             ''', user_uuid=user_uuid)
 
         # upsert network
-        UserNetwork.upsert_network(user_uuid, network_id, user_id, access_token)
+        UserNetwork.upsert_network(user_uuid, network_id, user_network_id, access_token)
 
         # that was all
         return {

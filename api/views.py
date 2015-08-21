@@ -132,7 +132,7 @@ def user(request, user_uuid, user):
     if not user: # or user['is_deleted']:
         return not_found(user_uuid)
 
-    return ok(user=user)
+    return ok_raw(user)
 
 # list of user
 @api_view(['GET'])

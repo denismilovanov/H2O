@@ -128,16 +128,6 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def drop_access_tokens(db):
-        pass
-
-    @staticmethod
-    @raw_queries()
-    def drop_refresh_tokens(db):
-        pass
-
-    @staticmethod
-    @raw_queries()
     def get_all(limit, offset, scope, db):
         logger.debug('get_all')
 

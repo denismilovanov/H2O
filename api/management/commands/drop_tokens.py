@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from models.user import User
+from models.user_session import UserSession
 
 class Command(BaseCommand):
     help = 'Drop tokens'
@@ -8,5 +8,5 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        User.drop_access_tokens()
-        User.drop_refresh_tokens()
+        UserSession.drop_access_tokens()
+        UserSession.drop_refresh_tokens()

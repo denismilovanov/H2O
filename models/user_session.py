@@ -38,6 +38,20 @@ class UserSession:
 
     @staticmethod
     @raw_queries()
+    def drop_access_tokens(db):
+        db.select_field('''
+            SELECT main.drop_access_tokens();
+        ''')
+
+    @staticmethod
+    @raw_queries()
+    def drop_refresh_tokens(db):
+        db.select_field('''
+            SELECT main.drop_refresh_tokens();
+        ''')
+
+    @staticmethod
+    @raw_queries()
     def update_push_token(user_id, access_token, push_token, db):
         pass
 

@@ -53,7 +53,12 @@ class UserSession:
     @staticmethod
     @raw_queries()
     def update_push_token(user_id, access_token, push_token, db):
-        pass
+        logger.debug('update_push_token')
+        logger.debug(push_token)
+
+        db.select_field('''
+            SELECT main.update_push_token(%(access_token)s, %(push_token)s);
+        ''', access_token=access_token, push_token=push_token)
 
 
 

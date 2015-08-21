@@ -9,6 +9,7 @@ class ProfileTestCase(MyAPITestCase):
         data = {
             'status': 'i_have_less_than_enough_money',
             'visibility': 'visible_for_friends',
+            'push_token': 'PUSH'
         }
         headers = self.authorization()['headers']
 

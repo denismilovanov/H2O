@@ -146,7 +146,7 @@ def profile(request, user):
     User.update_profile(user['id'], visibility, status)
 
     if push_token:
-        UserSession.update_push_token(user['access_token'], push_token)
+        UserSession.update_push_token(user['id'], user['access_token'], push_token)
 
     return no_content()
 

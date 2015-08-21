@@ -96,7 +96,7 @@ def session(request):
         except Exception, e:
             return bad_request(e)
 
-        access_token = User.refresh_access_token(refresh_token)
+        access_token = UserSession.refresh_access_token(refresh_token)
 
         if not access_token:
             return unauthorized('Refresh token is old')

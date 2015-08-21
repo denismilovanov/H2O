@@ -128,18 +128,6 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def refresh_access_token(refresh_token, db):
-        logger.debug('refresh_access_token')
-
-        access_token = db.select_field('''
-            SELECT main.refresh_access_token(%(refresh_token)s);
-        ''', refresh_token=refresh_token)
-        logger.debug(refresh_token)
-
-        return access_token
-
-    @staticmethod
-    @raw_queries()
     def drop_access_tokens(db):
         pass
 

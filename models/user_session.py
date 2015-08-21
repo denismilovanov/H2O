@@ -24,5 +24,17 @@ class UserSession:
             'refresh_token_expires_in': REFRESH_TOKEN_EXPIRES_IN,
         }
 
+    @staticmethod
+    @raw_queries()
+    def refresh_access_token(refresh_token, db):
+        logger.debug('refresh_access_token')
+
+        access_token = db.select_field('''
+            SELECT main.refresh_access_token(%(refresh_token)s);
+        ''', refresh_token=refresh_token)
+        logger.debug(refresh_token)
+
+        return access_token
+
 
 

@@ -26,9 +26,6 @@ BEGIN
         SELECT s_name, s_avatar_url
         RETURNING uuid, id INTO r_user;
 
-    INSERT INTO main.users_sessions
-        SELECT r_user.id;
-
     RETURN r_user.uuid;
 
 END

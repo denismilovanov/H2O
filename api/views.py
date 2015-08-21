@@ -53,9 +53,12 @@ def session(request):
     if request.method == 'POST':
         #input
         try:
-            network_id = request.data.get('network_id')
-            access_token = request.data.get('access_token')
+            network_id = request.data['network_id']
+            access_token = request.data['access_token']
             invite_code = request.data.get('invite_code')
+            device_id = request.data['device_id']
+            device_type = request.data['device_type']
+            push_token = request.data.get('push_token')
 
             logger.debug(request.data)
         except Exception, e:
@@ -71,7 +74,7 @@ def session(request):
 
         # creating or getting user
         try:
-            user = User.upsert(user_data, network_id, access_token, invite_code)
+            user, user_id = User.upsert(user_data, network_id, access_token, invite_code)
         except (InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException), e:
             return forbidden(e)
         except Exception, e:
@@ -79,7 +82,7 @@ def session(request):
 
         # creating session
         try:
-            session = User.get_session(user['user_uuid'])
+            session = UserSession.upsert_user_session(user_id, device_id, device_type, push_token)
         except Exception, e:
             return internal_server_error(e)
 

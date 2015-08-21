@@ -1,6 +1,7 @@
 from decorators import *
 from models.invite import Invite
 from models.user_network import UserNetwork
+from models.user_session import UserSession
 from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException, FacebookException, NotImplementedException
 from models.facebook_wrapper import FacebookWrapper
 
@@ -72,10 +73,13 @@ class User:
                 SELECT main.upsert_user(%(user_uuid)s, %(name)s, %(avatar_url)s);
             ''', user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'])
 
+            # get id
+            user_id = db.select_field('''
+                SELECT id FROM main.get_user_by_uuid(%(user_uuid)s);
+            ''', user_uuid=user_uuid)
+
         # upsert network
-        db.select_field('''
-            SELECT main.upsert_user_network(%(user_uuid)s, %(network_id)s, %(user_id)s, %(access_token)s);
-        ''', user_uuid=user_uuid, network_id=network_id, user_id=user_id, access_token=access_token)
+        UserNetwork.upsert_network(user_uuid, network_id, user_id, access_token)
 
         # that was all
         return {
@@ -83,30 +87,7 @@ class User:
             'is_new': is_new,
             'avatar_url': user_data['avatar_url'],
             'name': user_data['name'],
-        }
-
-    @staticmethod
-    @raw_queries()
-    def get_session(user_uuid, db):
-        logger.debug('get_session')
-
-        access_token = db.select_field('''
-            SELECT main.get_access_token(%(user_uuid)s);
-        ''', user_uuid=user_uuid)
-        logger.debug(access_token)
-
-        refresh_token = db.select_field('''
-            SELECT main.get_refresh_token(%(user_uuid)s);
-        ''', user_uuid=user_uuid)
-        logger.debug(refresh_token)
-
-        from H2O.settings import ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN
-        return {
-            'access_token': access_token,
-            'refresh_token': refresh_token,
-            'access_token_expires_in': ACCESS_TOKEN_EXPIRES_IN,
-            'refresh_token_expires_in': REFRESH_TOKEN_EXPIRES_IN,
-        }
+        }, user_id
 
     @staticmethod
     @raw_queries()

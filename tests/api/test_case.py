@@ -9,6 +9,8 @@ class MyAPITestCase(APITestCase):
             'network_id': 1,
             'access_token': 'TEST_TOKEN_1',
             'invite_code': 'Q123',
+            'device_id': 'DEVICE_1',
+            'device_type': 'ios',
         }
 
         response = self.client.post(self.session_controller, data, format=self.format)

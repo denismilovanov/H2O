@@ -10,27 +10,37 @@ logger = logging.getLogger(__name__)
 # decorator for all methods
 def authorization_needed(func):
     def inner(*k, **v):
-        logger.debug('METHOD: authorization_needed')
-
         request = k[0]
+        refresh_token = request.data.get('refresh_token')
+        access_token = None
+        user = {}
 
-        # get token
-        try:
-            access_token = request.META.get('HTTP_ACCESS_TOKEN')
-            if not access_token:
-                access_token = request.META['headers']['Access-Token']
+        if  not refresh_token and \
+            not (request.path == '/v1/session' and request.method == 'POST'):
 
-            logger.debug('access token ' + str(access_token))
-        except Exception, e:
-            return unauthorized(e)
+            logger.debug('Need to authorize')
 
-        # get user
-        try:
-            user = User.find_by_access_token(access_token)
-            if not user:
-                return unauthorized(access_token)
-        except Exception, e:
-            return internal_server_error(e)
+            # get token
+            try:
+                access_token = request.META.get('HTTP_ACCESS_TOKEN')
+                if not access_token:
+                    access_token = request.META['headers']['Access-Token']
+
+                logger.debug('access token ' + str(access_token))
+            except Exception, e:
+                return unauthorized(e)
+        else:
+            logger.debug('No need to authorize')
+
+        # need to authorize with this token
+        if access_token:
+            # get user
+            try:
+                user = User.find_by_access_token(access_token)
+                if not user:
+                    return unauthorized(access_token)
+            except Exception, e:
+                return internal_server_error(e)
 
         # pass user
         user['access_token'] = access_token
@@ -46,9 +56,9 @@ def authorization_needed(func):
 
 # session
 @api_view(['POST', 'PATCH'])
-def session(request):
+@authorization_needed
+def session(request, user):
     logger.debug('METHOD: session')
-    logger.debug(request.data)
 
     # new session
     if request.method == 'POST':
@@ -59,8 +69,8 @@ def session(request):
             invite_code = request.data.get('invite_code')
             device_type = request.data['device_type']
             push_token = request.data.get('push_token')
-
             logger.debug(request.data)
+
         except Exception, e:
             return bad_request(e)
 
@@ -91,18 +101,25 @@ def session(request):
 
     # refresh session
     elif request.method == 'PATCH':
-        try:
-            refresh_token = request.data['refresh_token']
-        except Exception, e:
-            return bad_request(e)
+        refresh_token = request.data.get('refresh_token')
+        push_token = request.data.get('push_token')
 
-        access_token = UserSession.refresh_access_token(refresh_token)
+        if not refresh_token and not push_token:
+            return bad_request(None)
 
-        if not access_token:
-            return unauthorized('Refresh token is old')
+        if refresh_token:
+            access_token = UserSession.refresh_access_token(refresh_token)
 
-        from H2O.settings import ACCESS_TOKEN_EXPIRES_IN
-        return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
+            if not access_token:
+                return unauthorized('Refresh token is old')
+
+            from H2O.settings import ACCESS_TOKEN_EXPIRES_IN
+            return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
+
+        if push_token:
+            UserSession.update_push_token(user['id'], user['access_token'], push_token)
+
+            return no_content()
 
 # profile
 @api_view(['GET'])
@@ -137,16 +154,12 @@ def profile(request, user):
     try:
         visibility = request.data.get('visibility')
         status = request.data.get('status')
-        push_token = request.data.get('push_token')
-
         logger.debug(request.data)
+
     except Exception, e:
         return bad_request(e)
 
     User.update_profile(user['id'], visibility, status)
-
-    if push_token:
-        UserSession.update_push_token(user['id'], user['access_token'], push_token)
 
     return no_content()
 

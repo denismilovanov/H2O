@@ -19,6 +19,13 @@ class SessionTestCase(MyAPITestCase):
         response = self.client.get(user_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
+        # new push token
+
+        response = self.client.patch(self.session_controller, {
+            'push_token': 'NEW_PUSH_TOKEN',
+        }, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
+
         # my codes
 
         controller = self.invite_codes_controller

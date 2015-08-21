@@ -27,3 +27,13 @@ class EmailIsAlreadyUsed(Exception):
     def __str__(self):
         return 'EMAIL_IS_ALREADY_USED'
     pass
+
+class UserIsAlreadyFollowed(Exception):
+    def __str__(self):
+        return 'USER_IS_ALREADY_FOLLOWED'
+    pass
+
+class UserIsNotFound(Exception):
+    def __str__(self):
+        return 'USER_IS_NOT_FOUND'
+    pass

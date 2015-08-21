@@ -26,3 +26,4 @@ GRANT EXECUTE ON FUNCTION  main.get_users(
     i_limit integer,
     i_offset integer
 ) TO h2o_user;
+

@@ -173,8 +173,22 @@ class User:
         logger.debug('get_all')
 
         users = db.select_table('''
-            SELECT ''' + User.scope(scope) + ''' FROM main.get_users(%(limit)s, %(offset)s);
+            SELECT id FROM main.get_users(%(limit)s, %(offset)s);
         ''', limit=limit, offset=offset)
+
+        users_ids = [user['id'] for user in users]
+
+        return User.get_all_by_ids(users_ids, scope)
+
+    @staticmethod
+    @raw_queries()
+    def get_all_by_ids(users_ids, scope, db):
+        logger.debug('get_all_by_ids')
+        logger.debug(users_ids)
+
+        users = db.select_table('''
+            SELECT ''' + User.scope(scope) + ''' FROM main.get_users_by_ids(%(users_ids)s);
+        ''', users_ids=users_ids)
 
         if scope == 'admin':
             for user in users:

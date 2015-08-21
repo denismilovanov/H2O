@@ -7,7 +7,7 @@ class MyAPITestCase(APITestCase):
     def authorization(self):
         data = {
             'network_id': 1,
-            'access_token': 'CAAFs4iZCHulQBAP1qjTQISAFW60aA8MZBtZBWxUi5gGR5LZBZAZAftPwzZBaQXZChgbEAMByI7eAySOuLVm8piCV9sVetT94v2cqVkpFoaaSzjc6HqxByBW1DozJYeMhkuL0IumCEqKVeo1bJNxmTI4EBkHaDuZBZCLNERZAWoMlZAkXlQFbKTOMbh027jEHpjlOOfjZCzseskfkZAaSGUbFz61q3laeclW3P4Ujn8gpJS7AyqLQZDZD',
+            'access_token': 'TEST_TOKEN_1',
             'invite_code': 'Q123',
         }
 
@@ -27,6 +27,7 @@ class MyAPITestCase(APITestCase):
     profile_controller = '/v1/profile'
     user_controller = '/v1/users/'
     invite_codes_controller = '/v1/invite_codes'
+    follows_controller = '/v1/follows'
     format = 'json'
 
 

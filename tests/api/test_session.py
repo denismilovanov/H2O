@@ -29,7 +29,6 @@ class SessionTestCase(MyAPITestCase):
 
         controller = self.user_controller
         response = self.client.get(controller, {}, format=self.format, headers=headers)
-        print response.content
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         # not found

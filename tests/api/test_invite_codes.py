@@ -24,7 +24,6 @@ class InviteCodesTestCase(MyAPITestCase):
         response = self.client.patch(controller, {
             'email': 'me@denismilovanov.net',
         }, format=self.format, headers=headers)
-
         self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
 
         # get again

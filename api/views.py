@@ -185,3 +185,43 @@ def invite_code(request, invite_code, user):
         return not_acceptable(e)
 
     return no_content()
+
+# add follow
+@api_view(['POST'])
+@authorization_needed
+def follow(request, user_uuid, user):
+    logger.debug('METHOD: follow')
+
+    try:
+        UserFollow.upsert_user_follow(user['id'], user_uuid)
+    except UserIsAlreadyFollowed, e:
+        return not_acceptable(e)
+    except UserIsNotFound, e:
+        return not_found(user_uuid)
+
+    return created()
+
+# list of follows
+@api_view(['GET'])
+@authorization_needed
+def follows(request, user):
+    logger.debug('METHOD: follows')
+
+    #input
+    try:
+        limit = request.data.get('limit', 20)
+        offset = request.data.get('offset', 0)
+
+        if limit < 0:
+            limit = 20
+
+        if offset < 0:
+            offset = 0
+
+    except Exception, e:
+        return bad_request(e)
+
+    # get
+    follows = UserFollow.get_user_follows(user['id'], limit, offset)
+
+    return ok(follows=follows)

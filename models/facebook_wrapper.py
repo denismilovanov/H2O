@@ -9,6 +9,19 @@ class FacebookWrapper:
     @staticmethod
     def get_user_data(access_token):
         logger.debug(access_token)
+
+        # test cases will pass here special access token:
+        import re
+        m = re.search('TEST_TOKEN_(\d+)', access_token)
+        if m:
+            test_user_id = m.group(1)
+            return {
+                'name': 'Test ' + str(test_user_id),
+                'avatar_url': None,
+                'id': -1 * int(test_user_id), # tests users have negative ids
+            }
+
+        # normal access token
         try:
             graph = facebook.GraphAPI(access_token=access_token, version="2.4")
             logger.debug(graph)

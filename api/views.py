@@ -33,6 +33,7 @@ def authorization_needed(func):
             return internal_server_error(e)
 
         # pass user
+        user['access_token'] = access_token
         v['user'] = user
 
         # call decorated function
@@ -56,7 +57,6 @@ def session(request):
             network_id = request.data['network_id']
             access_token = request.data['access_token']
             invite_code = request.data.get('invite_code')
-            device_id = request.data['device_id']
             device_type = request.data['device_type']
             push_token = request.data.get('push_token')
 
@@ -82,7 +82,7 @@ def session(request):
 
         # creating session
         try:
-            session = UserSession.upsert_user_session(user_id, device_id, device_type, push_token)
+            session = UserSession.upsert_user_session(user_id, device_type, push_token)
         except Exception, e:
             return internal_server_error(e)
 
@@ -137,12 +137,16 @@ def profile(request, user):
     try:
         visibility = request.data.get('visibility')
         status = request.data.get('status')
+        push_token = request.data.get('push_token')
 
         logger.debug(request.data)
     except Exception, e:
         return bad_request(e)
 
     User.update_profile(user['id'], visibility, status)
+
+    if push_token:
+        UserSession.update_push_token(user['access_token'], push_token)
 
     return no_content()
 

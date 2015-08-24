@@ -83,7 +83,7 @@ class User:
 
         # that was all
         return {
-            'user_uuid': user_uuid,
+            'uuid': user_uuid,
             'is_new': is_new,
             'avatar_url': user_data['avatar_url'],
             'name': user_data['name'],

@@ -12,7 +12,7 @@ class SessionTestCase(MyAPITestCase):
 
         # get self
 
-        user_controller = self.user_controller + session['user']['user_uuid']
+        user_controller = self.user_controller + session['user']['uuid']
         headers = {
             'Access-Token': session['session']['access_token']
         }

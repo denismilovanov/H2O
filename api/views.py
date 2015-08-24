@@ -36,7 +36,12 @@ def authorization_needed(func):
         if access_token:
             # get user
             try:
-                user = User.find_by_access_token(access_token)
+                uuid = UserSession.get_user_uuid_by_access_token(access_token)
+
+                user = None
+                if uuid:
+                    user = User.find_by_user_uuid(uuid, 'all')
+
                 if not user:
                     return unauthorized(access_token)
             except Exception, e:

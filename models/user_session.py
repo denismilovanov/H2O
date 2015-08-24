@@ -26,6 +26,18 @@ class UserSession:
 
     @staticmethod
     @raw_queries()
+    def get_user_uuid_by_access_token(access_token, db):
+        logger.debug('get_user_uuid_by_access_token')
+
+        uuid = db.select_field('''
+            SELECT main.get_user_uuid_by_access_token(%(access_token)s);
+        ''', access_token=access_token)
+        logger.debug(uuid)
+
+        return uuid
+
+    @staticmethod
+    @raw_queries()
     def refresh_access_token(refresh_token, db):
         logger.debug('refresh_access_token')
 

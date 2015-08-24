@@ -90,21 +90,6 @@ class User:
         }, user_id
 
     @staticmethod
-    @raw_queries()
-    def find_by_access_token(access_token, db):
-        logger.debug('find_by_access_token')
-
-        uuid = db.select_field('''
-            SELECT main.get_user_uuid_by_access_token(%(access_token)s);
-        ''', access_token=access_token)
-        logger.debug(uuid)
-
-        if not uuid:
-            return None
-
-        return User.find_by_user_uuid(uuid, 'all')
-
-    @staticmethod
     def scope(scope):
         if scope == 'public_profile' or scope == 'public_all':
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility'])

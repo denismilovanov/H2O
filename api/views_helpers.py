@@ -14,10 +14,12 @@ class JSONResponse(HttpResponse):
 
 def bad_request(e):
     logger.debug(e)
+    from models.exceptions import BadRequest
     v = {
         'error': str(e),
+        'additional_data': str(e.e) if type(e) is BadRequest else None,
     }
-    return HttpResponse(v, status=status.HTTP_400_BAD_REQUEST)
+    return JSONResponse(v, status=status.HTTP_400_BAD_REQUEST)
 
 def internal_server_error(e):
     logger.debug(e)

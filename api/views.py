@@ -24,9 +24,15 @@ def authorization_needed(func):
             try:
                 access_token = request.META.get('HTTP_ACCESS_TOKEN')
                 if not access_token:
-                    access_token = request.META['headers']['Access-Token']
+                    headers = request.META.get('headers')
+                    if headers:
+                        access_token = headers.get('Access-Token')
 
                 logger.debug('access token ' + str(access_token))
+
+                if not access_token:
+                    raise AccessTokenDoesNotExist()
+
             except Exception, e:
                 return unauthorized(e)
         else:
@@ -43,7 +49,10 @@ def authorization_needed(func):
                     user = User.find_by_user_uuid(uuid, 'all')
 
                 if not user:
-                    return unauthorized(access_token)
+                    raise AccessTokenDoesNotExist()
+
+            except AccessTokenDoesNotExist, e:
+                return unauthorized(e)
             except Exception, e:
                 return internal_server_error(e)
 
@@ -77,7 +86,7 @@ def session(request, user):
             logger.debug(request.data)
 
         except Exception, e:
-            return bad_request(e)
+            return bad_request(BadRequest(e))
 
         # connecting to facebook
         try:
@@ -110,13 +119,13 @@ def session(request, user):
         push_token = request.data.get('push_token')
 
         if not refresh_token and not push_token:
-            return bad_request(None)
+            return bad_request(BadRequest())
 
         if refresh_token:
             access_token = UserSession.refresh_access_token(refresh_token)
 
             if not access_token:
-                return unauthorized('Refresh token is old')
+                return unauthorized(ResfreshTokenDoesNotExist())
 
             from H2O.settings import ACCESS_TOKEN_EXPIRES_IN
             return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
@@ -162,7 +171,7 @@ def profile(request, user):
         logger.debug(request.data)
 
     except Exception, e:
-        return bad_request(e)
+        return bad_request(BadRequest(e))
 
     User.update_profile(user['id'], visibility, status)
 
@@ -187,7 +196,7 @@ def invite_code(request, invite_code, user):
     try:
         email = request.data['email']
     except Exception, e:
-        return bad_request(e)
+        return bad_request(BadRequest(e))
 
     # get code
     code = Invite.get_invite_code(invite_code)
@@ -195,11 +204,11 @@ def invite_code(request, invite_code, user):
 
     if not code or code['status'] != 'free':
         # there is no code available
-        return not_found(invite_code)
+        return not_found(InviteCodeDoesNotExistException())
 
     if code['owner_id'] != user['id']:
         # code is not mine
-        return forbidden(invite_code)
+        return forbidden(InviteCodeDoesNotExistException())
 
     # making invite
     try:
@@ -244,7 +253,7 @@ def follows(request, user):
             offset = 0
 
     except Exception, e:
-        return bad_request(e)
+        return bad_request(BadRequest(e))
 
     # get
     follows = UserFollow.get_user_follows(user['id'], limit, offset)

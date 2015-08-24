@@ -1,39 +1,49 @@
-class InviteCodeAlreadyTakenException(Exception):
+class BadRequest(Exception):
+    def __init__(self, e):
+        self.e = e
     def __str__(self):
-        return 'INVITE_CODE_IS_ALREADY_TAKEN'
-    pass
+        return 'BAD_REQUEST'
 
-class InviteCodeDoesNotExistException(Exception):
+class AccessTokenDoesNotExist(Exception):
     def __str__(self):
-        return 'INVITE_CODE_DOES_NOT_EXIST'
-    pass
+        return 'ACCESS_TOKEN_DOES_NOT_EXIST'
 
-class FacebookException(Exception):
+class ResfreshTokenDoesNotExist(Exception):
     def __str__(self):
-        return 'FACEBOOK_EXCEPTION'
-    pass
-
-class NotImplementedException(Exception):
-    def __str__(self):
-        return 'NOT_IMPLEMENTED'
-    pass
-
-class InvalidEmail(Exception):
-    def __str__(self):
-        return 'INVALID_EMAIL'
-    pass
-
-class EmailIsAlreadyUsed(Exception):
-    def __str__(self):
-        return 'EMAIL_IS_ALREADY_USED'
-    pass
-
-class UserIsAlreadyFollowed(Exception):
-    def __str__(self):
-        return 'USER_IS_ALREADY_FOLLOWED'
-    pass
+        return 'REFRESH_TOKEN_DOES_NOT_EXIST'
 
 class UserIsNotFound(Exception):
     def __str__(self):
         return 'USER_IS_NOT_FOUND'
-    pass
+
+class InviteCodeAlreadyTakenException(Exception):
+    def __str__(self):
+        return 'INVITE_CODE_IS_ALREADY_TAKEN'
+
+class InviteCodeDoesNotExistException(Exception):
+    def __str__(self):
+        return 'INVITE_CODE_DOES_NOT_EXIST'
+
+class FacebookException(Exception):
+    def __str__(self):
+        return 'FACEBOOK_EXCEPTION'
+
+class NotImplementedException(Exception):
+    def __str__(self):
+        return 'NOT_IMPLEMENTED'
+
+class InvalidEmail(Exception):
+    def __str__(self):
+        return 'INVALID_EMAIL'
+
+class EmailIsAlreadyUsed(Exception):
+    def __str__(self):
+        return 'EMAIL_IS_ALREADY_USED'
+
+class UserIsAlreadyFollowed(Exception):
+    def __str__(self):
+        return 'USER_IS_ALREADY_FOLLOWED'
+
+class UserIsNotFound(Exception):
+    def __str__(self):
+        return 'USER_IS_NOT_FOUND'

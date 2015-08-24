@@ -16,13 +16,25 @@ class InviteCodesTestCase(MyAPITestCase):
 
         invite_codes = json.loads(response.content)
         invite_code = invite_codes[0]
+        second_invite_code = invite_codes[1]
+
+        real_email = 'me@denismilovanov.net'
 
         # update
 
         controller = self.invite_codes_controller + '/' + invite_code['invite_code']
 
         response = self.client.patch(controller, {
-            'email': 'me@denismilovanov.net',
+            'email': 'me',
+        }, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_400_BAD_REQUEST)
+
+        # update again
+
+        controller = self.invite_codes_controller + '/' + invite_code['invite_code']
+
+        response = self.client.patch(controller, {
+            'email': real_email,
         }, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
 
@@ -31,3 +43,13 @@ class InviteCodesTestCase(MyAPITestCase):
         controller = self.invite_codes_controller + '/'
         response = self.client.get(controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
+
+        # update again
+
+        controller = self.invite_codes_controller + '/' + second_invite_code['invite_code']
+
+        response = self.client.patch(controller, {
+            'email': real_email,
+        }, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_406_NOT_ACCEPTABLE)
+

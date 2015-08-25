@@ -20,10 +20,10 @@ class Invite:
 
     @staticmethod
     @raw_queries()
-    def use_invite_code(invite_code, user_uuid, db):
+    def use_invite_code(invite_code, user_id, db):
         db.select_field('''
-            SELECT main.use_invite_code(%(invite_code)s, %(user_uuid)s);
-        ''', invite_code=invite_code, user_uuid=user_uuid)
+            SELECT main.use_invite_code(%(invite_code)s, %(user_id)s);
+        ''', invite_code=invite_code, user_id=user_id)
 
         return True
 

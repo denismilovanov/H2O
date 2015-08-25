@@ -63,6 +63,14 @@ DATABASES = {
         'PASSWORD': '1g2Az8_lJ',
         'HOST': '127.0.0.1',
         'PORT': os.environ.get('DB_PORT', 5432),
+    },
+    'auth': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'h2o_auth',
+        'USER': 'h2o_user',
+        'PASSWORD': '1g2Az8_lJ',
+        'HOST': '127.0.0.1',
+        'PORT': os.environ.get('DB_PORT', 5432),
     }
 }
 

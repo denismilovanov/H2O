@@ -2,31 +2,36 @@
 -- добавление или обновление пользователя
 
 CREATE OR REPLACE FUNCTION main.upsert_user(
-    u_user_uuid uuid,
+    i_user_id integer,
     s_name varchar,
-    s_avatar_url varchar
+    s_avatar_url varchar,
+    u_user_uuid uuid DEFAULT NULL
 )
     RETURNS uuid AS
 $BODY$
 DECLARE
-    r_user record;
+    u_uuid uuid;
 BEGIN
 
     UPDATE main.users
         SET name = s_name,
             avatar_url = s_avatar_url
-        WHERE uuid = u_user_uuid;
+        WHERE id = i_user_id
+        RETURNING uuid INTO u_uuid;
 
     IF FOUND THEN
-        RETURN u_user_uuid;
+        RETURN u_uuid;
     END IF;
 
     INSERT INTO main.users
-        (name, avatar_url)
-        SELECT s_name, s_avatar_url
-        RETURNING uuid, id INTO r_user;
+        (id, name, avatar_url, uuid)
+        SELECT  i_user_id,
+                s_name,
+                s_avatar_url,
+                u_user_uuid
+        RETURNING uuid INTO u_uuid;
 
-    RETURN r_user.uuid;
+    RETURN u_uuid;
 
 END
 $BODY$
@@ -34,7 +39,8 @@ $BODY$
 
 
 GRANT EXECUTE ON FUNCTION main.upsert_user(
-    u_user_uuid uuid,
+    i_user_id integer,
     s_name varchar,
-    s_avatar_url varchar
+    s_avatar_url varchar,
+    u_user_uuid uuid
 ) TO h2o_user;

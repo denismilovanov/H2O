@@ -29,14 +29,11 @@ class User:
         user_network_id = user_data['id']
 
         # search
-        user_uuid = db.select_field('''
-            SELECT main.find_user_by_network(%(network_id)s, %(user_network_id)s);
-        ''', network_id=network_id, user_network_id=user_network_id)
-        logger.info(user_uuid)
+        user_id = UserNetwork.find_user_by_network(network_id, user_network_id)
 
         is_new = False
 
-        if not user_uuid:
+        if not user_id:
             # new account
             invite = Invite.get_invite_code(invite_code)
             logger.info(invite)
@@ -50,18 +47,18 @@ class User:
                 raise InviteCodeAlreadyTakenException
 
             # create
-            user_uuid = db.select_field('''
-                SELECT main.upsert_user(NULL, %(name)s, %(avatar_url)s);
-            ''', name=user_data['name'], avatar_url=user_data['avatar_url'])
+            user_id, user_uuid = UserNetwork.get_new_user_id()
+
+            # choose DB based on user_id:
+            db.select_field('''
+                SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s);
+            ''', user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'])
             logger.info(user_uuid)
 
             # use code
-            Invite.use_invite_code(invite_code, user_uuid)
+            Invite.use_invite_code(invite_code, user_id)
 
             # create codes
-            user_id = db.select_field('''
-                SELECT id FROM main.get_user_by_uuid(%(user_uuid)s);
-            ''', user_uuid=user_uuid)
             Invite.create_invite_codes_for_user_id(user_id, 3)
 
             # newness flag
@@ -69,17 +66,12 @@ class User:
 
         else:
             # update information
-            db.select_field('''
-                SELECT main.upsert_user(%(user_uuid)s, %(name)s, %(avatar_url)s);
-            ''', user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'])
-
-            # get id
-            user_id = db.select_field('''
-                SELECT id FROM main.get_user_by_uuid(%(user_uuid)s);
-            ''', user_uuid=user_uuid)
+            user_uuid = db.select_field('''
+                SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s);
+            ''', user_id=user_id, name=user_data['name'], avatar_url=user_data['avatar_url'])
 
         # upsert network
-        UserNetwork.upsert_network(user_uuid, network_id, user_network_id, access_token)
+        UserNetwork.upsert_network(user_id, network_id, user_network_id, access_token)
 
         # that was all
         return {
@@ -101,6 +93,8 @@ class User:
     def find_by_user_uuid(user_uuid, scope, db):
         logger.info('find_by_user_uuid')
 
+        # user_uuid contains user_id
+        # user_id maps to database
         user = db.select_record('''
             SELECT ''' + User.scope(scope) + ''' FROM main.get_user_by_uuid(%(user_uuid)s);
         ''', user_uuid=user_uuid)

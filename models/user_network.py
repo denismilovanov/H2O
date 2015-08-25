@@ -19,6 +19,9 @@ class UserNetwork:
     @staticmethod
     @raw_queries(['auth'])
     def find_user_by_network(network_id, user_network_id, auth):
+        logger.info('find_user_by_network')
+        logger.info(str(network_id) + ' ' + str(user_network_id))
+
         user_id = auth.select_field('''
             SELECT main.find_user_by_network(%(network_id)s, %(user_network_id)s);
         ''', network_id=network_id, user_network_id=user_network_id)

@@ -8,15 +8,15 @@ CREATE OR REPLACE FUNCTION main.find_user_by_network(
     RETURNS integer AS
 $BODY$
 DECLARE
-    i_user_id integer;
+    i_result_id integer;
 BEGIN
 
-    SELECT user_id INTO i_user_id
+    SELECT user_id INTO i_result_id
         FROM main.users_networks
         WHERE   user_network_id = i_user_id AND
                 network_id = i_network_id;
 
-    RETURN i_user_id;
+    RETURN i_result_id;
 
 END
 $BODY$

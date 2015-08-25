@@ -28,6 +28,15 @@ class Invite:
         return True
 
     @staticmethod
+    @raw_queries()
+    def send_invite_code(invite_code, db):
+        db.select_field('''
+            SELECT main.send_invite_code(%(invite_code)s);
+        ''', invite_code=invite_code)
+
+        return True
+
+    @staticmethod
     def scope(scope):
         if scope == 'public_invite_codes':
             return ', '.join(['invite_code', 'status', 'email'])
@@ -68,5 +77,14 @@ class Invite:
             ''', invite_code=invite_code, email=email)
         except Exception, e:
             raise EmailIsAlreadyUsed()
+
+        # sending though queue
+        try:
+            from tasks.send_invite_task import SendInviteTask
+            SendInviteTask(email, invite_code).push()
+        except Exception, e:
+            # there is no need to raise exception and scare user
+            # we shall perform regular checks of codes without sent emails
+            logger.info(e)
 
         return True

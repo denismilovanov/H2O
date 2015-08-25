@@ -79,6 +79,11 @@ DATABASES = {
     }
 }
 
+RABBITMQ_USER =  'rabbitmq_user'
+RABBITMQ_PASSWORD = '1Gh_7*2aS#+2K'
+RABBITMQ_HOST = 'localhost'
+RABBITMQ_PORT = 5672
+
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',

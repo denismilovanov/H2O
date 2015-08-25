@@ -2,7 +2,7 @@ from decorators import *
 from models.exceptions import InvalidEmail, EmailIsAlreadyUsed
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Invite:
@@ -55,8 +55,8 @@ class Invite:
     @staticmethod
     @raw_queries()
     def invite_user_via_invite_code_and_email(invite_code, email, db):
-        logger.debug('invite_user_via_invite_code_and_email')
-        logger.debug(str(invite_code) + ' ' + str(email))
+        logger.info('invite_user_via_invite_code_and_email')
+        logger.info(str(invite_code) + ' ' + str(email))
 
         from validate_email import validate_email
         if not email or not validate_email(email):

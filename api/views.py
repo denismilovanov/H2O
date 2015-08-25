@@ -4,7 +4,7 @@ from models import *
 from models.exceptions import *
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # decorator for all methods
@@ -18,7 +18,7 @@ def authorization_needed(func):
         if  not refresh_token and \
             not (request.path == '/v1/session' and request.method == 'POST'):
 
-            logger.debug('Need to authorize')
+            logger.info('Need to authorize')
 
             # get token
             try:
@@ -28,7 +28,7 @@ def authorization_needed(func):
                     if headers:
                         access_token = headers.get('Access-Token')
 
-                logger.debug('access token ' + str(access_token))
+                logger.info('access token ' + str(access_token))
 
                 if not access_token:
                     raise AccessTokenDoesNotExist()
@@ -36,7 +36,7 @@ def authorization_needed(func):
             except Exception, e:
                 return unauthorized(e)
         else:
-            logger.debug('No need to authorize')
+            logger.info('No need to authorize')
 
         # need to authorize with this token
         if access_token:
@@ -72,7 +72,7 @@ def authorization_needed(func):
 @api_view(['POST', 'PATCH'])
 @authorization_needed
 def session(request, user):
-    logger.debug('METHOD: session')
+    logger.info('METHOD: session')
 
     # new session
     if request.method == 'POST':
@@ -83,7 +83,7 @@ def session(request, user):
             invite_code = request.data.get('invite_code')
             device_type = request.data['device_type']
             push_token = request.data.get('push_token')
-            logger.debug(request.data)
+            logger.info(request.data)
 
         except Exception, e:
             return bad_request(BadRequest(e))
@@ -139,7 +139,7 @@ def session(request, user):
 @api_view(['GET'])
 @authorization_needed
 def user(request, user_uuid, user):
-    logger.debug('METHOD: user')
+    logger.info('METHOD: user')
 
     user = User.find_by_user_uuid(user_uuid, scope='public_profile')
 
@@ -152,7 +152,7 @@ def user(request, user_uuid, user):
 @api_view(['GET'])
 @authorization_needed
 def users(request, user):
-    logger.debug('METHOD: users')
+    logger.info('METHOD: users')
 
     users = User.get_all(1000, 0, scope='public_all')
 
@@ -162,13 +162,13 @@ def users(request, user):
 @api_view(['PATCH'])
 @authorization_needed
 def profile(request, user):
-    logger.debug('METHOD: profile')
+    logger.info('METHOD: profile')
 
     #input
     try:
         visibility = request.data.get('visibility')
         status = request.data.get('status')
-        logger.debug(request.data)
+        logger.info(request.data)
 
     except Exception, e:
         return bad_request(BadRequest(e))
@@ -181,7 +181,7 @@ def profile(request, user):
 @api_view(['GET'])
 @authorization_needed
 def invite_codes(request, user):
-    logger.debug('METHOD: invite_codes')
+    logger.info('METHOD: invite_codes')
 
     return ok_raw(Invite.get_invite_codes_by_user_id(user['id'], scope='public_invite_codes'))
 
@@ -190,7 +190,7 @@ def invite_codes(request, user):
 @api_view(['PATCH'])
 @authorization_needed
 def invite_code(request, invite_code, user):
-    logger.debug('METHOD: invite_code')
+    logger.info('METHOD: invite_code')
 
     #input
     try:
@@ -200,7 +200,7 @@ def invite_code(request, invite_code, user):
 
     # get code
     code = Invite.get_invite_code(invite_code)
-    logger.debug(code)
+    logger.info(code)
 
     if not code or code['status'] != 'free':
         # there is no code available
@@ -224,7 +224,7 @@ def invite_code(request, invite_code, user):
 @api_view(['POST'])
 @authorization_needed
 def follow(request, user_uuid, user):
-    logger.debug('METHOD: follow')
+    logger.info('METHOD: follow')
 
     try:
         UserFollow.upsert_user_follow(user['id'], user_uuid)
@@ -239,7 +239,7 @@ def follow(request, user_uuid, user):
 @api_view(['GET'])
 @authorization_needed
 def follows(request, user):
-    logger.debug('METHOD: follows')
+    logger.info('METHOD: follows')
 
     #input
     try:

@@ -6,7 +6,7 @@ from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNot
 from models.facebook_wrapper import FacebookWrapper
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class User:
@@ -23,8 +23,8 @@ class User:
     @staticmethod
     @raw_queries()
     def upsert(user_data, network_id, access_token, invite_code, db):
-        logger.debug('upsert')
-        logger.debug(user_data)
+        logger.info('upsert')
+        logger.info(user_data)
 
         user_network_id = user_data['id']
 
@@ -32,14 +32,14 @@ class User:
         user_uuid = db.select_field('''
             SELECT main.find_user_by_network(%(network_id)s, %(user_network_id)s);
         ''', network_id=network_id, user_network_id=user_network_id)
-        logger.debug(user_uuid)
+        logger.info(user_uuid)
 
         is_new = False
 
         if not user_uuid:
             # new account
             invite = Invite.get_invite_code(invite_code)
-            logger.debug(invite)
+            logger.info(invite)
 
             if not invite:
                 # there is no code
@@ -53,7 +53,7 @@ class User:
             user_uuid = db.select_field('''
                 SELECT main.upsert_user(NULL, %(name)s, %(avatar_url)s);
             ''', name=user_data['name'], avatar_url=user_data['avatar_url'])
-            logger.debug(user_uuid)
+            logger.info(user_uuid)
 
             # use code
             Invite.use_invite_code(invite_code, user_uuid)
@@ -99,12 +99,12 @@ class User:
     @staticmethod
     @raw_queries()
     def find_by_user_uuid(user_uuid, scope, db):
-        logger.debug('find_by_user_uuid')
+        logger.info('find_by_user_uuid')
 
         user = db.select_record('''
             SELECT ''' + User.scope(scope) + ''' FROM main.get_user_by_uuid(%(user_uuid)s);
         ''', user_uuid=user_uuid)
-        logger.debug(user)
+        logger.info(user)
 
         if not user['uuid']:
             return None
@@ -114,7 +114,7 @@ class User:
     @staticmethod
     @raw_queries()
     def get_all(limit, offset, scope, db):
-        logger.debug('get_all')
+        logger.info('get_all')
 
         users = db.select_table('''
             SELECT id FROM main.get_users(%(limit)s, %(offset)s);
@@ -127,8 +127,8 @@ class User:
     @staticmethod
     @raw_queries()
     def get_all_by_ids(users_ids, scope, db):
-        logger.debug('get_all_by_ids')
-        logger.debug(users_ids)
+        logger.info('get_all_by_ids')
+        logger.info(users_ids)
 
         users = db.select_table('''
             SELECT ''' + User.scope(scope) + ''' FROM main.get_users_by_ids(%(users_ids)s);
@@ -143,7 +143,7 @@ class User:
     @staticmethod
     @raw_queries()
     def update_profile(user_id, visibility, status, db):
-        logger.debug('update_profile')
+        logger.info('update_profile')
 
         db.select_field('''
             SELECT main.update_user_profile(%(user_id)s, %(visibility)s, %(status)s);

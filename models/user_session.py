@@ -1,14 +1,14 @@
 from decorators import *
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class UserSession:
     @staticmethod
     @raw_queries()
     def upsert_user_session(user_id, device_type, push_token, db):
-        logger.debug('upsert_user_session')
+        logger.info('upsert_user_session')
 
         session = db.select_record('''
             SELECT *
@@ -27,24 +27,24 @@ class UserSession:
     @staticmethod
     @raw_queries()
     def get_user_uuid_by_access_token(access_token, db):
-        logger.debug('get_user_uuid_by_access_token')
+        logger.info('get_user_uuid_by_access_token')
 
         uuid = db.select_field('''
             SELECT main.get_user_uuid_by_access_token(%(access_token)s);
         ''', access_token=access_token)
-        logger.debug(uuid)
+        logger.info(uuid)
 
         return uuid
 
     @staticmethod
     @raw_queries()
     def refresh_access_token(refresh_token, db):
-        logger.debug('refresh_access_token')
+        logger.info('refresh_access_token')
 
         access_token = db.select_field('''
             SELECT main.refresh_access_token(%(refresh_token)s);
         ''', refresh_token=refresh_token)
-        logger.debug(refresh_token)
+        logger.info(refresh_token)
 
         return access_token
 
@@ -65,8 +65,8 @@ class UserSession:
     @staticmethod
     @raw_queries()
     def update_push_token(user_id, access_token, push_token, db):
-        logger.debug('update_push_token')
-        logger.debug(push_token)
+        logger.info('update_push_token')
+        logger.info(push_token)
 
         db.select_field('''
             SELECT main.update_push_token(%(access_token)s, %(push_token)s);

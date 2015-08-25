@@ -3,7 +3,7 @@ from exceptions import UserIsAlreadyFollowed, UserIsNotFound
 from models import User
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class UserFollow:

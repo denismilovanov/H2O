@@ -1,7 +1,7 @@
 from decorators import *
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class UserNetwork:
@@ -19,7 +19,7 @@ class UserNetwork:
     @staticmethod
     @raw_queries()
     def upsert_network(user_uuid, network_id, network_user_id, access_token, db):
-        logger.debug('upsert_network')
+        logger.info('upsert_network')
 
         return db.select_field('''
             SELECT main.upsert_user_network(%(user_uuid)s, %(network_id)s, %(network_user_id)s, %(access_token)s);

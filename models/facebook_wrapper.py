@@ -2,13 +2,13 @@ import facebook
 from exceptions import FacebookException
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class FacebookWrapper:
     @staticmethod
     def get_user_data(access_token):
-        logger.debug(access_token)
+        logger.info(access_token)
 
         # test cases will pass here special access token:
         import re
@@ -24,10 +24,10 @@ class FacebookWrapper:
         # normal access token
         try:
             graph = facebook.GraphAPI(access_token=access_token, version="2.4")
-            logger.debug(graph)
+            logger.info(graph)
 
             profile = graph.get_object('me')
-            logger.debug(profile)
+            logger.info(profile)
 
             avatar = graph.get_object(profile['id'] + '/picture?type=large')
             avatar_url = None
@@ -38,7 +38,7 @@ class FacebookWrapper:
                 pass
 
         except Exception, e:
-            logger.debug(e)
+            logger.info(e)
             # ok, let's raise
             raise FacebookException(e)
 

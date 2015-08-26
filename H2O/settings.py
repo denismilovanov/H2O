@@ -59,16 +59,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'h2o_main',
-        'USER': 'h2o_user',
-        'PASSWORD': '1g2Az8_lJ',
+        'USER': 'h2o_front',
+        'PASSWORD': os.environ.get('DB_PASSWORD', '1g2Az8_lJ'),
         'HOST': '127.0.0.1',
         'PORT': os.environ.get('DB_PORT', 5432),
     },
     'auth': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'h2o_auth',
-        'USER': 'h2o_user',
-        'PASSWORD': '1g2Az8_lJ',
+        'USER': 'h2o_front',
+        'PASSWORD': os.environ.get('DB_PASSWORD', '1g2Az8_lJ'),
         'HOST': '127.0.0.1',
         'PORT': os.environ.get('DB_PORT', 5432),
     }
@@ -86,6 +86,8 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
     )
 }
+
+GCM_API_KEY = 'AIzaSyDl8iM7UK3rIBlefHx6Ofh173TZdDVltxs'
 
 URL = 'http://localhost:8000'
 API_URL = URL

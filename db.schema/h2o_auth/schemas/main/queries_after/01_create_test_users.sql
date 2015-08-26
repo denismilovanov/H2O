@@ -11,3 +11,6 @@ INSERT INTO main.users_networks
     (- 8, - 8, 1),
     (- 9, - 9, 1),
     (-10, -10, 1);
+
+-- for real users
+ALTER SEQUENCE main.users_id_seq RESTART WITH 100000;

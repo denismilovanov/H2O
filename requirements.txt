@@ -11,7 +11,7 @@ backports.ssl-match-hostname==3.4.0.2
 billiard==3.3.0.20
 celery==3.1.18
 certifi==2015.04.28
-cffi==1.2.0
+cffi==1.2.1
 circus==0.12.1
 circus-web==1.0.0
 cryptography==1.0

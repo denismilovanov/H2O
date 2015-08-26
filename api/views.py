@@ -276,5 +276,5 @@ def follows_inner(request, user_uuid, user):
     # get list
     follows = UserFollow.get_user_follows(user_id, limit, offset)
 
-    return ok(follows=follows)
+    return ok_raw(follows)
 

@@ -12,7 +12,7 @@ class FollowsTestCase(MyAPITestCase):
 
         # follows
 
-        follows_controller = self.follows_controller + '/00000000-0000-0000-0000-000000000002'
+        follows_controller = self.follows_controller + '/00000002-0000-0000-0000-000000000002'
         response = self.client.post(follows_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_201_CREATED)
 
@@ -27,9 +27,15 @@ class FollowsTestCase(MyAPITestCase):
         response = self.client.post(follows_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_404_NOT_FOUND)
 
-        # get
+        # get my
 
-        follows_controller = self.follows_controller
+        follows_controller = self.follows_controller + '/my'
+        response = self.client.get(follows_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+
+        # get others
+
+        follows_controller = self.follows_controller + '/00000002-0000-0000-0000-000000000002'
         response = self.client.get(follows_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 

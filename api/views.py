@@ -221,24 +221,32 @@ def invite_code(request, invite_code, user):
     return no_content()
 
 # add follow
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @authorization_needed
 def follow(request, user_uuid, user):
     logger.info('METHOD: follow')
 
-    try:
-        UserFollow.upsert_user_follow(user['id'], user_uuid)
-    except UserIsAlreadyFollowed, e:
-        return not_acceptable(e)
-    except UserIsNotFound, e:
-        return not_found(user_uuid)
+    if request.method == 'POST':
+        try:
+            UserFollow.upsert_user_follow(user['id'], user_uuid)
+        except UserIsAlreadyFollowed, e:
+            return not_acceptable(e)
+        except UserIsNotFound, e:
+            return not_found(UserIsNotFound())
 
-    return created()
+        return created()
+
+    else:
+        return follows_inner(request, user_uuid, user)
 
 # list of follows
 @api_view(['GET'])
 @authorization_needed
-def follows(request, user):
+def follows(request, user_uuid, user):
+    return follows_inner(request, user_uuid, user)
+
+# for 2 previous
+def follows_inner(request, user_uuid, user):
     logger.info('METHOD: follows')
 
     #input
@@ -255,7 +263,18 @@ def follows(request, user):
     except Exception, e:
         return bad_request(BadRequest(e))
 
-    # get
-    follows = UserFollow.get_user_follows(user['id'], limit, offset)
+    # look at the user to get follows list about
+    if user_uuid == 'my':
+        user_id = user['id']
+    else:
+        user = User.find_by_user_uuid(user_uuid, scope='all')
+        if not user:
+            return not_found(UserIsNotFound())
+
+        user_id = user['id']
+
+    # get list
+    follows = UserFollow.get_user_follows(user_id, limit, offset)
 
     return ok(follows=follows)
+

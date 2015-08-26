@@ -43,4 +43,4 @@ GRANT EXECUTE ON FUNCTION main.upsert_user(
     s_name varchar,
     s_avatar_url varchar,
     u_user_uuid uuid
-) TO h2o_user;
+) TO h2o_front;

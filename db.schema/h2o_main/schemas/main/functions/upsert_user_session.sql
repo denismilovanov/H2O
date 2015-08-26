@@ -40,4 +40,4 @@ GRANT EXECUTE ON FUNCTION main.upsert_user_session(
     i_user_id integer,
     t_device_type main.device_type,
     s_push_token varchar
-) TO h2o_user;
+) TO h2o_front;

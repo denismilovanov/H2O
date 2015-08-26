@@ -18,4 +18,4 @@ $BODY$
 
 
 GRANT EXECUTE ON FUNCTION main.drop_refresh_tokens(
-) TO h2o_user;
+) TO h2o_front;

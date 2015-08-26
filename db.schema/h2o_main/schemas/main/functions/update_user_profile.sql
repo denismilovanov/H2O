@@ -26,4 +26,4 @@ GRANT EXECUTE ON FUNCTION main.update_user_profile(
     i_user_id integer,
     t_visibility main.user_visibility,
     t_status main.user_status
-) TO h2o_user;
+) TO h2o_front;

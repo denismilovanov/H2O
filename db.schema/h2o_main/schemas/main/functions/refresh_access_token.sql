@@ -29,4 +29,4 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.refresh_access_token(
     s_refresh_token varchar
-) TO h2o_user;
+) TO h2o_front;

@@ -23,4 +23,4 @@ $BODY$
 GRANT EXECUTE ON FUNCTION main.update_push_token(
     s_access_token varchar,
     s_push_token varchar
-) TO h2o_user;
+) TO h2o_front;

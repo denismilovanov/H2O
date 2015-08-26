@@ -39,4 +39,4 @@ GRANT EXECUTE ON FUNCTION main.upsert_user_network(
     i_network_id integer,
     i_user_id bigint,
     s_access_token varchar
-) TO h2o_user;
+) TO h2o_front;

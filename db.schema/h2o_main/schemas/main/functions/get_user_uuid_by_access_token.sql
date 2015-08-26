@@ -23,4 +23,4 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.get_user_uuid_by_access_token(
     s_access_token varchar
-) TO h2o_user;
+) TO h2o_front;

@@ -31,4 +31,4 @@ $BODY$
 
 
 GRANT EXECUTE ON FUNCTION main.get_new_user_id(
-) TO h2o_user;
+) TO h2o_front;

@@ -22,4 +22,4 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.get_user_networks(
     i_user_id integer
-) TO h2o_user;
+) TO h2o_front;

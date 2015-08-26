@@ -28,4 +28,4 @@ GRANT EXECUTE ON FUNCTION main.get_user_follows_ids(
     i_user_id integer,
     i_limit_id integer,
     i_offset_id integer
-) TO h2o_user;
+) TO h2o_front;

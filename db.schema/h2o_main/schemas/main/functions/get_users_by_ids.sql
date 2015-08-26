@@ -22,5 +22,5 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.get_users_by_ids(
     ai_users_ids integer[]
-) TO h2o_user;
+) TO h2o_front;
 

@@ -24,4 +24,4 @@ $BODY$
 GRANT EXECUTE ON FUNCTION main.invite_user_via_invite_code_and_email(
     s_invite_code varchar,
     s_email varchar
-) TO h2o_user;
+) TO h2o_front;

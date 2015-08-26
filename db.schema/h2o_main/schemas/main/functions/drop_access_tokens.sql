@@ -19,4 +19,4 @@ $BODY$
 
 
 GRANT EXECUTE ON FUNCTION main.drop_access_tokens(
-) TO h2o_user;
+) TO h2o_front;

@@ -26,4 +26,4 @@ $BODY$
 GRANT EXECUTE ON FUNCTION main.find_user_by_network(
     i_network_id integer,
     i_user_id bigint
-) TO h2o_user;
+) TO h2o_front;

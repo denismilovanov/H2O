@@ -34,4 +34,4 @@ $BODY$
 GRANT EXECUTE ON FUNCTION main.upsert_user_follow(
     i_user_id integer,
     i_follow_user_id integer
-) TO h2o_user;
+) TO h2o_front;

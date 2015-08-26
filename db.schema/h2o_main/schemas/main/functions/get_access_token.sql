@@ -30,4 +30,4 @@ $BODY$
 GRANT EXECUTE ON FUNCTION main.get_access_token(
     s_user_uuid uuid,
     b_drop boolean
-) TO h2o_user;
+) TO h2o_front;

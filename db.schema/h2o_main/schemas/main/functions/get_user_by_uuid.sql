@@ -27,4 +27,4 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.get_user_by_uuid(
     s_uuid uuid
-) TO h2o_user;
+) TO h2o_front;

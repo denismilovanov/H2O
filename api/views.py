@@ -267,14 +267,28 @@ def follows_inner(request, user_uuid, user):
     if user_uuid == 'my':
         user_id = user['id']
     else:
-        user = User.find_by_user_uuid(user_uuid, scope='all')
-        if not user:
+        user_by_uuid = User.find_by_user_uuid(user_uuid, scope='all')
+        if not user_by_uuid:
             return not_found(UserIsNotFound())
 
-        user_id = user['id']
+        user_id = user_by_uuid['id']
 
     # get list
     follows = UserFollow.get_user_follows(user_id, limit, offset)
 
+    # if we need to get list of other user's follows
+    # then we shall calculate i_follow
+    if user['id'] != user_id:
+        my_follows = UserFollow.get_user_follows(user['id'], int(1e6), 0)
+
+        my_follows_uuids = [my_follow['uuid'] for my_follow in my_follows]
+
+        for follow in follows:
+            follow['i_follow'] = follow['uuid'] in my_follows_uuids
+    else:
+        for follow in follows:
+            follow['i_follow'] = False
+
+    # that's all
     return ok_raw(follows)
 

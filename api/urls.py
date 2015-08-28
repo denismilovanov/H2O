@@ -16,4 +16,6 @@ urlpatterns = [
 
     # supports
     url(r'v1/supports/(?P<whose>(my|follows))', views.supports),
+    # receives
+    url(r'v1/receives/(?P<whose>(my|follows))', views.receives),
 ]

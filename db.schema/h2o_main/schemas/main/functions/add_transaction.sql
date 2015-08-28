@@ -30,6 +30,23 @@ BEGIN
             'success'
         );
 
+    INSERT INTO main.transactions
+        (user_id, user_uuid, counter_user_id, counter_user_uuid,
+        amount, currency, direction, status)
+        VALUES (
+            i_counter_user_id,
+            u_counter_user_uuid,
+            i_user_id,
+            u_user_uuid,
+            n_amount,
+            t_currency,
+            CASE WHEN t_direction = 'support'::main.transaction_direction
+                THEN 'receive'::main.transaction_direction
+                ELSE 'support'::main.transaction_direction
+            END,
+            'success'
+        );
+
 END
 $BODY$
     LANGUAGE plpgsql VOLATILE SECURITY DEFINER;

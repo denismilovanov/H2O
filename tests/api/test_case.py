@@ -31,6 +31,7 @@ class MyAPITestCase(APITestCase):
     invite_codes_controller = '/v1/invite_codes'
     follows_controller = '/v1/follows'
     supports_controller = '/v1/supports'
+    receives_controller = '/v1/receives'
     format = 'json'
 
 

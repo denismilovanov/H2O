@@ -9,12 +9,12 @@ class Transaction:
     @staticmethod
     def scope(scope):
         if scope == 'public':
-            return ', '.join(['amount', 'currency', 'status'])
+            return ', '.join(['amount', 'currency', 'status', 'direction'])
         else:
             return '*'
 
     @staticmethod
-    def get_transactions(users_ids, from_date, to_date, direction, db):
+    def get_transactions_raw(users_ids, from_date, to_date, direction, db):
         return db.select_table('''
             SELECT ''' + Transaction.scope('public') + ''', date(created_at) AS date, counter_user_id, user_id
                 FROM main.get_transactions_by_users_ids_and_dates(%(users_ids)s, %(from_date)s::date, %(to_date)s::date, %(direction)s);
@@ -59,7 +59,7 @@ class Transaction:
 
     @staticmethod
     @raw_queries()
-    def get_supports(user_id, whose, from_date, to_date, db):
+    def get_transactions(user_id, whose, direction, from_date, to_date, db):
         if whose == 'my':
             # all transactions of me
             users_ids = [user_id]
@@ -68,17 +68,17 @@ class Transaction:
             users_ids = follows_ids = UserFollow.get_user_follows_ids(user_id)
 
         # all transactions of them
-        supports = Transaction.get_transactions(users_ids, from_date, to_date, 'support', db)
+        transactions = Transaction.get_transactions_raw(users_ids, from_date, to_date, direction, db)
 
         # extract counter users ids
-        counter_users_ids = Transaction.extract_counter_users_ids(supports)
+        counter_users_ids = Transaction.extract_counter_users_ids(transactions)
 
         # get them all
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
 
         # gather all
         result = {
-            'transactions_by_dates': Transaction.split_transactions_by_dates(supports),
+            'transactions_by_dates': Transaction.split_transactions_by_dates(transactions),
             'counter_users': counter_users,
         }
 

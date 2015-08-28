@@ -329,8 +329,24 @@ def supports(request, whose, user):
         return bad_request(e)
 
     # getting data
-    supports = Transaction.get_supports(user['id'], whose, from_date, to_date)
+    supports = Transaction.get_transactions(user['id'], whose, 'support', from_date, to_date)
 
     return ok_raw(supports)
+
+# receives
+@api_view(['GET'])
+@authorization_needed
+def receives(request, whose, user):
+    logger.info('METHOD: receives')
+
+    try:
+        from_date, to_date = get_from_date_to_date(request)
+    except BadRequest, e:
+        return bad_request(e)
+
+    # getting data
+    receives = Transaction.get_transactions(user['id'], whose, 'receive', from_date, to_date)
+
+    return ok_raw(receives)
 
 

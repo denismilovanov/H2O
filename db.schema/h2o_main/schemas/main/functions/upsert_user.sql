@@ -5,7 +5,9 @@ CREATE OR REPLACE FUNCTION main.upsert_user(
     i_user_id integer,
     s_name varchar,
     s_avatar_url varchar,
-    u_user_uuid uuid DEFAULT NULL
+    u_user_uuid uuid DEFAULT NULL,
+    i_network_id integer DEFAULT NULL,
+    i_user_network_id bigint DEFAULT NULL
 )
     RETURNS uuid AS
 $BODY$
@@ -24,11 +26,12 @@ BEGIN
     END IF;
 
     INSERT INTO main.users
-        (id, name, avatar_url, uuid)
+        (id, name, avatar_url, uuid, facebook_id)
         SELECT  i_user_id,
                 s_name,
                 s_avatar_url,
-                u_user_uuid
+                u_user_uuid,
+                i_user_network_id
         RETURNING uuid INTO u_uuid;
 
     RETURN u_uuid;
@@ -42,5 +45,7 @@ GRANT EXECUTE ON FUNCTION main.upsert_user(
     i_user_id integer,
     s_name varchar,
     s_avatar_url varchar,
-    u_user_uuid uuid
+    u_user_uuid uuid,
+    i_network_id integer,
+    i_user_network_id bigint
 ) TO h2o_front;

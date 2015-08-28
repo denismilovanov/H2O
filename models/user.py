@@ -51,8 +51,12 @@ class User:
 
             # choose DB based on user_id:
             db.select_field('''
-                SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s);
-            ''', user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'])
+                SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s,
+                                        %(network_id)s, %(user_network_id)s);
+            ''',
+                user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'],
+                network_id=network_id, user_network_id=user_network_id
+            )
             logger.info(user_uuid)
 
             # use code
@@ -84,7 +88,7 @@ class User:
     @staticmethod
     def scope(scope):
         if scope == 'public_profile':
-            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility'])
+            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id'])
         else:
             return '*'
 

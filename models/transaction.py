@@ -39,8 +39,28 @@ class Transaction:
         return users_ids
 
     @staticmethod
+    def split_transactions_by_dates(transactions):
+        result = {}
+
+        for transaction in transactions:
+            date = str(transaction['date'])
+
+            del transaction['counter_user_id']
+            del transaction['user_id']
+            del transaction['date']
+
+            try:
+                result[date].append(transaction)
+            except Exception, e:
+                result[date] = []
+                result[date].append(transaction)
+
+        return result
+
+    @staticmethod
     @raw_queries()
     def get_my_supports(user_id, from_date, to_date, db):
+        # all transactions of me
         supports = Transaction.get_transactions([user_id], from_date, to_date, 'support', db)
 
         # extract counter users ids
@@ -51,23 +71,9 @@ class Transaction:
 
         # gather all
         result = {
-            'transactions_by_dates': {},
+            'transactions_by_dates': Transaction.split_transactions_by_dates(supports),
             'counter_users': counter_users,
         }
-
-        # split transactions by dates
-        for support in supports:
-            date = str(support['date'])
-
-            del support['counter_user_id']
-            del support['user_id']
-            del support['date']
-
-            try:
-                result['transactions_by_dates'][date].append(support)
-            except Exception, e:
-                result['transactions_by_dates'][date] = []
-                result['transactions_by_dates'][date].append(support)
 
         # we are ready!
         return result
@@ -75,43 +81,30 @@ class Transaction:
     @staticmethod
     @raw_queries()
     def get_follows_supports(user_id, from_date, to_date, db):
+        # my follows
         follows_ids =  UserFollow.get_user_follows_ids(user_id)
 
-        # all transactions
+        # all transactions of them
         supports = Transaction.get_transactions(follows_ids, from_date, to_date, 'support', db)
 
         # extract counter users ids
         counter_users_ids = Transaction.extract_counter_users_ids(supports)
 
-        # real follows who in transactions
+        # real follows who are in transactions
         follows_ids = Transaction.extract_users_ids(supports)
 
-        # get them all
+        # get all counters
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
 
-        #
+        # get all follows
         follows = User.get_all_by_ids(follows_ids, scope='public_profile')
 
         # gather all
         result = {
-            'transactions_by_dates': {},
+            'transactions_by_dates': Transaction.split_transactions_by_dates(supports),
             'follows': follows,
             'counter_users': counter_users,
         }
-
-        # split transactions by dates
-        for support in supports:
-            date = str(support['date'])
-
-            del support['counter_user_id']
-            del support['user_id']
-            del support['date']
-
-            try:
-                result['transactions_by_dates'][date].append(support)
-            except Exception, e:
-                result['transactions_by_dates'][date] = []
-                result['transactions_by_dates'][date].append(support)
 
         # we are ready!
         return result

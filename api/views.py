@@ -329,12 +329,7 @@ def supports(request, whose, user):
         return bad_request(e)
 
     # getting data
-    supports = []
-
-    if whose == 'my':
-        supports = Transaction.get_my_supports(user['id'], from_date, to_date)
-    elif whose == 'follows':
-        supports = Transaction.get_follows_supports(user['id'], from_date, to_date)
+    supports = Transaction.get_supports(user['id'], whose, from_date, to_date)
 
     return ok_raw(supports)
 

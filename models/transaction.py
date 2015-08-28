@@ -59,9 +59,16 @@ class Transaction:
 
     @staticmethod
     @raw_queries()
-    def get_my_supports(user_id, from_date, to_date, db):
-        # all transactions of me
-        supports = Transaction.get_transactions([user_id], from_date, to_date, 'support', db)
+    def get_supports(user_id, whose, from_date, to_date, db):
+        if whose == 'my':
+            # all transactions of me
+            users_ids = [user_id]
+        elif whose == 'follows':
+            # my follows
+            users_ids = follows_ids = UserFollow.get_user_follows_ids(user_id)
+
+        # all transactions of them
+        supports = Transaction.get_transactions(users_ids, from_date, to_date, 'support', db)
 
         # extract counter users ids
         counter_users_ids = Transaction.extract_counter_users_ids(supports)
@@ -75,36 +82,8 @@ class Transaction:
             'counter_users': counter_users,
         }
 
-        # we are ready!
-        return result
-
-    @staticmethod
-    @raw_queries()
-    def get_follows_supports(user_id, from_date, to_date, db):
-        # my follows
-        follows_ids =  UserFollow.get_user_follows_ids(user_id)
-
-        # all transactions of them
-        supports = Transaction.get_transactions(follows_ids, from_date, to_date, 'support', db)
-
-        # extract counter users ids
-        counter_users_ids = Transaction.extract_counter_users_ids(supports)
-
-        # real follows who are in transactions
-        follows_ids = Transaction.extract_users_ids(supports)
-
-        # get all counters
-        counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
-
-        # get all follows
-        follows = User.get_all_by_ids(follows_ids, scope='public_profile')
-
-        # gather all
-        result = {
-            'transactions_by_dates': Transaction.split_transactions_by_dates(supports),
-            'follows': follows,
-            'counter_users': counter_users,
-        }
+        if whose == 'follows':
+            result['follows'] = User.get_all_by_ids(follows_ids, scope='public_profile')
 
         # we are ready!
         return result

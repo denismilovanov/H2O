@@ -144,3 +144,14 @@ class User:
         ''', user_id=user_id, visibility=visibility, status=status)
 
         return True
+
+    @staticmethod
+    @raw_queries()
+    def delete_profile(user_id, db):
+        logger.info('delete_profile')
+
+        db.select_field('''
+            SELECT main.delete_user_profile(%(user_id)s);
+        ''', user_id=user_id)
+
+        return True

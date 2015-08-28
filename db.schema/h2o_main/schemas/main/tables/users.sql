@@ -8,7 +8,9 @@ CREATE TABLE main.users (
     registered_at timestamptz NOT NULL DEFAULT now(),
     status main.user_status NOT NULL DEFAULT 'i_have_enough_money',
     visibility main.user_visibility NOT NULL DEFAULT 'visible_for_all',
-    avatar_url varchar NULL
+    avatar_url varchar NULL,
+    is_deleted boolean NOT NULL DEFAULT FALSE
 );
+
 
 

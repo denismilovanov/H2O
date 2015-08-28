@@ -160,21 +160,25 @@ def users(request, user):
     return ok_raw(users)
 
 # profile
-@api_view(['PATCH'])
+@api_view(['PATCH', 'DELETE'])
 @authorization_needed
 def profile(request, user):
     logger.info('METHOD: profile')
 
-    #input
-    try:
-        visibility = request.data.get('visibility')
-        status = request.data.get('status')
-        logger.info(request.data)
+    if request.method == 'PATCH':
+        #input
+        try:
+            visibility = request.data.get('visibility')
+            status = request.data.get('status')
+            logger.info(request.data)
 
-    except Exception, e:
-        return bad_request(BadRequest(e))
+        except Exception, e:
+            return bad_request(BadRequest(e))
 
-    User.update_profile(user['id'], visibility, status)
+        User.update_profile(user['id'], visibility, status)
+
+    elif request.method == 'DELETE':
+        User.delete_profile(user['id'])
 
     return no_content()
 

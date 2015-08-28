@@ -63,9 +63,9 @@ class Invite:
 
     @staticmethod
     @raw_queries()
-    def invite_user_via_invite_code_and_email(invite_code, email, db):
+    def invite_user_via_invite_code_and_email(invite_code, email, entrance_gift, db):
         logger.info('invite_user_via_invite_code_and_email')
-        logger.info(str(invite_code) + ' ' + str(email))
+        logger.info(str(invite_code) + ' ' + str(email) + ' ' + str(entrance_gift))
 
         from validate_email import validate_email
         if not email or not validate_email(email):

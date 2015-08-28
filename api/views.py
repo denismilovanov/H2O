@@ -196,6 +196,7 @@ def invite_code(request, invite_code, user):
     #input
     try:
         email = request.data['email']
+        entrance_gift = request.data.get('entrance_gift', False)
     except Exception, e:
         return bad_request(BadRequest(e))
 
@@ -213,7 +214,7 @@ def invite_code(request, invite_code, user):
 
     # making invite
     try:
-        Invite.invite_user_via_invite_code_and_email(invite_code, email)
+        Invite.invite_user_via_invite_code_and_email(invite_code, email, entrance_gift)
     except InvalidEmail, e:
         return bad_request(e)
     except EmailIsAlreadyUsed, e:

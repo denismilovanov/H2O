@@ -3,7 +3,6 @@ from api import views
 
 urlpatterns = [
     url(r'v1/session', views.session),
-    url(r'v1/session2', views.session),
     url(r'v1/users/(?P<user_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', views.user),
     url(r'v1/users', views.users),
     url(r'v1/profile', views.profile),
@@ -14,4 +13,7 @@ urlpatterns = [
     url(r'v1/follows/(?P<user_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', views.follow),
     # get my follows
     url(r'v1/follows/(?P<user_uuid>my)', views.follows),
+
+    # supports
+    url(r'v1/supports/(?P<whose>(my|follows))', views.supports),
 ]

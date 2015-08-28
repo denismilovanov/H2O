@@ -36,4 +36,13 @@ class UserFollow:
 
         users_ids = [u['follow_user_id'] for u in users]
 
-        return User.get_all_by_ids(users_ids, scope='public_all')
+        return User.get_all_by_ids(users_ids, scope='public_profile')
+
+    @staticmethod
+    @raw_queries()
+    def get_user_follows_ids(user_id, db):
+        users = db.select_table('''
+            SELECT main.get_user_follows_ids(%(user_id)s, 100000, 0) AS follow_user_id;
+        ''', user_id=user_id)
+
+        return [u['follow_user_id'] for u in users]

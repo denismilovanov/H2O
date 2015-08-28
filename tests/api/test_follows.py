@@ -12,7 +12,7 @@ class FollowsTestCase(MyAPITestCase):
 
         # follows
 
-        follows_controller = self.follows_controller + '/00000002-0000-0000-0000-000000000002'
+        follows_controller = self.follows_controller + '/00000009-0000-0000-0000-000000000009'
         response = self.client.post(follows_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_201_CREATED)
 

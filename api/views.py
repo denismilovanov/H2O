@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from views_helpers import created, bad_request, unavailable, forbidden, unauthorized, ok, ok_raw, internal_server_error, not_found, not_acceptable, no_content
 from models import *
 from models.exceptions import *
+import datetime
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -154,7 +155,7 @@ def user(request, user_uuid, user):
 def users(request, user):
     logger.info('METHOD: users')
 
-    users = User.get_all(1000, 0, scope='public_all')
+    users = User.get_all(1000, 0, scope='public_profile')
 
     return ok_raw(users)
 
@@ -292,3 +293,41 @@ def follows_inner(request, user_uuid, user):
     # that's all
     return ok_raw(follows)
 
+# supports
+@api_view(['GET'])
+@authorization_needed
+def supports(request, whose, user):
+    logger.info('METHOD: supports')
+
+    try:
+        from_date = request.GET['from_date']
+        to_date = request.GET['to_date']
+    except Exception, e:
+        return bad_request(BadRequest(e))
+
+    # special dates
+    if from_date == 'now':
+        from_date = str(datetime.datetime.now().date())
+    if to_date == 'now':
+        to_date = str(datetime.datetime.now().date())
+
+    logger.info(from_date)
+    logger.info(to_date)
+
+    # parse string repr
+    try:
+        from dateutil.parser import parse
+        from_date = parse(from_date)
+        to_date = parse(to_date)
+    except Exception, e:
+        return bad_request(BadRequest(e))
+
+    # getting data
+    supports = []
+
+    if whose == 'my':
+        supports = Transaction.get_my_supports(user['id'], from_date, to_date)
+    elif whose == 'follows':
+        supports = Transaction.get_follows_supports(user['id'], from_date, to_date)
+
+    return ok_raw(supports)

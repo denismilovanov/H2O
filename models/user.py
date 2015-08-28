@@ -83,7 +83,7 @@ class User:
 
     @staticmethod
     def scope(scope):
-        if scope == 'public_profile' or scope == 'public_all':
+        if scope == 'public_profile':
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility'])
         else:
             return '*'

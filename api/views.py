@@ -293,17 +293,12 @@ def follows_inner(request, user_uuid, user):
     # that's all
     return ok_raw(follows)
 
-# supports
-@api_view(['GET'])
-@authorization_needed
-def supports(request, whose, user):
-    logger.info('METHOD: supports')
-
+def get_from_date_to_date(request):
     try:
         from_date = request.GET['from_date']
         to_date = request.GET['to_date']
     except Exception, e:
-        return bad_request(BadRequest(e))
+        raise BadRequest(e)
 
     # special dates
     if from_date == 'now':
@@ -311,16 +306,27 @@ def supports(request, whose, user):
     if to_date == 'now':
         to_date = str(datetime.datetime.now().date())
 
-    logger.info(from_date)
-    logger.info(to_date)
-
     # parse string repr
     try:
         from dateutil.parser import parse
         from_date = parse(from_date)
         to_date = parse(to_date)
     except Exception, e:
-        return bad_request(BadRequest(e))
+        raise BadRequest(e)
+
+    return from_date, to_date
+
+
+# supports
+@api_view(['GET'])
+@authorization_needed
+def supports(request, whose, user):
+    logger.info('METHOD: supports')
+
+    try:
+        from_date, to_date = get_from_date_to_date(request)
+    except BadRequest, e:
+        return bad_request(e)
 
     # getting data
     supports = []
@@ -331,3 +337,5 @@ def supports(request, whose, user):
         supports = Transaction.get_follows_supports(user['id'], from_date, to_date)
 
     return ok_raw(supports)
+
+

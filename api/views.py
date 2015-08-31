@@ -142,10 +142,19 @@ def session(request, user):
 def user(request, user_uuid, user):
     logger.info('METHOD: user')
 
+    me = False
+
+    if user_uuid == 'me':
+        user_uuid = user['uuid']
+        me = True
+
     user = User.find_by_user_uuid(user_uuid, scope='public_profile')
 
-    if not user: # or user['is_deleted']:
-        return not_found(user_uuid)
+    if not user:
+        return not_found(UserIsNotFound())
+
+    if me:
+        user['balance'] = int(user['facebook_id']) % 1000
 
     return ok_raw(user)
 

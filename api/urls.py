@@ -3,7 +3,7 @@ from api import views
 
 urlpatterns = [
     url(r'v1/session', views.session),
-    url(r'v1/users/(?P<user_uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', views.user),
+    url(r'v1/users/(?P<user_uuid>([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|me)', views.user),
     url(r'v1/users', views.users),
     url(r'v1/profile', views.profile),
     url(r'v1/invite_codes/(?P<invite_code>[0-9a-zA-Z]+)', views.invite_code),

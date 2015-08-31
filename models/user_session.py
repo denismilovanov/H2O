@@ -72,5 +72,13 @@ class UserSession:
             SELECT main.update_push_token(%(access_token)s, %(push_token)s);
         ''', access_token=access_token, push_token=push_token)
 
+    @staticmethod
+    @raw_queries()
+    def delete_session(user_id, access_token, db):
+        db.select_field('''
+            SELECT main.drop_all_tokens_by_access_token(%(access_token)s);
+        ''', access_token=access_token)
+
+
 
 

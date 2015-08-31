@@ -70,7 +70,7 @@ def authorization_needed(func):
     return inner
 
 # session
-@api_view(['POST', 'PATCH'])
+@api_view(['POST', 'PATCH', 'DELETE'])
 @authorization_needed
 def session(request, user):
     logger.info('METHOD: session')
@@ -135,6 +135,12 @@ def session(request, user):
             UserSession.update_push_token(user['id'], user['access_token'], push_token)
 
             return no_content()
+
+    # logout
+    elif request.method == 'DELETE':
+        UserSession.delete_session(user['id'], user['access_token'])
+
+        return no_content()
 
 # profile
 @api_view(['GET'])

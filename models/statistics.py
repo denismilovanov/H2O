@@ -10,28 +10,50 @@ class Statistics:
     @raw_queries()
     def get_statistics_overall(user_id, db):
         statistics = db.select_table('''
-            SELECT transaction_direction, users_ids, transactions_count, users_count
+            SELECT transaction_direction, transactions_count, users_count
                 FROM statistics.get_statistics_overall(%(user_id)s);
         ''', user_id=user_id)
 
         result = {}
 
         for record in statistics:
-            transaction_direction = str(record['transaction_direction']) + 's'
-            result[transaction_direction] = {
+            result[str(record['transaction_direction']) + 's'] = {
                 'transactions_count': record['transactions_count'],
                 'users_count': record['users_count'],
-                'users': User.get_all_by_ids(record['users_ids'], scope='public_profile')
+                'users': Statistics.get_statistics_counter_users_inner(user_id, record['transaction_direction'], 5, 0, db)
             }
 
         return result
 
     @staticmethod
     @raw_queries()
-    def get_statistics_counter_users(user_id, transaction_direction, limit, count, db):
-        users_ids = []
+    def get_statistics_counter_users(user_id, transaction_direction, limit, offset, db):
+        return Statistics.get_statistics_counter_users_inner(user_id, transaction_direction, limit, offset, db)
 
-        return User.get_all_by_ids(users_ids, scope='public_profile')
+    @staticmethod
+    def get_statistics_counter_users_inner(user_id, transaction_direction, limit, offset, db):
+        # get stat
+        statistics = db.select_table('''
+            SELECT *
+                FROM statistics.get_statistics_counter_users(%(user_id)s, %(transaction_direction)s, %(limit)s, %(offset)s);
+        ''', user_id=user_id, transaction_direction=transaction_direction, limit=limit, offset=offset)
+
+        # build hash from transactons_count
+        transactions_counts = dict([(record['counter_user_id'], record['transactions_count']) for record in statistics])
+
+        # collect users ids
+        users_ids = [record['counter_user_id'] for record in statistics]
+
+        # get all users
+        users = User.get_all_by_ids(users_ids, scope='public_profile_with_id')
+
+        # add transactions_count to user
+        for user in users:
+            user['transactions_count'] = transactions_counts[user['id']]
+            del user['id']
+
+        #
+        return users
 
     @staticmethod
     @raw_queries()

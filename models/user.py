@@ -93,6 +93,8 @@ class User:
     def scope(scope):
         if scope == 'public_profile':
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
+        elif scope == 'public_profile_with_id':
+            return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
         else:
             return '*'
 

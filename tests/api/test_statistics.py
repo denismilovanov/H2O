@@ -17,7 +17,14 @@ class StatisticsTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         supports = json.loads(response.content)
-        print supports
+
+        # other
+
+        statistics_controller = self.statistics_controller + '/my/counter_users/receives'
+        response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+
+        supports = json.loads(response.content)
 
 
 

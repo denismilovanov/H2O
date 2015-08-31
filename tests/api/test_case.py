@@ -32,6 +32,7 @@ class MyAPITestCase(APITestCase):
     follows_controller = '/v1/follows'
     supports_controller = '/v1/supports'
     receives_controller = '/v1/receives'
+    statistics_controller = '/v1/statistics'
     format = 'json'
 
 

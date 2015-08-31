@@ -7,3 +7,4 @@ from test_profile import ProfileTestCase
 from test_invite_codes import InviteCodesTestCase
 from test_follows import FollowsTestCase
 from test_transactions import TransactionsTestCase
+from test_statistics import StatisticsTestCase

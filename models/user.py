@@ -65,6 +65,10 @@ class User:
             # create codes
             Invite.create_invite_codes_for_user_id(user_id, 3)
 
+            # stat for user
+            from models.statistics import Statistics
+            Statistics.create_user_records(user_id)
+
             # newness flag
             is_new = True
 

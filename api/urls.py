@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'v1/supports/(?P<whose>(my|follows))', views.supports),
     # receives
     url(r'v1/receives/(?P<whose>(my|follows))', views.receives),
+
+    # statistics
+    url(r'v1/statistics/(?P<user_uuid>(my|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))/overall', views.statistics_overall),
 ]

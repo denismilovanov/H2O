@@ -354,4 +354,25 @@ def receives(request, whose, user):
 
     return ok_raw(receives)
 
+# statistics
+@api_view(['GET'])
+@authorization_needed
+def statistics_overall(request, user_uuid, user):
+    logger.info('METHOD: statistics')
+
+    if user_uuid == 'my':
+        user_uuid = user['uuid']
+        statistics_user = user
+    else:
+        statistics_user = User.find_by_user_uuid(user_uuid)
+
+    if not statistics_user:
+        return not_found(UserIsNotFound())
+
+    # getting data
+    statistics = Statistics.get_statistics_overall(statistics_user['id'])
+
+    return ok_raw(statistics)
+
+
 

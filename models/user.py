@@ -2,6 +2,7 @@ from decorators import *
 from models.invite import Invite
 from models.user_network import UserNetwork
 from models.user_session import UserSession
+from models.user_account import UserAccount
 from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException, FacebookException, NotImplementedException
 from models.facebook_wrapper import FacebookWrapper
 
@@ -10,6 +11,18 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class User:
+    @staticmethod
+    def extract_user_id_from_uuid(uuid):
+        uuid = str(uuid)
+        id = uuid[:8]
+        id = int(id, 16)
+
+        # test cases
+        if 0 < id < 100000:
+            id *= -1
+
+        return id
+
     # get names from social network
     @staticmethod
     def get_user_via_network(network_id, access_token):
@@ -95,7 +108,7 @@ class User:
 
     @staticmethod
     def scope(scope):
-        if scope == 'public_profile':
+        if scope == 'public_profile' or scope == 'my_personal_profile':
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
         elif scope == 'public_profile_with_id':
             return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
@@ -116,6 +129,11 @@ class User:
 
         if not user['uuid']:
             return None
+
+        if scope == 'my_personal_profile':
+            me_id = User.extract_user_id_from_uuid(user['uuid'])
+            user['balance'] = UserAccount.get_user_account(me_id)['balance']
+            user['push_notifications'] = True # UserSettings.get_user_settings(me_id)['push_notifications']
 
         return user
 

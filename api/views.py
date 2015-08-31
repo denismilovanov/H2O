@@ -143,10 +143,12 @@ def user(request, user_uuid, user):
     logger.info('METHOD: user')
 
     me = False
+    me_id = None
 
     if user_uuid == 'me':
         user_uuid = user['uuid']
         me = True
+        me_id = user['id']
 
     user = User.find_by_user_uuid(user_uuid, scope='public_profile')
 
@@ -154,7 +156,7 @@ def user(request, user_uuid, user):
         return not_found(UserIsNotFound())
 
     if me:
-        user['balance'] = int(user['facebook_id']) % 1000
+        user['balance'] = UserAccount.get_user_account(me_id)['balance']
 
     return ok_raw(user)
 

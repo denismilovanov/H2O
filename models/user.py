@@ -69,6 +69,10 @@ class User:
             from models.statistics import Statistics
             Statistics.create_user_records(user_id)
 
+            # account
+            from user_account import UserAccount
+            UserAccount.create_user_accounts(user_id)
+
             # newness flag
             is_new = True
 

@@ -4,20 +4,22 @@
 CREATE OR REPLACE FUNCTION statistics.get_statistics_overall(
     i_user_id integer
 )
-    RETURNS statistics.overall AS
+    RETURNS SETOF statistics.overall AS
 $BODY$
 DECLARE
     r_result statistics.overall;
 BEGIN
 
-    SELECT * INTO r_result
-        FROM statistics.overall
-        WHERE user_id = i_user_id;
+    FOR r_result IN SELECT *
+                        FROM statistics.overall
+                        WHERE user_id = i_user_id
+    LOOP
 
-    r_result.supports_users_ids := subarray(r_result.supports_users_ids, 0, 5);
-    r_result.receives_users_ids := subarray(r_result.receives_users_ids, 0, 5);
+        r_result.users_ids := subarray(r_result.users_ids, 0, 5);
 
-    RETURN r_result;
+        RETURN NEXT r_result;
+
+    END LOOP;
 
 END
 $BODY$

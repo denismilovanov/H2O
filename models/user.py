@@ -88,7 +88,7 @@ class User:
     @staticmethod
     def scope(scope):
         if scope == 'public_profile':
-            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id'])
+            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
         else:
             return '*'
 

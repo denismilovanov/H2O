@@ -18,6 +18,8 @@ SECRET_KEY = '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk'
 
 DEBUG = True
 
+FACEBOOK_TIMEOUT = 4
+
 ALLOWED_HOSTS = []
 
 REFRESH_TOKEN_EXPIRES_IN = 300 # 86400

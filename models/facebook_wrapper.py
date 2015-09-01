@@ -23,7 +23,8 @@ class FacebookWrapper:
 
         # normal access token
         try:
-            graph = facebook.GraphAPI(access_token=access_token, version="2.4")
+            from H2O.settings import FACEBOOK_TIMEOUT
+            graph = facebook.GraphAPI(access_token=access_token, version="2.4", timeout=FACEBOOK_TIMEOUT)
             logger.info(graph)
 
             profile = graph.get_object('me')

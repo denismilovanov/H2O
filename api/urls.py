@@ -24,4 +24,8 @@ urlpatterns = [
 
     # statistics: counter users
     url(r'v1/statistics/(?P<user_uuid>(my|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))/counter_users/(?P<transaction_direction>supports|receives)', views.statistics_counter_users),
+
+    # notifications
+    url(r'v1/notifications/(?P<notification_id>\d+)', views.notification),
+    url(r'v1/notifications', views.notifications),
 ]

@@ -433,5 +433,34 @@ def statistics_counter_users(request, transaction_direction, user_uuid, user):
 
     return ok_raw(statistics)
 
+# list of notifications
+@api_view(['GET'])
+@authorization_needed
+def notifications(request, user):
+    logger.info('METHOD: notifications')
+
+    #input
+    try:
+        limit, offset = get_limit_and_offset(request)
+    except Exception, e:
+        return bad_request(BadRequest(e))
+
+    notifications = Notification.get_notifications_by_user_id(user['id'], limit, offset)
+
+    return ok_raw(notifications)
+
+# delete notification
+@api_view(['DELETE'])
+@authorization_needed
+def notification(request, notification_id, user):
+    logger.info('METHOD: notification')
+
+    try:
+        Notification.delete_notification(user['id'], notification_id)
+    except ResourceIsNotFound, e:
+        return not_found(e)
+
+    return no_content()
+
 
 

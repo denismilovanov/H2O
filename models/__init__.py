@@ -6,3 +6,4 @@ from user_session import UserSession
 from transaction import Transaction
 from statistics import Statistics
 from user_account import UserAccount
+from notification import Notification

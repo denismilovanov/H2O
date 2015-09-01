@@ -47,3 +47,7 @@ class UserIsAlreadyFollowed(Exception):
 class UserIsNotFound(Exception):
     def __str__(self):
         return 'USER_IS_NOT_FOUND'
+
+class ResourceIsNotFound(Exception):
+    def __str__(self):
+        return 'RESOURCE_IS_NOT_FOUND'

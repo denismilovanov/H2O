@@ -16,7 +16,9 @@ class Transaction:
     @staticmethod
     def get_transactions_raw(users_ids, from_date, to_date, direction, db):
         return db.select_table('''
-            SELECT ''' + Transaction.scope('public') + ''', date(created_at) AS date, counter_user_id, user_id
+            SELECT ''' + Transaction.scope('public') + ''',
+                    public.format_datetime(created_at) AS created_at,
+                    counter_user_id, user_id
                 FROM main.get_transactions_by_users_ids_and_dates(%(users_ids)s, %(from_date)s::date, %(to_date)s::date, %(direction)s);
         ''', users_ids=users_ids, from_date=from_date, to_date=to_date, direction=direction)
 
@@ -37,25 +39,6 @@ class Transaction:
             users_ids.append(transaction['user_id'])
 
         return users_ids
-
-    @staticmethod
-    def split_transactions_by_dates(transactions):
-        result = {}
-
-        for transaction in transactions:
-            date = str(transaction['date'])
-
-            del transaction['counter_user_id']
-            del transaction['user_id']
-            del transaction['date']
-
-            try:
-                result[date].append(transaction)
-            except Exception, e:
-                result[date] = []
-                result[date].append(transaction)
-
-        return result
 
     @staticmethod
     @raw_queries()
@@ -80,9 +63,14 @@ class Transaction:
         # get them all
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
 
+        # remove some indeces
+        for transaction in transactions:
+            del transaction['counter_user_id']
+            del transaction['user_id']
+
         # gather all
         result = {
-            'transactions_by_dates': Transaction.split_transactions_by_dates(transactions),
+            'transactions': transactions,
             'users': counter_users,
         }
 

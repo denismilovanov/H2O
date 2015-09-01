@@ -8,6 +8,24 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+#
+def get_limit_and_offset(request):
+    limit = request.GET.get('limit', None)
+    offset = request.GET.get('offset', None)
+
+    if not limit:
+        limit = request.data.get('limit', 20)
+    if not offset:
+        offset = request.data.get('offset', 0)
+
+    if limit < 0:
+        limit = 20
+    if offset < 0:
+        offset = 0
+
+    return limit, offset
+    # raise Exception()
+
 # decorator for all methods
 def authorization_needed(func):
     def inner(*k, **v):
@@ -272,15 +290,7 @@ def follows_inner(request, user_uuid, user):
 
     #input
     try:
-        limit = request.data.get('limit', 20)
-        offset = request.data.get('offset', 0)
-
-        if limit < 0:
-            limit = 20
-
-        if offset < 0:
-            offset = 0
-
+        limit, offset = get_limit_and_offset(request)
     except Exception, e:
         return bad_request(BadRequest(e))
 
@@ -402,8 +412,10 @@ def statistics_counter_users(request, transaction_direction, user_uuid, user):
         transaction_direction = 'receive'
 
     #
-    limit = request.GET.get('limit', 20)
-    offset = request.GET.get('offset', 0)
+    try:
+        limit, offset = get_limit_and_offset(request)
+    except Exception, e:
+        return bad_request(BadRequest(e))
 
     #
     if user_uuid == 'my':

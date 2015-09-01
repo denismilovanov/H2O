@@ -51,16 +51,18 @@ class UserSession:
     @staticmethod
     @raw_queries()
     def drop_access_tokens(db):
+        from H2O.settings import ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN
         db.select_field('''
-            SELECT main.drop_access_tokens();
-        ''')
+            SELECT main.drop_access_tokens(%(ACCESS_TOKEN_EXPIRES_IN)s);
+        ''', ACCESS_TOKEN_EXPIRES_IN=ACCESS_TOKEN_EXPIRES_IN)
 
     @staticmethod
     @raw_queries()
     def drop_refresh_tokens(db):
+        from H2O.settings import ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN
         db.select_field('''
-            SELECT main.drop_refresh_tokens();
-        ''')
+            SELECT main.drop_refresh_tokens(%(REFRESH_TOKEN_EXPIRES_IN)s);
+        ''', REFRESH_TOKEN_EXPIRES_IN=REFRESH_TOKEN_EXPIRES_IN)
 
     @staticmethod
     @raw_queries()

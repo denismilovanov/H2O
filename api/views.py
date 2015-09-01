@@ -379,7 +379,7 @@ def statistics_overall(request, user_uuid, user):
         user_uuid = user['uuid']
         statistics_user = user
     else:
-        statistics_user = User.find_by_user_uuid(user_uuid)
+        statistics_user = User.find_by_user_uuid(user_uuid, scope='all')
 
     if not statistics_user:
         return not_found(UserIsNotFound())
@@ -410,7 +410,7 @@ def statistics_counter_users(request, transaction_direction, user_uuid, user):
         user_uuid = user['uuid']
         statistics_user = user
     else:
-        statistics_user = User.find_by_user_uuid(user_uuid)
+        statistics_user = User.find_by_user_uuid(user_uuid, scope='all')
 
     # 404?
     if not statistics_user:

@@ -16,16 +16,25 @@ class StatisticsTestCase(MyAPITestCase):
         response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
-        supports = json.loads(response.content)
-
         # other
 
         statistics_controller = self.statistics_controller + '/my/counter_users/receives'
         response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
-        supports = json.loads(response.content)
+        # follow statistics
 
+        statistics_controller = self.statistics_controller + '/00000002-0000-0000-0000-000000000002/overall'
+        response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        print response.content
+
+        # follow counter users statistics
+
+        statistics_controller = self.statistics_controller + '/00000002-0000-0000-0000-000000000002/counter_users/receives'
+        response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        print response.content
 
 
 

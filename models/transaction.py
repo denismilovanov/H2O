@@ -73,6 +73,10 @@ class Transaction:
         # extract counter users ids
         counter_users_ids = Transaction.extract_counter_users_ids(transactions)
 
+        # append follows to counters
+        if whose == 'follows':
+            counter_users_ids = counter_users_ids + follows_ids
+
         # get them all
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
 
@@ -81,9 +85,6 @@ class Transaction:
             'transactions_by_dates': Transaction.split_transactions_by_dates(transactions),
             'users': counter_users,
         }
-
-        if whose == 'follows':
-            result['follows'] = User.get_all_by_ids(follows_ids, scope='public_profile')
 
         # we are ready!
         return result

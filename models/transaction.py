@@ -79,7 +79,7 @@ class Transaction:
         # gather all
         result = {
             'transactions_by_dates': Transaction.split_transactions_by_dates(transactions),
-            'counter_users': counter_users,
+            'users': counter_users,
         }
 
         if whose == 'follows':

@@ -19,7 +19,7 @@ class MandrillEmailer:
             message = {
                 'auto_html': None,
                 'auto_text': None,
-                'from_email': 'milovanov@octabrain.com',
+                'from_email': 'team@h2o-project.com',
                 'from_name': 'H2O team',
                 'html': content,
                 'important': False,
@@ -48,5 +48,4 @@ class MandrillEmailer:
 class Emailer:
     @staticmethod
     def get():
-        return DevNullEmailer()
         return MandrillEmailer()

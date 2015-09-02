@@ -44,8 +44,8 @@ class Notification:
             # remove counter_user_id
             del record['counter_user_id']
 
-            # dump to json 'data_for_result'
-            record['data'] = json.dumps(data_for_result)
+            #
+            record['data'] = data_for_result
 
         # that is all
         return notifications

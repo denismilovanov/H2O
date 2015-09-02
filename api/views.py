@@ -235,7 +235,7 @@ def invite_code(request, invite_code, user):
         email = request.data['email']
         entrance_gift = request.data.get('entrance_gift', False)
     except Exception, e:
-        return bad_request(BadRequest(e))
+        return bad_request(BadRequest(e), email)
 
     # get code
     code = Invite.get_invite_code(invite_code)
@@ -243,19 +243,19 @@ def invite_code(request, invite_code, user):
 
     if not code or code['status'] != 'free':
         # there is no code available
-        return not_found(InviteCodeDoesNotExistException())
+        return not_found(InviteCodeDoesNotExistException(), email)
 
     if code['owner_id'] != user['id']:
         # code is not mine
-        return forbidden(InviteCodeDoesNotExistException())
+        return forbidden(InviteCodeDoesNotExistException(), email)
 
     # making invite
     try:
         Invite.invite_user_via_invite_code_and_email(invite_code, email, entrance_gift)
     except InvalidEmail, e:
-        return bad_request(e)
+        return bad_request(e, email)
     except EmailIsAlreadyUsed, e:
-        return not_acceptable(e)
+        return not_acceptable(e, email)
 
     return ok(email=email)
 

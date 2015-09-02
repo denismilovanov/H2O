@@ -12,13 +12,17 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
-def bad_request(e):
+def bad_request(e, data=None):
     logger.info(e)
     from models.exceptions import BadRequest
     v = {
         'error': str(e),
         'additional_data': str(e.e) if type(e) is BadRequest else None,
     }
+    if data:
+        logger.info(data)
+        v['data'] = data
+
     return JSONResponse(v, status=status.HTTP_400_BAD_REQUEST)
 
 def internal_server_error(e):
@@ -40,18 +44,26 @@ def unauthorized(e):
     }
     return JSONResponse(v, status=status.HTTP_401_UNAUTHORIZED)
 
-def forbidden(e):
+def forbidden(e, data=None):
     logger.info(e)
     v = {
         'error': str(e)
     }
+    if data:
+        logger.info(data)
+        v['data'] = data
+
     return JSONResponse(v, status=status.HTTP_403_FORBIDDEN)
 
-def not_found(e):
+def not_found(e, data=None):
     logger.info(e)
     v = {
         'error': str(e)
     }
+    if data:
+        logger.info(data)
+        v['data'] = data
+
     return HttpResponse(v, status=status.HTTP_404_NOT_FOUND)
 
 def unavailable(e):
@@ -61,11 +73,15 @@ def unavailable(e):
     }
     return HttpResponse(v, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-def not_acceptable(e):
+def not_acceptable(e, data=None):
     logger.info(e)
     v = {
         'error': str(e)
     }
+    if data:
+        logger.info(data)
+        v['data'] = data
+
     return JSONResponse(v, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 def no_content():

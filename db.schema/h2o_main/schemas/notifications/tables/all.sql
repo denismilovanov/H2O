@@ -6,6 +6,13 @@ CREATE TABLE notifications.all(
     user_id integer NOT NULL REFERENCES main.users (id) ON DELETE CASCADE ON UPDATE CASCADE,
     type notifications.type NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    data jsonb NOT NULL
+    data jsonb NOT NULL,
+    counter_user_id integer NULL
 );
 
+ALTER TABLE notifications.all
+    ADD CONSTRAINT counter_user_id_check
+    CHECK  (CASE WHEN type IN ('somebody_follows_me', 'somebody_sent_me_money')
+                    THEN counter_user_id IS NOT NULL
+                    ELSE counter_user_id IS NULL
+            END);

@@ -12,7 +12,7 @@ class Notification:
     @raw_queries()
     def get_notifications_by_user_id(user_id, limit, offset, db):
         notifications = db.select_table('''
-            SELECT  id, type, data, user_id,
+            SELECT  id, type, data, counter_user_id,
                     public.format_datetime(created_at) AS created_at
                 FROM notifications.get_all(%(user_id)s, %(limit)s, %(offset)s);
         ''', user_id=user_id, limit=limit, offset=offset)
@@ -26,7 +26,7 @@ class Notification:
             # type with user
             if record['type'] in ['somebody_follows_me', 'somebody_sent_me_money']:
                 try:
-                    data_for_result['user'] = User.get_all_by_ids([record['user_id']], scope='public_profile')[0]
+                    data_for_result['user'] = User.get_all_by_ids([record['counter_user_id']], scope='public_profile')[0]
                     # for json.dumps:
                     data_for_result['user']['uuid'] = str(data_for_result['user']['uuid'])
                 except Exception, e:
@@ -41,8 +41,8 @@ class Notification:
                     data_for_result['amount'] = None
                     data_for_result['currency'] = None
 
-            # remove user_id
-            del record['user_id']
+            # remove counter_user_id
+            del record['counter_user_id']
 
             # dump to json 'data_for_result'
             record['data'] = json.dumps(data_for_result)

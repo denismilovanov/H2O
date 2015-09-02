@@ -39,7 +39,7 @@ class Invite:
     @staticmethod
     def scope(scope):
         if scope == 'public_invite_codes':
-            return ', '.join(['invite_code', 'status', 'email'])
+            return ', '.join(['invite_code', 'status', 'email', 'entrance_gift'])
         else:
             return '*'
 
@@ -73,8 +73,8 @@ class Invite:
 
         try:
             db.select_field('''
-                SELECT main.invite_user_via_invite_code_and_email(%(invite_code)s, %(email)s);
-            ''', invite_code=invite_code, email=email)
+                SELECT main.invite_user_via_invite_code_and_email(%(invite_code)s, %(email)s, %(entrance_gift)s);
+            ''', invite_code=invite_code, email=email, entrance_gift=entrance_gift)
         except Exception, e:
             raise EmailIsAlreadyUsed()
 

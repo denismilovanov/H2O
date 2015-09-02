@@ -9,7 +9,8 @@ CREATE TABLE main.invite_codes (
     status main.invite_code_status NOT NULL DEFAULT 'free',
     created_at timestamptz NOT NULL DEFAULT now(),
     used_at timestamptz NULL,
-    email varchar NULL
+    email varchar NULL,
+    entrance_gift boolean NULL
 );
 
 CREATE UNIQUE INDEX invite_codes_email_ukey

@@ -3,7 +3,8 @@
 
 CREATE OR REPLACE FUNCTION main.invite_user_via_invite_code_and_email(
     s_invite_code varchar,
-    s_email varchar
+    s_email varchar,
+    b_entrance_gift boolean
 )
     RETURNS void AS
 $BODY$
@@ -23,5 +24,6 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.invite_user_via_invite_code_and_email(
     s_invite_code varchar,
-    s_email varchar
+    s_email varchar,
+    b_entrance_gift boolean
 ) TO h2o_front;

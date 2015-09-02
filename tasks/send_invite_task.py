@@ -2,6 +2,9 @@ from components.emailer import Emailer, EmailerException
 from models import Invite
 from jinja2 import Template, Environment, FileSystemLoader
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class SendInviteTask:
     # constructor for using in models
@@ -43,6 +46,8 @@ class SendInviteTask:
             # remove task
             self.queue_task.commit()
         except EmailerException, e:
+            #
+            logger.warn(e)
             # delay task
             self.queue_task.rollback(60)
             return False

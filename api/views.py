@@ -257,7 +257,7 @@ def invite_code(request, invite_code, user):
     except EmailIsAlreadyUsed, e:
         return not_acceptable(e)
 
-    return no_content()
+    return ok(email=email)
 
 # add follow
 @api_view(['GET', 'POST'])

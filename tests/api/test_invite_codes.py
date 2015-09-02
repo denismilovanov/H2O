@@ -37,7 +37,7 @@ class InviteCodesTestCase(MyAPITestCase):
             'email': real_email,
             'entrance_gift': False,
         }, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         # get again
 

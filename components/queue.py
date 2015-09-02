@@ -31,15 +31,23 @@ class GeneralTask:
             "x-dead-letter-routing-key": self.bag.queue,
             "x-message-ttl": delay * 1000,
         }
-        self.channel.queue_declare(queue=hold_queue, durable=True, exclusive=False, arguments=hold_queue_arguments)
+        self.bag.channel.exchange_declare(exchange=hold_queue, durable=True)
+        self.bag.channel.queue_declare(queue=hold_queue, durable=True, exclusive=False, arguments=hold_queue_arguments)
+        self.bag.channel.queue_bind(exchange=hold_queue, queue=hold_queue, routing_key=hold_queue)
+
+        # inc attempts count
+        try:
+            self.task_data['attempts'] += 1
+        except:
+            self.task_data['attempts'] = 1
 
         # remove old by ack
         self.commit()
         # publish new
-        self.channel.basic_publish(
-            exchange=hold_queue,
+        self.bag.channel.basic_publish(
+            exchange='',
             routing_key=hold_queue,
-            body=json.dumps(self.task),
+            body=json.dumps(self.task_data),
             properties=pika.BasicProperties(delivery_mode=2,),
         )
 
@@ -67,6 +75,8 @@ class Queue:
     def push(queue, message):
         channel, connection = Queue.get_channel()
         channel.queue_declare(queue=queue, durable=True)
+        channel.exchange_declare(exchange=queue, durable=True)
+        channel.queue_bind(exchange=queue, queue=queue, routing_key=queue)
         body = json.dumps(message)
         channel.basic_publish(exchange=queue, routing_key=queue, body=body)
         connection.close()
@@ -74,6 +84,7 @@ class Queue:
     @staticmethod
     def subscribe(queue, call):
         def callback(channel, method, properties, body):
+            print body
             task = json.loads(body)
             call(GeneralTask(task, QueueBag(channel, method, queue)))
 

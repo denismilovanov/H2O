@@ -64,14 +64,14 @@ def not_found(e, data=None):
         logger.info(data)
         v['data'] = data
 
-    return HttpResponse(v, status=status.HTTP_404_NOT_FOUND)
+    return JSONResponse(v, status=status.HTTP_404_NOT_FOUND)
 
 def unavailable(e):
     logger.info(e)
     v = {
         'error': str(e)
     }
-    return HttpResponse(v, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return JSONResponse(v, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 def not_acceptable(e, data=None):
     logger.info(e)

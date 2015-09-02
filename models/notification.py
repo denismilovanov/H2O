@@ -41,6 +41,13 @@ class Notification:
                     data_for_result['amount'] = None
                     data_for_result['currency'] = None
 
+            # type with notification_count
+            if record['type'] == 'new_invites_available':
+                try:
+                    data_for_result['invites_count'] = data['invites_count']
+                except Exception, e:
+                    data_for_result['invites_count'] = 0
+
             # remove counter_user_id
             del record['counter_user_id']
 

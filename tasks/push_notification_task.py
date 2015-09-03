@@ -38,10 +38,12 @@ class PushNotificationTask:
         from models.user import User
         devices = User.get_devices(self.user_id)
 
-        logger.info('Need to push to devices:')
+        logger.info('Need to push to devices, user = ' + str(self.user_id) + ':')
         logger.info(devices)
 
         sent = False
+        if len(devices) == 0:
+            sent = True
 
         for device in devices:
             try:

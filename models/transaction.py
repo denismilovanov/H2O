@@ -98,7 +98,9 @@ class Transaction:
         # sending notification though queue
         try:
             from tasks.notify_support_task import NotifySupportTask
-            NotifySupportTask(user_id, counter_user_id, amount, currency, is_anonymous).enqueue()
+            # counter_user_id will receive notification
+            # user_id will become counter_user_id inside NotifySupportTask
+            NotifySupportTask(counter_user_id, user_id, amount, currency, is_anonymous).enqueue()
         except Exception, e:
             # there is no need to raise exception and scare user
             # we shall perform regular checks of codes without sent emails

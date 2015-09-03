@@ -29,7 +29,9 @@ class UserFollow:
         # sending though queue
         try:
             from tasks.notify_follow_task import NotifyFollowTask
-            NotifyFollowTask(user_id, follow_user['id']).enqueue()
+            # follow_user['id'] will receive notification
+            # user_id will become counter_user_id inside NotifySupportTask
+            NotifyFollowTask(follow_user['id'], user_id).enqueue()
         except Exception, e:
             # there is no need to raise exception and scare user
             logger.info(e)

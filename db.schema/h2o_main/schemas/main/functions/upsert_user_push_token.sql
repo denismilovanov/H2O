@@ -12,11 +12,15 @@ DECLARE
     i_id bigint;
 BEGIN
 
+    IF s_push_token IS NULL THEN
+        RETURN;
+    END IF;
+
     UPDATE main.users_devices
         SET updated_at = now()
         WHERE   user_id = i_user_id AND
                 device_type = t_device_type AND
-                push_token IS NOT DISTINCT FROM s_push_token;
+                push_token = s_push_token;
 
     IF NOT FOUND THEN
         INSERT INTO main.users_devices

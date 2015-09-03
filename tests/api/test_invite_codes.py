@@ -15,10 +15,16 @@ class InviteCodesTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         invite_codes = json.loads(response.content)
-        invite_code = invite_codes[0]
-        second_invite_code = invite_codes[1]
 
-        real_email = 'me@denismilovanov.net'
+        invite_code = second_invite_code = None
+
+        for code in invite_codes:
+            if code['status'] == 'free':
+                invite_code = code
+            if code['status'] == 'free' and invite_code:
+                second_invite_code = invite_codes[1]
+
+        real_email = 'TEST_EMAIL_me@denismilovanov.net'
 
         # update
 

@@ -7,15 +7,17 @@ logger = logging.getLogger(__name__)
 class EmailerException(Exception):
     pass
 
-class DevNullEmailer:
-    def send(self, email, content):
-        logger.info('Sending to ' + email + ' content: ' + content)
-        return True
-
 class MandrillEmailer:
     def send(self, email, content):
+        import re
+        m = re.search('TEST_EMAIL', email)
+        if m:
+            logger.info('Test send: ' + str(content))
+            return True
+
         try:
-            mandrill_client = mandrill.Mandrill('fDlj32_-RH461igdYhjZQg')
+            from H2O.settings import MANDRILL_API_KEY
+            mandrill_client = mandrill.Mandrill(MANDRILL_API_KEY)
             message = {
                 'auto_html': None,
                 'auto_text': None,

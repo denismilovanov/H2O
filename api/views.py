@@ -363,6 +363,29 @@ def supports(request, whose, user):
 
     return ok_raw(supports)
 
+# supports
+@api_view(['POST'])
+@authorization_needed
+def post_support(request, user):
+    logger.info('METHOD: post_support')
+
+    try:
+        uuid = request.data['uuid']
+        amount = request.data['amount']
+        currency = request.data['currency']
+        is_anonymous = request.data['is_anonymous']
+    except Exception, e:
+        return bad_request(BadRequest(e))
+
+    supported_user = User.find_by_user_uuid(uuid, scope='all')
+
+    if not supported_user:
+        return not_found(UserIsNotFound())
+
+    transaction_id = Transaction.add_support(user['id'], supported_user['id'], amount, currency, is_anonymous)
+
+    return created(transaction_id=transaction_id)
+
 # receives
 @api_view(['GET'])
 @authorization_needed

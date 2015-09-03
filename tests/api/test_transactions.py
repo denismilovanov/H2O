@@ -10,6 +10,21 @@ class TransactionsTestCase(MyAPITestCase):
         headers = authorization['headers']
         session = authorization['session']
 
+        # do support
+
+        supports_controller = self.supports_controller
+        response = self.client.post(supports_controller, {
+            'amount': 10,
+            'uuid': '00000009-0000-0000-0000-000000000009',
+            'currency': 'usd',
+            'is_anonymous': False,
+        }, format=self.format, headers=headers)
+        print response.content
+        self.assertTrue(response.status_code == status.HTTP_201_CREATED)
+
+        supports = json.loads(response.content)
+
+
         # my supports
 
         supports_controller = self.supports_controller + '/my'
@@ -17,6 +32,7 @@ class TransactionsTestCase(MyAPITestCase):
             'from_date': 'now',
             'to_date': 'now',
         }, format=self.format, headers=headers)
+        print response.content
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         supports = json.loads(response.content)

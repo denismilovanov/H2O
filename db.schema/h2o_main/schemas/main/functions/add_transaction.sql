@@ -8,12 +8,13 @@ CREATE OR REPLACE FUNCTION main.add_transaction(
     u_counter_user_uuid uuid,
     t_direction main.transaction_direction,
     n_amount numeric,
-    t_currency main.currency
+    t_currency main.currency,
+    b_is_anonymous boolean
 )
-    RETURNS void AS
+    RETURNS bigint AS
 $BODY$
 DECLARE
-
+    i_id bigint;
 BEGIN
 
     INSERT INTO main.transactions
@@ -28,11 +29,12 @@ BEGIN
             t_currency,
             t_direction,
             'success'
-        );
+        )
+        RETURNING id INTO i_id;
 
     INSERT INTO main.transactions
         (user_id, user_uuid, counter_user_id, counter_user_uuid,
-        amount, currency, direction, status)
+        amount, currency, direction, status, is_anonymous)
         VALUES (
             i_counter_user_id,
             u_counter_user_uuid,
@@ -44,8 +46,11 @@ BEGIN
                 THEN 'receive'::main.transaction_direction
                 ELSE 'support'::main.transaction_direction
             END,
-            'success'
+            'success',
+            b_is_anonymous
         );
+
+    RETURN i_id;
 
 END
 $BODY$
@@ -59,6 +64,7 @@ GRANT EXECUTE ON FUNCTION main.add_transaction(
     u_counter_user_uuid uuid,
     t_direction main.transaction_direction,
     n_amount numeric,
-    t_currency main.currency
+    t_currency main.currency,
+    b_is_anonymous boolean
 ) TO h2o_front;
 

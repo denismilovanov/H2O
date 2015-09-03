@@ -77,4 +77,21 @@ class Transaction:
         # we are ready!
         return result
 
+    @staticmethod
+    @raw_queries()
+    def add_support(user_id, counter_user_id, amount, currency, is_anonymous, db):
+        user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
+        counter_user_uuid = User.get_all_by_ids([counter_user_id], scope='all')[0]['uuid']
+
+        return db.select_field('''
+            SELECT main.add_transaction(
+                %(user_id)s, %(user_uuid)s,
+                %(counter_user_id)s, %(counter_user_uuid)s,
+                'support', %(amount)s, %(currency)s, %(is_anonymous)s
+            );
+        ''',
+            user_id=user_id, user_uuid=user_uuid,
+            counter_user_id=counter_user_id, counter_user_uuid=counter_user_uuid,
+            amount=amount, currency=currency, is_anonymous=is_anonymous
+        )
 

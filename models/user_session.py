@@ -58,6 +58,14 @@ class UserSession:
 
     @staticmethod
     @raw_queries()
+    def drop_push_tokens(db):
+        from H2O.settings import IOS_PUSH_TOKEN_EXPIRES_IN, ANDROID_PUSH_TOKEN_EXPIRES_IN
+        db.select_field('''
+            SELECT main.drop_push_tokens(%(IOS_PUSH_TOKEN_EXPIRES_IN)s, %(ANDROID_PUSH_TOKEN_EXPIRES_IN)s);
+        ''', IOS_PUSH_TOKEN_EXPIRES_IN=IOS_PUSH_TOKEN_EXPIRES_IN, ANDROID_PUSH_TOKEN_EXPIRES_IN=ANDROID_PUSH_TOKEN_EXPIRES_IN)
+
+    @staticmethod
+    @raw_queries()
     def drop_refresh_tokens(db):
         from H2O.settings import ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN
         db.select_field('''

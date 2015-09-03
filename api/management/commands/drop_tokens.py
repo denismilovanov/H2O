@@ -10,3 +10,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         UserSession.drop_access_tokens()
         UserSession.drop_refresh_tokens()
+        UserSession.drop_push_tokens()

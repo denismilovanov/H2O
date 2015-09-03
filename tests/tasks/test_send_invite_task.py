@@ -2,12 +2,11 @@ from tasks.send_invite_task import SendInviteTask
 from django.test import SimpleTestCase
 from components.queue import MockTask
 from components.emailer import Emailer
-from tasks.send_invite_task import SendInviteTask
 
 class SendInviteTestCase(SimpleTestCase):
     def test1(self):
         mock = MockTask({
-            'email': 'me@denismilovanov.net',
+            'email': 'TEST_EMAIL_me@denismilovanov.net',
             'invite_code': 'Q123',
         })
 
@@ -16,3 +15,5 @@ class SendInviteTestCase(SimpleTestCase):
         result = task.run(emailer)
 
         self.assertTrue(result)
+
+

@@ -25,6 +25,15 @@ class UserFollow:
         if not result:
             raise UserIsAlreadyFollowed()
 
+        # send notification
+        # sending though queue
+        try:
+            from tasks.notify_follow_task import NotifyFollowTask
+            NotifyFollowTask(user_id, follow_user['id']).enqueue()
+        except Exception, e:
+            # there is no need to raise exception and scare user
+            logger.info(e)
+
         return True
 
     @staticmethod

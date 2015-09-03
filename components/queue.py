@@ -57,10 +57,10 @@ class MockTask:
         self.task_data = task_data
 
     def commit(self):
-        logger.info('commit')
+        logger.info('mock commit')
 
     def rollback(self, delay):
-        logger.info('rollback')
+        logger.info('mock rollback')
 
 class Queue:
     @staticmethod
@@ -73,6 +73,7 @@ class Queue:
 
     @staticmethod
     def push(queue, message):
+        logger.info('Enqueue into ' + str(queue) + ' ' + str(message))
         channel, connection = Queue.get_channel()
         channel.queue_declare(queue=queue, durable=True)
         channel.exchange_declare(exchange=queue, durable=True)
@@ -84,7 +85,6 @@ class Queue:
     @staticmethod
     def subscribe(queue, call):
         def callback(channel, method, properties, body):
-            print body
             task = json.loads(body)
             call(GeneralTask(task, QueueBag(channel, method, queue)))
 

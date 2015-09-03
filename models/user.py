@@ -139,6 +139,13 @@ class User:
 
     @staticmethod
     @raw_queries()
+    def get_devices(user_id, db):
+        return db.select_table('''
+            SELECT * FROM main.get_user_devices(%(user_id)s);
+        ''', user_id=user_id)
+
+    @staticmethod
+    @raw_queries()
     def get_all(limit, offset, scope, db):
         logger.info('get_all')
 

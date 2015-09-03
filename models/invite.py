@@ -81,7 +81,7 @@ class Invite:
         # sending though queue
         try:
             from tasks.send_invite_task import SendInviteTask
-            SendInviteTask(email, invite_code).push()
+            SendInviteTask(email, invite_code).enqueue()
         except Exception, e:
             # there is no need to raise exception and scare user
             # we shall perform regular checks of codes without sent emails

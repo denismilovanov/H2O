@@ -16,3 +16,7 @@ ALTER TABLE notifications.all
                     THEN counter_user_id IS NOT NULL
                     ELSE counter_user_id IS NULL
             END);
+
+CREATE INDEX all_user_id_idx
+    ON notifications.all
+    USING btree(user_id);

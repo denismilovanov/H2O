@@ -20,15 +20,15 @@ class SendInviteTask:
         task.queue_task = queue_task
         return task
 
-    # for push
+    # for enqueue
     def get(self):
         return {
             'email': self.email,
             'invite_code': self.invite_code,
         }
 
-    # push
-    def push(self):
+    # enqueue
+    def enqueue(self):
         from components.queue import Queue
         Queue.push('send_invites', self.get())
 

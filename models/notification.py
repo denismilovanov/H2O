@@ -9,6 +9,42 @@ logger = logging.getLogger(__name__)
 
 class Notification:
     @staticmethod
+    def process_notification(record):
+        data_for_result = {}
+        data = record['data'] # already json in db
+
+        # type with user
+        if record['type'] in ['somebody_follows_me', 'somebody_sent_me_money']:
+            try:
+                data_for_result['user'] = User.get_all_by_ids([record['counter_user_id']], scope='public_profile')[0]
+                # for json.dumps:
+                data_for_result['user']['uuid'] = str(data_for_result['user']['uuid'])
+            except Exception, e:
+                data_for_result['user'] = None
+
+        # type with money
+        if record['type'] == 'somebody_sent_me_money':
+            data_for_result['amount'] = data.get('amount', 0)
+            data_for_result['currency'] = data.get('currency', 'usd')
+            is_anonymous = data.get('is_anonymous', True)
+
+            if is_anonymous:
+                data_for_result['user'] = None
+
+        # type with notification_count
+        if record['type'] == 'new_invites_available':
+            try:
+                data_for_result['invites_count'] = data['invites_count']
+            except Exception, e:
+                data_for_result['invites_count'] = 0
+
+        # remove counter_user_id
+        del record['counter_user_id']
+
+        #
+        record['data'] = data_for_result
+
+    @staticmethod
     @raw_queries()
     def get_notifications_by_user_id(user_id, limit, offset, db):
         notifications = db.select_table('''
@@ -20,39 +56,7 @@ class Notification:
         result = []
 
         for record in notifications:
-            data_for_result = {}
-            data = record['data'] # already json in db
-
-            # type with user
-            if record['type'] in ['somebody_follows_me', 'somebody_sent_me_money']:
-                try:
-                    data_for_result['user'] = User.get_all_by_ids([record['counter_user_id']], scope='public_profile')[0]
-                    # for json.dumps:
-                    data_for_result['user']['uuid'] = str(data_for_result['user']['uuid'])
-                except Exception, e:
-                    data_for_result['user'] = None
-
-            # type with money
-            if record['type'] == 'somebody_sent_me_money':
-                try:
-                    data_for_result['amount'] = data['amount']
-                    data_for_result['currency'] = data['currency']
-                except Exception, e:
-                    data_for_result['amount'] = None
-                    data_for_result['currency'] = None
-
-            # type with notification_count
-            if record['type'] == 'new_invites_available':
-                try:
-                    data_for_result['invites_count'] = data['invites_count']
-                except Exception, e:
-                    data_for_result['invites_count'] = 0
-
-            # remove counter_user_id
-            del record['counter_user_id']
-
-            #
-            record['data'] = data_for_result
+            Notification.process_notification(record)
 
         # that is all
         return notifications
@@ -68,5 +72,28 @@ class Notification:
             raise ResourceIsNotFound()
 
         return True
+
+    @staticmethod
+    @raw_queries()
+    def add_notification(user_id, notification_type, data, counter_user_id, db):
+        return db.select_field('''
+            SELECT notifications.add_notification(%(user_id)s, %(notification_type)s, %(data)s, %(counter_user_id)s);
+        ''',
+            user_id=user_id, notification_type=notification_type,
+            data=json.dumps(data), counter_user_id=counter_user_id
+        )
+
+    @staticmethod
+    @raw_queries()
+    def get_notification_for_push(user_id, notification_id, db):
+        notification = db.select_record('''
+            SELECT  id, type, data, counter_user_id,
+                    public.format_datetime(created_at) AS created_at
+                FROM notifications.get_notification(%(user_id)s, %(notification_id)s);
+        ''', user_id=user_id, notification_id=notification_id)
+
+        Notification.process_notification(notification)
+
+        return notification
 
 

@@ -83,7 +83,7 @@ class Transaction:
         user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
         counter_user_uuid = User.get_all_by_ids([counter_user_id], scope='all')[0]['uuid']
 
-        return db.select_field('''
+        transaction_id = db.select_field('''
             SELECT main.add_transaction(
                 %(user_id)s, %(user_uuid)s,
                 %(counter_user_id)s, %(counter_user_uuid)s,
@@ -94,4 +94,15 @@ class Transaction:
             counter_user_id=counter_user_id, counter_user_uuid=counter_user_uuid,
             amount=amount, currency=currency, is_anonymous=is_anonymous
         )
+
+        # sending notification though queue
+        try:
+            from tasks.notify_support_task import NotifySupportTask
+            NotifySupportTask(user_id, counter_user_id, amount, currency, is_anonymous).enqueue()
+        except Exception, e:
+            # there is no need to raise exception and scare user
+            # we shall perform regular checks of codes without sent emails
+            logger.info(e)
+
+        return transaction_id
 

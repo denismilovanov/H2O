@@ -10,7 +10,5 @@ CREATE TABLE main.users_sessions (
     access_token varchar(40) NULL UNIQUE,
     refresh_token varchar(40) NULL UNIQUE,
     access_token_generated_at timestamptz NULL,
-    refresh_token_generated_at timestamptz NULL,
-
-    push_token varchar NULL
+    refresh_token_generated_at timestamptz NULL
 );

@@ -12,10 +12,10 @@ BEGIN
 
     RETURN QUERY    WITH tokens AS (
                         SELECT device_type, push_token
-                            FROM main.users_sessions
+                            FROM main.users_devices
                             WHERE   user_id = i_user_id AND
                                     push_token IS NOT NULL
-                            ORDER BY refresh_token_generated_at DESC
+                            ORDER BY updated_at DESC
                             LIMIT 10
                     )
                     SELECT DISTINCT device_type, push_token

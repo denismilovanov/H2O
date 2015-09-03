@@ -16,18 +16,23 @@ DECLARE
 BEGIN
 
     INSERT INTO main.users_sessions
-        (user_id, device_type, push_token,
+        (user_id, device_type,
         access_token, refresh_token, access_token_generated_at, refresh_token_generated_at)
         VALUES (
             i_user_id,
             t_device_type,
-            s_push_token,
             s_access_token,
             s_refresh_token,
             now(),
             now()
         )
         RETURNING id, access_token, refresh_token INTO r_result;
+
+    PERFORM main.upsert_user_push_token(
+        i_user_id,
+        t_device_type,
+        s_push_token
+    );
 
     RETURN r_result;
 

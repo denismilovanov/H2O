@@ -9,6 +9,8 @@ class AndroidPusher:
 
     # push
     def push(self, push_token, data):
+        logger.info('Push to token: ' + str(push_token) + ' ' + str(data))
+
         import re
         m = re.search('TEST_PUSH_TOKEN', push_token)
         if m:
@@ -25,7 +27,7 @@ class AndroidPusher:
             delay_while_idle=True,
             time_to_live=3600,
         )
-        print res
+        logger.info(res)
 
         return True
 
@@ -35,6 +37,8 @@ class ApplePusher:
 
     # push
     def push(self, push_token, data):
+        logger.info('Push to token: ' + str(push_token) + ' ' + str(data))
+
         import re
         m = re.search('TEST_PUSH_TOKEN', push_token)
         if m:

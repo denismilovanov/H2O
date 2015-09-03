@@ -150,7 +150,7 @@ def session(request, user):
             return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
 
         if push_token:
-            UserSession.update_push_token(user['id'], user['access_token'], push_token)
+            UserSession.upsert_push_token(user['id'], push_token)
 
             return no_content()
 

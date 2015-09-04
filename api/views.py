@@ -359,10 +359,24 @@ def supports(request, whose, user):
     except BadRequest, e:
         return bad_request(e)
 
-    # getting data
-    supports = Transaction.get_transactions(user['id'], whose, 'support', from_date, to_date)
+    supports = Transaction.get_transactions_by_dates(user['id'], whose, 'support', from_date, to_date)
 
     return ok_raw(supports)
+
+
+@api_view(['GET'])
+@authorization_needed
+def transactions(request, whose, user):
+    logger.info('METHOD: transactions')
+
+    try:
+        limit, offset = get_limit_and_offset(request)
+    except BadRequest, e:
+        return bad_request(e)
+
+    transactions = Transaction.get_transactions_by_offset(user['id'], whose, limit, offset)
+
+    return ok_raw(transactions)
 
 # supports
 @api_view(['POST'])
@@ -399,7 +413,7 @@ def receives(request, whose, user):
         return bad_request(e)
 
     # getting data
-    receives = Transaction.get_transactions(user['id'], whose, 'receive', from_date, to_date)
+    receives = Transaction.get_transactions_by_dates(user['id'], whose, 'receive', from_date, to_date)
 
     return ok_raw(receives)
 

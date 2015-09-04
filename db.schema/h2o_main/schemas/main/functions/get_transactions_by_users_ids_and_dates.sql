@@ -18,7 +18,7 @@ BEGIN
                     WHERE   user_id = ANY(ai_users_ids) AND
                             date(created_at) BETWEEN d_from_date AND d_to_date AND
                             direction = t_direction
-                    ORDER BY created_at ASC;
+                    ORDER BY created_at DESC;
 
 END
 $BODY$

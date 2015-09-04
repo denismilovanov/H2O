@@ -259,8 +259,8 @@ def invite_code(request, invite_code, user):
 
     return ok(email=email)
 
-# add follow
-@api_view(['GET', 'POST'])
+# add, get, or delete follow
+@api_view(['GET', 'POST', 'DELETE'])
 @authorization_needed
 def follow(request, user_uuid, user):
     logger.info('METHOD: follow')
@@ -274,6 +274,14 @@ def follow(request, user_uuid, user):
             return not_found(UserIsNotFound())
 
         return created()
+
+    elif request.method == 'DELETE':
+        try:
+            UserFollow.delete_user_follow(user['id'], user_uuid)
+        except UserIsNotFound, e:
+            return not_found(UserIsNotFound())
+
+        return no_content()
 
     else:
         return follows_inner(request, user_uuid, user)

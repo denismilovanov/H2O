@@ -40,6 +40,21 @@ class UserFollow:
 
     @staticmethod
     @raw_queries()
+    def delete_user_follow(user_id, follow_user_uuid, db):
+        follow_user = User.find_by_user_uuid(follow_user_uuid, scope='all')
+
+        if not follow_user:
+            raise UserIsNotFound()
+
+        result = db.select_field('''
+            SELECT main.delete_user_follow(%(user_id)s, %(follow_user_id)s);
+        ''', user_id=user_id, follow_user_id=follow_user['id'])
+
+        if not result:
+            raise UserIsNotFound()
+
+    @staticmethod
+    @raw_queries()
     def get_user_follows(user_id, limit, offset, search_query, db):
         users = db.select_table('''
             SELECT main.get_user_follows_ids(%(user_id)s, %(limit)s, %(offset)s) AS follow_user_id;

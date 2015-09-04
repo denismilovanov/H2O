@@ -39,4 +39,16 @@ class FollowsTestCase(MyAPITestCase):
         response = self.client.get(follows_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
+        # delete
+
+        follows_controller = self.follows_controller + '/00000009-0000-0000-0000-000000000009'
+        response = self.client.delete(follows_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
+
+        # delete again
+
+        follows_controller = self.follows_controller + '/00000009-0000-0000-0000-000000000009'
+        response = self.client.delete(follows_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_404_NOT_FOUND)
+
 

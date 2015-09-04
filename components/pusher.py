@@ -10,24 +10,34 @@ class AndroidPusher:
     # push
     def push(self, push_token, data):
         logger.info('Push to token: ' + str(push_token) + ' ' + str(data))
+        try:
+            # token is test?
+            import re
+            m = re.search('TEST_PUSH_TOKEN', push_token)
+            if m:
+                logger.info('That was a test push')
+                return True
 
-        import re
-        m = re.search('TEST_PUSH_TOKEN', push_token)
-        if m:
-            logger.info('Test push: ' + str(data))
-            return True
+            # token is real
 
-        if not AndroidPusher.gcm:
-            from H2O.settings import GCM_API_KEY
-            AndroidPusher.gcm = GCM(GCM_API_KEY)
+            # create GCM
+            if not AndroidPusher.gcm:
+                from H2O.settings import GCM_API_KEY
+                AndroidPusher.gcm = GCM(GCM_API_KEY)
 
-        res = AndroidPusher.gcm.json_request(
-            registration_ids=[push_token],
-            data=data,
-            delay_while_idle=True,
-            time_to_live=3600,
-        )
-        logger.info(res)
+            # sending
+            res = AndroidPusher.gcm.json_request(
+                registration_ids=[push_token],
+                data={
+                    'notification': data,
+                },
+                delay_while_idle=True,
+                time_to_live=3600,
+            )
+            logger.info(res)
+
+        except Exception, e:
+            raise PusherException(e)
 
         return True
 
@@ -39,11 +49,15 @@ class ApplePusher:
     def push(self, push_token, data):
         logger.info('Push to token: ' + str(push_token) + ' ' + str(data))
 
-        import re
-        m = re.search('TEST_PUSH_TOKEN', push_token)
-        if m:
-            logger.info('Test push: ' + str(data))
-            return True
+        try:
+            import re
+            m = re.search('TEST_PUSH_TOKEN', push_token)
+            if m:
+                logger.info('That was a test push')
+                return True
+
+        except Exception, e:
+            raise PusherException(e)
 
         return True
 

@@ -11,9 +11,7 @@ class SendInviteTestCase(SimpleTestCase):
         })
 
         task = SendInviteTask.create_from_queue_task(mock)
-        emailer = Emailer.get()
-        result = task.run(emailer)
-
+        result = task.run()
         self.assertTrue(result)
 
 

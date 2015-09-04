@@ -33,8 +33,11 @@ class SendInviteTask:
         Queue.push('send_invites', self.get())
 
     # run this kind of tasks
-    def run(self, emailer):
+    def run(self):
         try:
+            #
+            emailer = Emailer.get()
+            #
             email = self.email
             invite_code = self.invite_code
             # template

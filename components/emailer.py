@@ -48,6 +48,12 @@ class MandrillEmailer:
             raise EmailerException(e)
 
 class Emailer:
+    emailer = None
+
     @staticmethod
     def get():
-        return MandrillEmailer()
+        if Emailer.emailer:
+            return Emailer.emailer
+
+        Emailer.emailer = MandrillEmailer()
+        return Emailer.emailer

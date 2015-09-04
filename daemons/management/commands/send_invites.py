@@ -9,13 +9,10 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        # emailer for everything
-        emailer = Emailer.get()
-
         def handler(queue_record):
             # send one email
             from tasks.send_invite_task import SendInviteTask
-            SendInviteTask.create_from_queue_task(queue_record).run(emailer)
+            SendInviteTask.create_from_queue_task(queue_record).run()
 
         # sub
         Queue.subscribe('send_invites', handler)

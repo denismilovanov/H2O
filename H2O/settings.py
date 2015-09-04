@@ -30,10 +30,11 @@ IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
 
 INSTALLED_APPS = (
     'api',
-    'admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.staticfiles',
+    'daemons',
+    #'admin',
+    #'django.contrib.auth',
+    #'django.contrib.contenttypes',
+    #'django.contrib.staticfiles',
     'rest_framework',
 )
 

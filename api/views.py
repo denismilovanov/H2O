@@ -291,6 +291,7 @@ def follows_inner(request, user_uuid, user):
     #input
     try:
         limit, offset = get_limit_and_offset(request)
+        search_query = request.GET.get('search_query')
     except Exception, e:
         return bad_request(BadRequest(e))
 
@@ -305,12 +306,12 @@ def follows_inner(request, user_uuid, user):
         user_id = user_by_uuid['id']
 
     # get list
-    follows = UserFollow.get_user_follows(user_id, limit, offset)
+    follows = UserFollow.get_user_follows(user_id, limit, offset, search_query)
 
     # if we need to get list of other user's follows
     # then we shall calculate i_follow
     if user['id'] != user_id:
-        my_follows = UserFollow.get_user_follows(user['id'], int(1e6), 0)
+        my_follows = UserFollow.get_user_follows(user['id'], int(1e6), 0, search_query)
 
         my_follows_uuids = [my_follow['uuid'] for my_follow in my_follows]
 

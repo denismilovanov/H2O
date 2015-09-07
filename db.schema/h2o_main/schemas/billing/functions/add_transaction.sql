@@ -1,12 +1,12 @@
 ----------------------------------------------------------------------------
 --
 
-CREATE OR REPLACE FUNCTION main.add_transaction(
+CREATE OR REPLACE FUNCTION billing.add_transaction(
     i_user_id integer,
     u_user_uuid uuid,
     i_counter_user_id integer,
     u_counter_user_uuid uuid,
-    t_direction main.transaction_direction,
+    t_direction billing.transaction_direction,
     n_amount numeric,
     t_currency main.currency,
     b_is_anonymous boolean
@@ -17,7 +17,7 @@ DECLARE
     i_id bigint;
 BEGIN
 
-    INSERT INTO main.transactions
+    INSERT INTO billing.transactions
         (user_id, user_uuid, counter_user_id, counter_user_uuid,
         amount, currency, direction, status)
         VALUES (
@@ -32,7 +32,7 @@ BEGIN
         )
         RETURNING id INTO i_id;
 
-    INSERT INTO main.transactions
+    INSERT INTO billing.transactions
         (user_id, user_uuid, counter_user_id, counter_user_uuid,
         amount, currency, direction, status, is_anonymous)
         VALUES (
@@ -42,9 +42,9 @@ BEGIN
             u_user_uuid,
             n_amount,
             t_currency,
-            CASE WHEN t_direction = 'support'::main.transaction_direction
-                THEN 'receive'::main.transaction_direction
-                ELSE 'support'::main.transaction_direction
+            CASE WHEN t_direction = 'support'::billing.transaction_direction
+                THEN 'receive'::billing.transaction_direction
+                ELSE 'support'::billing.transaction_direction
             END,
             'success',
             b_is_anonymous
@@ -57,12 +57,12 @@ $BODY$
     LANGUAGE plpgsql VOLATILE SECURITY DEFINER;
 
 
-GRANT EXECUTE ON FUNCTION main.add_transaction(
+GRANT EXECUTE ON FUNCTION billing.add_transaction(
     i_user_id integer,
     u_user_uuid uuid,
     i_counter_user_id integer,
     u_counter_user_uuid uuid,
-    t_direction main.transaction_direction,
+    t_direction billing.transaction_direction,
     n_amount numeric,
     t_currency main.currency,
     b_is_anonymous boolean

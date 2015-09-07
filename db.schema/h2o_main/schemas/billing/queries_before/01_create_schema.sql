@@ -1,0 +1,3 @@
+CREATE SCHEMA billing;
+
+GRANT USAGE ON SCHEMA billing TO PUBLIC;

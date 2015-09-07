@@ -19,7 +19,7 @@ class Transaction:
             SELECT ''' + Transaction.scope('public') + ''',
                     public.format_datetime(created_at) AS created_at,
                     counter_user_id, user_id
-                FROM main.get_transactions_by_users_ids_and_dates(%(users_ids)s, %(from_date)s::date, %(to_date)s::date, %(direction)s);
+                FROM billing.get_transactions_by_users_ids_and_dates(%(users_ids)s, %(from_date)s::date, %(to_date)s::date, %(direction)s);
         ''', users_ids=users_ids, from_date=from_date, to_date=to_date, direction=direction)
 
     @staticmethod
@@ -28,7 +28,7 @@ class Transaction:
             SELECT ''' + Transaction.scope('public') + ''',
                     public.format_datetime(created_at) AS created_at,
                     counter_user_id, user_id
-                FROM main.get_transactions_by_users_ids_and_offset(%(users_ids)s, %(limit)s, %(offset)s);
+                FROM billing.get_transactions_by_users_ids_and_offset(%(users_ids)s, %(limit)s, %(offset)s);
         ''', users_ids=users_ids, limit=limit, offset=offset)
 
     @staticmethod
@@ -120,7 +120,7 @@ class Transaction:
         counter_user_uuid = User.get_all_by_ids([counter_user_id], scope='all')[0]['uuid']
 
         transaction_id = db.select_field('''
-            SELECT main.add_transaction(
+            SELECT billing.add_transaction(
                 %(user_id)s, %(user_uuid)s,
                 %(counter_user_id)s, %(counter_user_uuid)s,
                 'support', %(amount)s, %(currency)s, %(is_anonymous)s

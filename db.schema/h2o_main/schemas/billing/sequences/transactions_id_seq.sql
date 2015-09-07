@@ -1,4 +1,4 @@
-CREATE SEQUENCE main.transactions_id_seq
+CREATE SEQUENCE billing.transactions_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE

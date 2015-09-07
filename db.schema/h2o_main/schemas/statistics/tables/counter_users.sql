@@ -3,7 +3,7 @@
 
 CREATE TABLE statistics.counter_users (
     user_id integer NOT NULL REFERENCES main.users (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    counter_user_id integer NOT NULL,
+    counter_user_id integer NOT NULL, -- 0 для анонимных поступлений
     transaction_direction main.transaction_direction NOT NULL,
 
     transactions_count integer NOT NULL DEFAULT 0,

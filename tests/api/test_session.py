@@ -40,7 +40,7 @@ class SessionTestCase(MyAPITestCase):
 
         # not found
 
-        user_controller = self.user_controller + '00000000-0000-0000-0000-000000000000'
+        user_controller = self.user_controller + '10000000-0000-0000-0000-000000000000'
         response = self.client.get(user_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_404_NOT_FOUND)
 

@@ -5,25 +5,53 @@ from rest_framework import status
 import json
 
 class TransactionsTestCase(MyAPITestCase):
+    def get_balance(self, headers):
+        user_controller = self.user_controller + 'me'
+        response = self.client.get(user_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        balance = json.loads(response.content)['balance']
+        return balance
+
     def test1(self):
         authorization = self.authorization()
         headers = authorization['headers']
         session = authorization['session']
 
+        # balance
+        balance1 = self.get_balance(headers)
+
         # do support
+
+        amount = 10
 
         supports_controller = self.supports_controller
         response = self.client.post(supports_controller, {
-            'amount': 10,
+            'amount': amount,
             'uuid': '00000009-0000-0000-0000-000000000009',
             'currency': 'usd',
-            'is_anonymous': False,
+            'is_anonymous': True,
         }, format=self.format, headers=headers)
-        print response.content
         self.assertTrue(response.status_code == status.HTTP_201_CREATED)
 
         supports = json.loads(response.content)
 
+        # balance
+        balance2 = self.get_balance(headers)
+
+        # check balances
+        self.assertTrue(balance1 - amount == balance2)
+
+        # stat
+
+        statistics_controller = self.statistics_controller + '/my/overall'
+        response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        stat = json.loads(response.content)
+
+        statistics_controller = self.statistics_controller + '/my/counter_users/supports'
+        response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        stat = json.loads(response.content)
 
         # my supports
 
@@ -32,11 +60,8 @@ class TransactionsTestCase(MyAPITestCase):
             'from_date': 'now',
             'to_date': 'now',
         }, format=self.format, headers=headers)
-        print response.content
         self.assertTrue(response.status_code == status.HTTP_200_OK)
-
         supports = json.loads(response.content)
-        print supports
 
         # my follows supports
 
@@ -48,7 +73,6 @@ class TransactionsTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         supports = json.loads(response.content)
-        print supports
 
         # my receives
 
@@ -60,7 +84,6 @@ class TransactionsTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         receives = json.loads(response.content)
-        print receives
 
         # my follows receives
 
@@ -72,7 +95,6 @@ class TransactionsTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         receives = json.loads(response.content)
-        print receives
 
         # my transactions = supports + receives
 
@@ -84,7 +106,6 @@ class TransactionsTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         transactions = json.loads(response.content)
-        print transactions
 
         # follows transactions = supports + receives
 
@@ -96,8 +117,6 @@ class TransactionsTestCase(MyAPITestCase):
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         transactions = json.loads(response.content)
-        print transactions
-
 
 
 

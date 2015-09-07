@@ -19,7 +19,7 @@ BEGIN
 
     INSERT INTO billing.transactions
         (user_id, user_uuid, counter_user_id, counter_user_uuid,
-        amount, currency, direction, status)
+        amount, currency, direction, status, is_anonymous)
         VALUES (
             i_user_id,
             u_user_uuid,
@@ -28,27 +28,10 @@ BEGIN
             n_amount,
             t_currency,
             t_direction,
-            'success'
-        )
-        RETURNING id INTO i_id;
-
-    INSERT INTO billing.transactions
-        (user_id, user_uuid, counter_user_id, counter_user_uuid,
-        amount, currency, direction, status, is_anonymous)
-        VALUES (
-            i_counter_user_id,
-            u_counter_user_uuid,
-            i_user_id,
-            u_user_uuid,
-            n_amount,
-            t_currency,
-            CASE WHEN t_direction = 'support'::billing.transaction_direction
-                THEN 'receive'::billing.transaction_direction
-                ELSE 'support'::billing.transaction_direction
-            END,
             'success',
             b_is_anonymous
-        );
+        )
+        RETURNING id INTO i_id;
 
     RETURN i_id;
 

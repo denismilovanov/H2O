@@ -64,3 +64,35 @@ class Statistics:
 
         return True
 
+    @staticmethod
+    @raw_queries()
+    def update_statistics_via_transaction(user_id, transaction_id, db):
+        # get transactions
+        from models.transaction import Transaction
+        transaction = Transaction.get_transaction_by_id(user_id, transaction_id)
+
+        # skip
+        if not transaction:
+            return True
+        if transaction['status'] != 'success':
+            return True
+        if transaction['direction'] not in ['support', 'receive']:
+            return True
+
+        # do update
+        db.select_field('''
+            SELECT statistics.update_statistics_via_transaction(
+                %(user_id)s, %(counter_user_id)s, %(direction)s,
+                %(amount)s, %(currency)s, %(is_anonymous)s
+            );
+        ''',
+            user_id=user_id,
+            counter_user_id=transaction['counter_user_id'],
+            direction=transaction['direction'],
+            amount=transaction['amount'],
+            currency=transaction['currency'],
+            is_anonymous=transaction['is_anonymous']
+        )
+
+        return True
+

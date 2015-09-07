@@ -9,7 +9,7 @@ class UserAccount:
     @raw_queries()
     def get_user_account(user_id, db):
         account = db.select_record('''
-            SELECT * FROM main.get_user_account(%(user_id)s);
+            SELECT * FROM billing.get_user_account(%(user_id)s);
         ''', user_id=user_id)
 
         return account
@@ -18,7 +18,7 @@ class UserAccount:
     @raw_queries()
     def create_user_accounts(user_id, db):
         db.select_field('''
-            SELECT main.create_user_accounts(%(user_id)s);
+            SELECT billing.create_user_accounts(%(user_id)s);
         ''', user_id=user_id)
 
         return True

@@ -1,17 +1,17 @@
 ----------------------------------------------------------------------------
 --
 
-CREATE OR REPLACE FUNCTION main.get_user_account(
+CREATE OR REPLACE FUNCTION billing.get_user_account(
     i_user_id integer
 )
-    RETURNS main.users_accounts AS
+    RETURNS billing.users_accounts AS
 $BODY$
 DECLARE
-    r_user_account main.users_accounts;
+    r_user_account billing.users_accounts;
 BEGIN
 
     SELECT * INTO r_user_account
-        FROM main.users_accounts
+        FROM billing.users_accounts
         WHERE   user_id = i_user_id AND
                 currency = 'usd';
 
@@ -22,6 +22,6 @@ $BODY$
     LANGUAGE plpgsql VOLATILE SECURITY DEFINER;
 
 
-GRANT EXECUTE ON FUNCTION main.get_user_account(
+GRANT EXECUTE ON FUNCTION billing.get_user_account(
     i_user_id integer
 ) TO h2o_front;

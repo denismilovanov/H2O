@@ -55,6 +55,15 @@ def raw_queries(dbs=[]):
             except:
                 return None
 
+        def begin(db):
+            return db.query('BEGIN')
+
+        def commit(db):
+            return db.query('COMMIT')
+
+        def rollback(db):
+            return db.query('ROLLBACK')
+
         def query(db, query, *args, **kwargs):
             return db.execute(query, kwargs)
 
@@ -72,6 +81,9 @@ def raw_queries(dbs=[]):
                 cursor.select_table = types.MethodType(select_table, cursor)
                 cursor.select_record = types.MethodType(select_record, cursor)
                 cursor.select_field = types.MethodType(select_field, cursor)
+                cursor.begin = types.MethodType(begin, cursor)
+                cursor.commit = types.MethodType(commit, cursor)
+                cursor.rollback = types.MethodType(rollback, cursor)
                 cursor.query = types.MethodType(query, cursor)
                 kwargs[name if name != 'default' else 'db'] = cursor
             return func(*args, **kwargs)

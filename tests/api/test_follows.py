@@ -23,14 +23,17 @@ class FollowsTestCase(MyAPITestCase):
 
         # not found
 
-        follows_controller = self.follows_controller + '/00000000-0000-0000-0000-000000000000'
+        follows_controller = self.follows_controller + '/10000000-0000-0000-0000-000000000000'
         response = self.client.post(follows_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_404_NOT_FOUND)
 
         # get my
 
         follows_controller = self.follows_controller + '/my'
-        response = self.client.get(follows_controller, {}, format=self.format, headers=headers)
+        response = self.client.get(follows_controller, {
+            'limit': 10,
+            'offset': 0,
+        }, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
         # get others

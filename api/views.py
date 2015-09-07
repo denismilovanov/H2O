@@ -23,6 +23,9 @@ def get_limit_and_offset(request):
     if offset < 0:
         offset = 0
 
+    if limit > 100:
+        limit = 100
+
     return limit, offset
     # raise Exception()
 
@@ -327,7 +330,7 @@ def follows_inner(request, user_uuid, user):
             follow['i_follow'] = follow['uuid'] in my_follows_uuids
     else:
         for follow in follows:
-            follow['i_follow'] = False
+            follow['i_follow'] = True
 
     # that's all
     return ok_raw(follows)

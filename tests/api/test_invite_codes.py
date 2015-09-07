@@ -19,10 +19,11 @@ class InviteCodesTestCase(MyAPITestCase):
         invite_code = second_invite_code = None
 
         for code in invite_codes:
-            if code['status'] == 'free':
+            if code['status'] == 'free' and not invite_code:
                 invite_code = code
-            if code['status'] == 'free' and invite_code:
-                second_invite_code = invite_codes[1]
+                continue
+            if code['status'] == 'free' and invite_code and not second_invite_code:
+                second_invite_code = code
 
         real_email = 'TEST_EMAIL_me@denismilovanov.net'
 

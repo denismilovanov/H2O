@@ -33,7 +33,7 @@ INSTALLED_APPS = (
     'daemons',
     #'admin',
     #'django.contrib.auth',
-    #'django.contrib.contenttypes',
+    'django.contrib.contenttypes',
     #'django.contrib.staticfiles',
     'rest_framework',
 )

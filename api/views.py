@@ -13,10 +13,15 @@ def get_limit_and_offset(request):
     limit = request.GET.get('limit', None)
     offset = request.GET.get('offset', None)
 
+    if limit:
+        limit = int(limit)
+    if offset:
+        offset = int(offset)
+
     if not limit:
-        limit = request.data.get('limit', 20)
+        limit = int(request.data.get('limit', 20))
     if not offset:
-        offset = request.data.get('offset', 0)
+        offset = int(request.data.get('offset', 0))
 
     if limit < 0:
         limit = 20

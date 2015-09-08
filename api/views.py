@@ -211,12 +211,14 @@ def profile(request, user):
         try:
             visibility = request.data.get('visibility')
             status = request.data.get('status')
+            push_notifications = request.data.get('push_notifications')
+            is_deleted = request.data.get('is_deleted')
             logger.info(request.data)
 
         except Exception, e:
             return bad_request(BadRequest(e))
 
-        User.update_profile(user['id'], visibility, status)
+        User.update_profile(user['id'], visibility, status, push_notifications, is_deleted)
 
     elif request.method == 'DELETE':
         User.delete_profile(user['id'])

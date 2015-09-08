@@ -19,5 +19,11 @@ class ProfileTestCase(MyAPITestCase):
         response = self.client.delete(self.profile_controller, data, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
 
+        data = {
+            'is_deleted': False,
+        }
+        response = self.client.patch(self.profile_controller, data, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
+
 
 

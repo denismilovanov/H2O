@@ -95,6 +95,9 @@ class User:
                 SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s);
             ''', user_id=user_id, name=user_data['name'], avatar_url=user_data['avatar_url'])
 
+        # for is_deleted in response
+        user = User.find_by_user_uuid(user_uuid, scope='all')
+
         # upsert network
         UserNetwork.upsert_network(user_id, network_id, user_network_id, access_token)
 
@@ -104,6 +107,7 @@ class User:
             'is_new': is_new,
             'avatar_url': user_data['avatar_url'],
             'name': user_data['name'],
+            'is_deleted': user['is_deleted'],
         }, user_id
 
     @staticmethod
@@ -175,12 +179,15 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def update_profile(user_id, visibility, status, db):
+    def update_profile(user_id, visibility, status, push_notifications, is_deleted, db):
         logger.info('update_profile')
 
         db.select_field('''
             SELECT main.update_user_profile(%(user_id)s, %(visibility)s, %(status)s);
         ''', user_id=user_id, visibility=visibility, status=status)
+
+        if is_deleted == False:
+            User.undelete_profile(user_id)
 
         return True
 
@@ -191,6 +198,17 @@ class User:
 
         db.select_field('''
             SELECT main.delete_user_profile(%(user_id)s);
+        ''', user_id=user_id)
+
+        return True
+
+    @staticmethod
+    @raw_queries()
+    def undelete_profile(user_id, db):
+        logger.info('undelete_profile')
+
+        db.select_field('''
+            SELECT main.undelete_user_profile(%(user_id)s);
         ''', user_id=user_id)
 
         return True

@@ -33,14 +33,16 @@ class SendExceptionTask:
         try:
             import traceback
             self.exception.traceback = traceback.format_exc()
-        except:
+        except Exception, e:
+            logger.warn(e)
             pass
 
         # push
         try:
             from components.queue import Queue
             Queue.push('send_exceptions', self.get())
-        except:
+        except Exception, e:
+            logger.warn(e)
             pass
 
     # run this kind of tasks

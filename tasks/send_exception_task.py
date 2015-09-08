@@ -66,7 +66,7 @@ class SendExceptionTask:
             if not email:
                 email = DEVELOPER_EMAIL
 
-            emailer.send(email, exception)
+            emailer.send(email, exception, 'Exception')
             # remove task
             self.queue_task.commit()
         except EmailerException, e:

@@ -43,7 +43,7 @@ class SendInviteTask:
             # template
             invite = SendInviteTask.template().render(invite_code=invite_code)
             # send
-            emailer.send(email, invite)
+            emailer.send(email, invite, 'Registration at H2O project')
             # change status
             Invite.send_invite_code(invite_code)
             # remove task

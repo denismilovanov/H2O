@@ -8,7 +8,7 @@ class EmailerException(Exception):
     pass
 
 class MandrillEmailer:
-    def send(self, email, content):
+    def send(self, email, content, subject):
         import re
         m = re.search('TEST_EMAIL', email)
         if m:
@@ -28,7 +28,7 @@ class MandrillEmailer:
                 'preserve_recipients': None,
                 'return_path_domain': None,
                 'signing_domain': None,
-                'subject': 'Registration at H2O project',
+                'subject': subject,
                 'to': [{'email': email}],
             }
 

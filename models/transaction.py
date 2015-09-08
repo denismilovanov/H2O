@@ -127,6 +127,29 @@ class Transaction:
         return result
 
     @staticmethod
+    def add_transaction_raw(db, user_id, user_uuid, counter_user_id, counter_user_uuid, direction,
+                            amount, currency, is_anonymous):
+
+        return db.select_field('''
+            SELECT billing.add_transaction(
+                %(user_id)s, %(user_uuid)s,
+                %(counter_user_id)s, %(counter_user_uuid)s,
+                %(direction)s, %(amount)s, %(currency)s, %(is_anonymous)s
+            );
+        ''',
+            user_id=user_id, user_uuid=user_uuid,
+            counter_user_id=counter_user_id, counter_user_uuid=counter_user_uuid,
+            direction=direction,
+            amount=amount, currency=currency, is_anonymous=is_anonymous
+        )
+
+    @staticmethod
+    def update_user_balance(db, user_id, amount, currency):
+        db.select_field('''
+            SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(currency)s);
+        ''', user_id=user_id, amount=amount, currency=currency)
+
+    @staticmethod
     @raw_queries()
     def add_support(user_id, counter_user_id, amount, currency, is_anonymous, db):
         amount = float(amount)
@@ -136,40 +159,28 @@ class Transaction:
         try:
             with db.t():
                 # support
-                transaction_id = db.select_field('''
-                    SELECT billing.add_transaction(
-                        %(user_id)s, %(user_uuid)s,
-                        %(counter_user_id)s, %(counter_user_uuid)s,
-                        'support', %(amount)s, %(currency)s, %(is_anonymous)s
-                    );
-                ''',
-                    user_id=user_id, user_uuid=user_uuid,
-                    counter_user_id=counter_user_id, counter_user_uuid=counter_user_uuid,
-                    amount=amount, currency=currency, is_anonymous=is_anonymous
+                transaction_id = Transaction.add_transaction_raw(
+                    db,
+                    user_id, user_uuid,
+                    counter_user_id, counter_user_uuid,
+                    'support',
+                    amount, currency, is_anonymous
                 )
 
                 # decrease balance
-                db.select_field('''
-                    SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(currency)s);
-                ''', user_id=user_id, amount=amount * -1, currency=currency)
+                Transaction.update_user_balance(db, user_id, amount * -1, currency)
 
                 # receive
-                counter_transaction_id = db.select_field('''
-                    SELECT billing.add_transaction(
-                        %(counter_user_id)s, %(counter_user_uuid)s,
-                        %(user_id)s, %(user_uuid)s,
-                        'receive', %(amount)s, %(currency)s, %(is_anonymous)s
-                    );
-                ''',
-                    user_id=user_id, user_uuid=user_uuid,
-                    counter_user_id=counter_user_id, counter_user_uuid=counter_user_uuid,
-                    amount=amount, currency=currency, is_anonymous=is_anonymous
+                counter_transaction_id = Transaction.add_transaction_raw(
+                    db,
+                    counter_user_id, counter_user_uuid,
+                    user_id, user_uuid,
+                    'receive',
+                    amount, currency, is_anonymous
                 )
 
                 # increase balance
-                db.select_field('''
-                    SELECT billing.update_user_balance(%(counter_user_id)s, %(amount)s, %(currency)s);
-                ''', counter_user_id=counter_user_id, amount=amount, currency=currency)
+                Transaction.update_user_balance(db, counter_user_id, amount, currency)
 
         except Exception, e:
             raise e
@@ -198,16 +209,11 @@ class Transaction:
         amount = float(amount)
         user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
 
-        transaction_id = db.select_field('''
-            SELECT billing.add_transaction(
-                %(user_id)s, %(user_uuid)s,
-                NULL, NULL,
-                'deposit', %(amount)s, %(currency)s,
-                FALSE
-            );
-        ''',
-            user_id=user_id, user_uuid=user_uuid,
-            amount=amount, currency=currency
+        transaction_id = Transaction.add_transaction_raw(
+            db,
+            user_id, user_uuid,
+            None, None,
+            amount, currency, False
         )
 
         return transaction_id

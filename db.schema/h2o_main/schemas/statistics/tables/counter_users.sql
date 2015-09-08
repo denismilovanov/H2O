@@ -7,7 +7,7 @@ CREATE TABLE statistics.counter_users (
     transaction_direction main.transaction_direction NOT NULL,
 
     transactions_count integer NOT NULL DEFAULT 0,
-    amount_sum numeric(15,2) NOT NULL DEFAULT 0,
+    transactions_amount_sum numeric(15,2) NOT NULL DEFAULT 0,
 
     CONSTRAINT counter_users_pkey PRIMARY KEY(user_id, counter_user_id, transaction_direction)
 );

@@ -10,7 +10,7 @@ class Statistics:
     @raw_queries()
     def get_statistics_overall(user_id, db):
         statistics = db.select_table('''
-            SELECT transaction_direction, transactions_count, users_count
+            SELECT transaction_direction, transactions_count, users_count, transactions_amount_sum
                 FROM statistics.get_statistics_overall(%(user_id)s);
         ''', user_id=user_id)
 
@@ -19,6 +19,7 @@ class Statistics:
         for record in statistics:
             result[str(record['transaction_direction']) + 's'] = {
                 'transactions_count': record['transactions_count'],
+                'transactions_amount_sum': record['transactions_amount_sum'],
                 'users_count': record['users_count'],
                 'users': Statistics.get_statistics_counter_users_inner(user_id, record['transaction_direction'], 5, 0, db)
             }
@@ -38,8 +39,9 @@ class Statistics:
                 FROM statistics.get_statistics_counter_users(%(user_id)s, %(transaction_direction)s, %(limit)s, %(offset)s);
         ''', user_id=user_id, transaction_direction=transaction_direction, limit=limit, offset=offset)
 
-        # build hash from transactons_count
+        # build hash from transactons_*
         transactions_counts = dict([(record['counter_user_id'], record['transactions_count']) for record in statistics])
+        transactions_amounts_sums = dict([(record['counter_user_id'], record['transactions_amount_sum']) for record in statistics])
 
         # collect users ids
         users_ids = [record['counter_user_id'] for record in statistics]
@@ -50,6 +52,7 @@ class Statistics:
         # add transactions_count to user
         for user in users:
             user['transactions_count'] = transactions_counts[user['id']]
+            user['transactions_amount_sum'] = transactions_amounts_sums[user['id']]
             del user['id']
 
         #

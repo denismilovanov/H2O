@@ -21,14 +21,14 @@ BEGIN
 
     UPDATE statistics.counter_users
         SET transactions_count = transactions_count + 1,
-            amount_sum = amount_sum + n_amount
+            transactions_amount_sum = transactions_amount_sum + n_amount
         WHERE   user_id = i_user_id AND
                 counter_user_id IS NOT DISTINCT FROM i_counter_user_id AND
                 transaction_direction = t_direction;
 
     IF NOT FOUND THEN
         INSERT INTO statistics.counter_users
-            (user_id, counter_user_id, transaction_direction, transactions_count, amount_sum)
+            (user_id, counter_user_id, transaction_direction, transactions_count, transactions_amount_sum)
             VALUES (
                 i_user_id,
                 i_counter_user_id,
@@ -48,17 +48,19 @@ BEGIN
 
     UPDATE statistics.overall
         SET transactions_count = transactions_count + 1,
+            transactions_amount_sum = transactions_amount_sum + n_amount,
             users_count = i_users_count
         WHERE   user_id = i_user_id AND
                 transaction_direction = t_direction;
 
     IF NOT FOUND THEN
         INSERT INTO statistics.overall
-            (user_id, transaction_direction, transactions_count, users_count)
+            (user_id, transaction_direction, transactions_count, transactions_amount_sum, users_count)
             VALUES (
                 i_user_id,
                 t_direction,
                 1,
+                n_amount,
                 i_users_count
             );
     END IF;

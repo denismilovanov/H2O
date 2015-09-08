@@ -63,14 +63,12 @@ def raw_queries(dbs=[]):
 
         def inner(*args, **kwargs):
             for db in dbs:
-                if db == 'matches':
-                    user_id = args[0]
-                    # there is only 1 database now, with number 0
-                    db = 'matches' + str(user_id % 1)
-                    name = 'matches'
-                else:
-                    name = db
-
+                # if db == 'smth_sharded':
+                #    user_id = args[0]
+                #    db = 'smth_sharded' + str(user_id % 1)
+                #    name = 'smth_sharded'
+                # else:
+                name = db
                 cursor = connections[db].cursor()
                 cursor.select_table = types.MethodType(select_table, cursor)
                 cursor.select_record = types.MethodType(select_record, cursor)

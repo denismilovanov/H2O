@@ -4,10 +4,10 @@ import json
 
 
 class MyAPITestCase(APITestCase):
-    def authorization(self):
+    def authorization(self, user_id=1):
         data = {
             'network_id': 1,
-            'access_token': 'TEST_TOKEN_1',
+            'access_token': 'TEST_TOKEN_' + str(user_id),
             'invite_code': 'Q123',
             'device_type': 'ios',
             'push_token': 'push',

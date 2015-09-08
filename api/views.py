@@ -43,7 +43,7 @@ def authorization_needed(func):
         user = {}
 
         if  not refresh_token and \
-            not (request.path == '/v1/session' and request.method == 'POST'):
+            not (request.path.startswith('/v1/session') and request.method == 'POST'):
 
             logger.info('Need to authorize')
 

@@ -28,6 +28,9 @@ ACCESS_TOKEN_EXPIRES_IN = 60 # 3600
 ANDROID_PUSH_TOKEN_EXPIRES_IN = 7 * 86400
 IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
 
+# see send_alert_task
+DEVELOPER_EMAIL = 'milovanov@octabrain.com'
+
 INSTALLED_APPS = (
     'api',
     'daemons',

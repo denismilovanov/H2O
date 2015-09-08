@@ -28,8 +28,14 @@ def bad_request(e, data=None):
 def internal_server_error(e):
     logger.info(e)
     v = {
-        'error': str(e),
+        'error': 'INTERNAL_SERVER_ERROR',
     }
+
+    # send exception to developers
+    from tasks.send_exception_task import SendExceptionTask
+    SendExceptionTask(e).enqueue()
+
+    # output
     return JSONResponse(v, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def created(**v):

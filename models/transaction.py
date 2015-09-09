@@ -54,63 +54,53 @@ class Transaction:
             else:
                 counter_users_ids.append(transaction['counter_user_id'])
 
+            counter_users_ids.append(transaction['user_id'])
+
         return list(set(counter_users_ids))
 
     @staticmethod
-    def extract_users_ids(transactions):
-        # users ids
+    def get_users_ids(whose, user_id):
         users_ids = []
-        for transaction in transactions:
-            users_ids.append(transaction['user_id'])
 
-        return list(set(users_ids))
-
-    @staticmethod
-    def get_users_and_follows_ids(whose, user_id):
         if whose == 'my':
             # all transactions of me
             users_ids = [user_id]
-            follows_ids = []
         elif whose == 'follows':
             # my follows
-            users_ids = follows_ids = UserFollow.get_user_follows_ids(user_id)
+            users_ids = UserFollow.get_user_follows_ids(user_id)
 
-        return users_ids, follows_ids
+        return users_ids
 
     @staticmethod
     @raw_queries()
     def get_transactions_by_dates(user_id, whose, direction, from_date, to_date, db):
         #
-        users_ids, follows_ids = Transaction.get_users_and_follows_ids(whose, user_id)
+        users_ids = Transaction.get_users_ids(whose, user_id)
 
         # all transactions of them
         transactions = Transaction.get_transactions_by_dates_raw(users_ids, from_date, to_date, direction, db)
 
         #
-        return Transaction.prepare_transactions_response(transactions, whose, follows_ids)
+        return Transaction.prepare_transactions_response(transactions, whose)
 
 
     @staticmethod
     @raw_queries()
     def get_transactions_by_offset(user_id, whose, limit, offset, db):
         #
-        users_ids, follows_ids = Transaction.get_users_and_follows_ids(whose, user_id)
+        users_ids = Transaction.get_users_ids(whose, user_id)
 
         # all transactions of them
         transactions = Transaction.get_transactions_by_offset_raw(users_ids, limit, offset, db)
 
         #
-        return Transaction.prepare_transactions_response(transactions, whose, follows_ids)
+        return Transaction.prepare_transactions_response(transactions, whose)
 
 
     @staticmethod
-    def prepare_transactions_response(transactions, whose, follows_ids):
+    def prepare_transactions_response(transactions, whose):
         # extract counter users ids
         counter_users_ids = Transaction.extract_counter_users_ids(transactions)
-
-        # append follows to counters
-        if whose == 'follows':
-            counter_users_ids = counter_users_ids + follows_ids
 
         # get them all
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
@@ -121,6 +111,10 @@ class Transaction:
             # anonymous reveives
             if transaction['direction'] == 'receive' and transaction['is_anonymous']:
                 transaction['counter_user_uuid'] = None
+
+            if whose == 'follows':
+                if transaction['direction'] == 'support' and transaction['is_anonymous']:
+                    transaction['user_uuid'] = None
 
             # no need to output this
             del transaction['counter_user_id']

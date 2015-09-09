@@ -186,7 +186,7 @@ class User:
             SELECT main.update_user_profile(%(user_id)s, %(visibility)s, %(status)s);
         ''', user_id=user_id, visibility=visibility, status=status)
 
-        if is_deleted == False:
+        if is_deleted == 'false':
             User.undelete_profile(user_id)
 
         return True

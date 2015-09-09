@@ -26,6 +26,16 @@ class TransactionsTestCase(MyAPITestCase):
         stat = json.loads(response.content)
         return stat
 
+    def get_transactions(self, who, headers):
+        transactions_controller = self.transactions_controller + '/' + who
+        response = self.client.get(transactions_controller, {
+            'limit': 10,
+            'offset': 0,
+        }, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        transactions = json.loads(response.content)
+        return transactions
+
     def post_support(self, headers, uuid, amount, is_anonymous):
         supports_controller = self.supports_controller
         response = self.client.post(supports_controller, {
@@ -81,31 +91,14 @@ class TransactionsTestCase(MyAPITestCase):
         #
 
         counter_stat = self.get_stat_overall(counter_headers)
-        # print counter_stat
-        # return
+
+        # transactions = supports + receives
+
+        my_transactions = self.get_transactions('my', headers)
+
+        counter_transactions = self.get_transactions('my', counter_headers)
 
 
-        # my transactions = supports + receives
-
-        transactions_controller = self.transactions_controller + '/my'
-        response = self.client.get(transactions_controller, {
-            'limit': 10,
-            'offset': 0,
-        }, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
-
-        transactions = json.loads(response.content)
-
-        # follows transactions = supports + receives
-
-        transactions_controller = self.transactions_controller + '/follows'
-        response = self.client.get(transactions_controller, {
-            'limit': 10,
-            'offset': 0,
-        }, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
-
-        transactions = json.loads(response.content)
 
 
 

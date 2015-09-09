@@ -49,7 +49,10 @@ class Transaction:
         # counter users ids
         counter_users_ids = []
         for transaction in transactions:
-            counter_users_ids.append(transaction['counter_user_id'])
+            if transaction['direction'] == 'reveive' and transaction['is_anonymous']:
+                pass
+            else:
+                counter_users_ids.append(transaction['counter_user_id'])
 
         return list(set(counter_users_ids))
 
@@ -113,7 +116,13 @@ class Transaction:
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
 
         # remove some indeces
+        # perform some transformation depening on circumstances
         for transaction in transactions:
+            # anonymous reveives
+            if transaction['direction'] == 'receive' and transaction['is_anonymous']:
+                transaction['counter_user_uuid'] = None
+
+            # no need to output this
             del transaction['counter_user_id']
             del transaction['user_id']
 

@@ -36,6 +36,19 @@ class AndroidPusher:
             )
             logger.info(res)
 
+            # old token
+            old_token = None
+            try:
+                errors = res['errors']
+                old_token = errors['NotRegistered'][0]
+            except:
+                pass
+
+            # remove it
+            if old_token:
+                from models.user_device import UserDevice
+                UserDevice.delete_push_token(None, old_token)
+
         except Exception, e:
             raise PusherException(e)
 

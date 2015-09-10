@@ -53,7 +53,7 @@ class PushNotificationTask:
                 # pusher
                 pusher = Pusher.get_pusher(device_type)
                 # push
-                pusher.push(push_token, data)
+                pusher.push(self.user_id, push_token, data)
                 #
                 sent = True
             except PusherException, e:

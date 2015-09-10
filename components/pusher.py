@@ -9,8 +9,8 @@ class AndroidPusher:
     gcm = None
 
     # push
-    def push(self, push_token, data):
-        logger.info('Push to token: ' + str(push_token) + ' ' + str(data))
+    def push(self, user_id, push_token, data):
+        logger.info('Push to token: ' + str(push_token) + ' ' + str(user_id) + ' ' + str(data))
         try:
             # token is test?
             import re
@@ -48,7 +48,7 @@ class AndroidPusher:
             # remove it
             if old_token:
                 from models.user_device import UserDevice
-                UserDevice.delete_push_token(None, old_token)
+                UserDevice.delete_push_token(user_id, old_token)
 
         except Exception, e:
             raise PusherException(e)
@@ -60,8 +60,8 @@ class ApplePusher:
     apns = None
 
     # push
-    def push(self, push_token, data):
-        logger.info('Push to token: ' + str(push_token) + ' ' + str(data))
+    def push(self, user_id, push_token, data):
+        logger.info('Push to token: ' + str(push_token) + ' ' + str(user_id) + ' ' + str(data))
 
         try:
             import re

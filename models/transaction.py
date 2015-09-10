@@ -49,7 +49,7 @@ class Transaction:
         # counter users ids
         counter_users_ids = []
         for transaction in transactions:
-            if transaction['direction'] == 'reveive' and transaction['is_anonymous']:
+            if transaction['direction'] == 'receive' and transaction['is_anonymous']:
                 pass
             else:
                 counter_users_ids.append(transaction['counter_user_id'])

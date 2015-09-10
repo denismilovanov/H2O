@@ -36,6 +36,17 @@ class FollowsTestCase(MyAPITestCase):
         }, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
+        follows_controller = self.follows_controller + '/my'
+        response = self.client.get(follows_controller, {
+            'limit': 10,
+            'offset': 0,
+            'search_query': 'test9',
+        }, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+
+        found = json.loads(response.content)
+        self.assertTrue(len(found) > 0)
+
         # get others
 
         follows_controller = self.follows_controller + '/00000002-0000-0000-0000-000000000002'

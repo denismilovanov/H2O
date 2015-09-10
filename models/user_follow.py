@@ -69,8 +69,8 @@ class UserFollow:
     @raw_queries()
     def get_user_follows(user_id, limit, offset, search_query, db):
         users = db.select_table('''
-            SELECT main.get_user_follows_ids(%(user_id)s, %(limit)s, %(offset)s) AS follow_user_id;
-        ''', user_id=user_id, limit=limit, offset=offset)
+            SELECT main.get_user_follows_ids(%(user_id)s, %(limit)s, %(offset)s, %(search_query)s) AS follow_user_id;
+        ''', user_id=user_id, limit=limit, offset=offset, search_query=search_query)
 
         users_ids = [u['follow_user_id'] for u in users]
 

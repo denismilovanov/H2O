@@ -8,6 +8,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def get_boolean(smth):
+    return smth in [True, 'true', '1', 1]
+
 #
 def get_limit_and_offset(request):
     limit = request.GET.get('limit', None)
@@ -211,7 +214,7 @@ def profile(request, user):
         try:
             visibility = request.data.get('visibility')
             status = request.data.get('status')
-            push_notifications = request.data.get('push_notifications')
+            push_notifications = get_boolean(request.data.get('push_notifications', True))
             is_deleted = request.data.get('is_deleted')
             logger.info(request.data)
 
@@ -243,7 +246,7 @@ def invite_code(request, invite_code, user):
     #input
     try:
         email = request.data['email']
-        entrance_gift = request.data.get('entrance_gift', False)
+        entrance_gift = get_boolean(request.data.get('entrance_gift', False))
     except Exception, e:
         return bad_request(BadRequest(e), email)
 
@@ -406,7 +409,7 @@ def post_support(request, user):
         uuid = request.data['uuid']
         amount = request.data['amount']
         currency = request.data['currency']
-        is_anonymous = request.data['is_anonymous'] in ['true', '1', 1]
+        is_anonymous = get_boolean(request.data['is_anonymous'])
     except Exception, e:
         return bad_request(BadRequest(e))
 

@@ -18,12 +18,19 @@ class UserFollow:
         if follow_user['id'] == user_id:
             raise UserIsAlreadyFollowed()
 
-        result = db.select_field('''
-            SELECT main.upsert_user_follow(%(user_id)s, %(follow_user_id)s);
-        ''', user_id=user_id, follow_user_id=follow_user['id'])
+        # insert into follows and followed_by
+        with db.t():
+            result = db.select_field('''
+                SELECT main.upsert_user_follow(%(user_id)s, %(follow_user_id)s);
+            ''', user_id=user_id, follow_user_id=follow_user['id'])
 
-        if not result:
-            raise UserIsAlreadyFollowed()
+            # check
+            if not result:
+                raise UserIsAlreadyFollowed()
+
+            db.select_field('''
+                SELECT main.upsert_user_followed_by(%(follow_user_id)s, %(user_id)s);
+            ''', user_id=user_id, follow_user_id=follow_user['id'])
 
         # send notification
         # sending though queue

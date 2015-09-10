@@ -1,4 +1,5 @@
 from gcm import GCM
+from apns import APNs, Frame, Payload
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -68,6 +69,15 @@ class ApplePusher:
             if m:
                 logger.info('That was a test push')
                 return True
+
+            if not ApplePusher.apns:
+                from H2O.settings import BASE_DIR
+                cert_file = BASE_DIR + '/resources/certs/push_H2O_Dev.pem'
+                key_file = BASE_DIR + '/resources/certs/push_H2O_Dev.key'
+                ApplePusher.apns = APNs(use_sandbox=True, cert_file=cert_file, key_file=key_file)
+
+            payload = Payload(alert=data, sound="default", badge=1)
+            ApplePusher.apns.gateway_server.send_notification(push_token, payload)
 
         except Exception, e:
             raise PusherException(e)

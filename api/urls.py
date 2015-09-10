@@ -33,5 +33,6 @@ urlpatterns = [
     url(r'v1/notifications', views.notifications),
 
     # graph
+    url(r'v1/graph/(?P<user_uuid>(me|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))', views.graph_user),
     url(r'v1/graph', views.graph),
 ]

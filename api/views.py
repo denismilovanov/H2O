@@ -537,3 +537,24 @@ def graph(request):
         'followed_by': Graph.get_followed_by(100008),
     })
 
+# graph
+@api_view(['GET'])
+@authorization_needed
+def graph_user(request, user_uuid, user):
+    logger.info('METHOD: graph_user')
+
+    if user_uuid != 'me':
+        graph_user = User.find_by_user_uuid(user_uuid, scope='all')
+        if not graph_user:
+            return not_found(UserIsNotFound())
+    else:
+        graph_user = user
+
+    logger.info(graph_user)
+
+    return ok_raw({
+        'user': User.get_all_by_ids([graph_user['id']], scope='graph')[0],
+        'follows': Graph.get_follows(graph_user['id']),
+        'followed_by': Graph.get_followed_by(graph_user['id']),
+    })
+

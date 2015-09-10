@@ -9,7 +9,7 @@ class Transaction:
     @staticmethod
     def scope(scope):
         if scope == 'public':
-            return ', '.join(['amount', 'currency', 'status', 'direction', 'user_uuid', 'counter_user_uuid', 'is_anonymous'])
+            return ', '.join(['id', 'amount', 'currency', 'status', 'direction', 'user_uuid', 'counter_user_uuid', 'is_anonymous'])
         else:
             return '*'
 

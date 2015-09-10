@@ -406,7 +406,7 @@ def post_support(request, user):
         uuid = request.data['uuid']
         amount = request.data['amount']
         currency = request.data['currency']
-        is_anonymous = request.data['is_anonymous']
+        is_anonymous = request.data['is_anonymous'] in ['true', '1', 1]
     except Exception, e:
         return bad_request(BadRequest(e))
 

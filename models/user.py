@@ -59,16 +59,30 @@ class User:
                 # invite is used
                 raise InviteCodeAlreadyTakenException
 
+            #
+            invite_owner = User.get_all_by_ids([invite['owner_id']], scope='all')[0]
+            logger.info(invite_owner)
+
+            #
+            generation = invite_owner['generation'] + 1
+
             # create
             user_id, user_uuid = UserNetwork.get_new_user_id()
+            from models.graph import Graph
+            num_in_generation = Graph.get_last_num_in_generation(generation)
+            logger.info(str(generation) + ' ' + str(num_in_generation))
 
             # choose DB based on user_id:
             db.select_field('''
-                SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s,
-                                        %(network_id)s, %(user_network_id)s);
+                SELECT main.upsert_user(
+                    %(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s,
+                    %(network_id)s, %(user_network_id)s,
+                    %(generation)s, %(num_in_generation)s
+                );
             ''',
                 user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'],
-                network_id=network_id, user_network_id=user_network_id
+                network_id=network_id, user_network_id=user_network_id,
+                generation=generation, num_in_generation=num_in_generation
             )
             logger.info(user_uuid)
 

@@ -10,8 +10,14 @@ CREATE TABLE main.users (
     visibility main.user_visibility NOT NULL DEFAULT 'visible_for_all',
     avatar_url varchar NULL,
     is_deleted boolean NOT NULL DEFAULT FALSE,
-    facebook_id bigint NOT NULL
+    facebook_id bigint NOT NULL,
+    generation integer NOT NULL,
+    num_in_generation integer NOT NULL
 );
 
+CREATE UNIQUE INDEX users_facebook_id_ukey
+    ON main.users
+    USING btree(facebook_id)
+    WHERE id > 0;
 
 

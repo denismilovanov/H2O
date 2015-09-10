@@ -158,7 +158,7 @@ def session(request, user):
             return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
 
         if push_token:
-            UserSession.upsert_push_token(user['id'], push_token)
+            UserDevice.upsert_push_token(user['id'], push_token)
 
             return no_content()
 

@@ -37,6 +37,7 @@ class MyAPITestCase(APITestCase):
     transactions_controller = '/v1/transactions'
     statistics_controller = '/v1/statistics'
     notifications_controller = '/v1/notifications'
+    graph_controller = '/v1/graph'
     format = 'json'
 
 

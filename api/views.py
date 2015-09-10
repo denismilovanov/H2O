@@ -518,5 +518,18 @@ def notification(request, notification_id, user):
 
     return no_content()
 
+# graph
+@api_view(['GET'])
+@authorization_needed
+def graph(request, user):
+    logger.info('METHOD: graph')
+
+    return ok_raw({
+        'users_counts': Graph.get_users_counts(),
+        'first_generation': Graph.get_first_generation(),
+        'follows': Graph.get_follows(user['id']),
+        'followed_by': Graph.get_followed_by(user['id']),
+    })
+
 
 

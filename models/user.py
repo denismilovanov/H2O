@@ -130,6 +130,8 @@ class User:
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
         elif scope == 'public_profile_with_id':
             return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
+        elif scope == 'graph':
+            return ', '.join(['uuid', 'name', 'generation', 'num_in_generation', 'is_deleted', 'status'])
         else:
             return '*'
 

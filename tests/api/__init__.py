@@ -10,3 +10,4 @@ from test_transactions import TransactionsTestCase
 from test_statistics import StatisticsTestCase
 from test_notifications import NotificationsTestCase
 from test_session_create_new_user import SessionCreateNewUserTestCase
+from test_graph import GraphTestCase

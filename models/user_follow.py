@@ -53,12 +53,17 @@ class UserFollow:
         if not follow_user:
             raise UserIsNotFound()
 
-        result = db.select_field('''
-            SELECT main.delete_user_follow(%(user_id)s, %(follow_user_id)s);
-        ''', user_id=user_id, follow_user_id=follow_user['id'])
+        with db.t():
+            result = db.select_field('''
+                SELECT main.delete_user_follow(%(user_id)s, %(follow_user_id)s);
+            ''', user_id=user_id, follow_user_id=follow_user['id'])
 
-        if not result:
-            raise UserIsNotFound()
+            if not result:
+                raise UserIsNotFound()
+
+            db.select_field('''
+                SELECT main.delete_user_followed_by(%(follow_user_id)s, %(user_id)s);
+            ''', user_id=user_id, follow_user_id=follow_user['id'])
 
     @staticmethod
     @raw_queries()
@@ -79,3 +84,12 @@ class UserFollow:
         ''', user_id=user_id)
 
         return [u['follow_user_id'] for u in users]
+
+    @staticmethod
+    @raw_queries()
+    def get_user_followed_by_ids(user_id, db):
+        users = db.select_table('''
+            SELECT main.get_user_followed_by_ids(%(user_id)s, 100000, 0) AS followed_by_user_id;
+        ''', user_id=user_id)
+
+        return [u['followed_by_user_id'] for u in users]

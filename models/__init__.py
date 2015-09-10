@@ -8,3 +8,4 @@ from transaction import Transaction
 from statistics import Statistics
 from user_account import UserAccount
 from notification import Notification
+from graph import Graph

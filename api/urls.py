@@ -31,4 +31,7 @@ urlpatterns = [
     # notifications
     url(r'v1/notifications/(?P<notification_id>\d+)', views.notification),
     url(r'v1/notifications', views.notifications),
+
+    # graph
+    url(r'v1/graph', views.graph),
 ]

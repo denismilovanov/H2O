@@ -520,16 +520,17 @@ def notification(request, notification_id, user):
 
 # graph
 @api_view(['GET'])
-@authorization_needed
-def graph(request, user):
+# @authorization_needed
+# def graph(request, user):
+def graph(request):
     logger.info('METHOD: graph')
 
     return ok_raw({
         'users_counts': Graph.get_users_counts(),
         'first_generation': Graph.get_first_generation(),
-        'follows': Graph.get_follows(user['id']),
-        'followed_by': Graph.get_followed_by(user['id']),
+        # 'follows': Graph.get_follows(user['id']),
+        # 'followed_by': Graph.get_followed_by(user['id']),
+        'follows': Graph.get_follows(100008),
+        'followed_by': Graph.get_followed_by(100008),
     })
-
-
 

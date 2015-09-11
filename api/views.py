@@ -534,8 +534,11 @@ def graph(request):
         'first_generation': Graph.get_first_generation(),
         # 'follows': Graph.get_follows(user['id']),
         # 'followed_by': Graph.get_followed_by(user['id']),
-        'follows': Graph.get_follows(100008),
-        'followed_by': Graph.get_followed_by(100008),
+        'me': {
+            'follows': Graph.get_follows(100008),
+            'followed_by': Graph.get_followed_by(100008),
+            'user': User.get_all_by_ids([100008], scope='graph')[0],
+        },
     })
 
 # graph

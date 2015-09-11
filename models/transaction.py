@@ -1,5 +1,6 @@
 from decorators import *
 from models import User, UserFollow
+from models.exceptions import ResourceIsNotFound, ConflictException
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -137,13 +138,31 @@ class Transaction:
             SELECT billing.add_transaction(
                 %(user_id)s, %(user_uuid)s,
                 %(counter_user_id)s, %(counter_user_uuid)s,
-                %(direction)s, %(amount)s, %(currency)s, %(is_anonymous)s
+                %(direction)s, %(amount)s, %(currency)s, %(is_anonymous)s,
+                NULL, NULL
             );
         ''',
             user_id=user_id, user_uuid=user_uuid,
             counter_user_id=counter_user_id, counter_user_uuid=counter_user_uuid,
             direction=direction,
             amount=amount, currency=currency, is_anonymous=is_anonymous
+        )
+
+    @staticmethod
+    def add_deposit_raw(db, user_id, user_uuid, amount, currency,
+                        provider, provider_transaction_id):
+
+        return db.select_field('''
+            SELECT billing.add_transaction(
+                %(user_id)s, %(user_uuid)s,
+                NULL, NULL,
+                'deposit', %(amount)s, %(currency)s, FALSE,
+                %(provider)s, %(provider_transaction_id)s
+            );
+        ''',
+            user_id=user_id, user_uuid=user_uuid,
+            amount=amount, currency=currency,
+            provider=provider, provider_transaction_id=provider_transaction_id
         )
 
     @staticmethod
@@ -155,7 +174,6 @@ class Transaction:
     @staticmethod
     @raw_queries()
     def add_support(user_id, counter_user_id, amount, currency, is_anonymous, db):
-        amount = float(amount)
         user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
         counter_user_uuid = User.get_all_by_ids([counter_user_id], scope='all')[0]['uuid']
 
@@ -171,7 +189,7 @@ class Transaction:
                 )
 
                 # decrease balance
-                Transaction.update_user_balance(db, user_id, amount * -1, currency)
+                Transaction.update_user_balance(db, user_id, -amount, currency)
 
                 # receive
                 counter_transaction_id = Transaction.add_transaction_raw(
@@ -183,7 +201,7 @@ class Transaction:
                 )
 
                 # increase balance
-                Transaction.update_user_balance(db, counter_user_id, amount, currency)
+                Transaction.update_user_balance(db, counter_user_id, +amount, currency)
 
         except Exception, e:
             raise e
@@ -208,15 +226,47 @@ class Transaction:
 
     @staticmethod
     @raw_queries()
-    def add_deposit(user_id, amount, currency, db):
-        amount = float(amount)
+    def add_deposit(user_id, provider, provider_transaction_id, amount, currency, db):
         user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
 
-        transaction_id = Transaction.add_transaction_raw(
-            db,
-            user_id, user_uuid,
-            None, None,
-            amount, currency, False
-        )
+        from paypalrestsdk import Payment, ResourceNotFound
+        import paypalrestsdk
 
+        try:
+            from H2O.settings import PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
+            paypalrestsdk.configure({
+                'mode': PAYPAL_MODE,
+                'client_id': PAYPAL_CLIENT_ID,
+                'client_secret': PAYPAL_CLIENT_SECRET,
+            })
+
+            payment = Payment.find(provider_transaction_id)
+            amount = float(payment['transactions'][0]['amount']['total'])
+        except ResourceNotFound as error:
+            logger.warn(error)
+            raise ResourceIsNotFound()
+
+        # write to db
+        with db.t():
+            # transaction
+            transaction_id = Transaction.add_deposit_raw(
+                db,
+                user_id, user_uuid,
+                amount, currency,
+                'paypal', provider_transaction_id,
+            )
+            if not transaction_id:
+                raise ConflictException()
+
+            # increase balance
+            Transaction.update_user_balance(db, user_id, +amount, currency)
+
+        # update statistics sync.
+        # TODO: make it async.
+        from models.statistics import Statistics
+        Statistics.update_statistics_via_transaction(user_id, transaction_id)
+
+        #
         return transaction_id
+
+

@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION main.get_user_follows_ids(
     i_user_id integer,
     i_limit_id integer,
     i_offset_id integer,
-    s_search_query varchar
+    s_search_query varchar DEFAULT NULL
 )
     RETURNS SETOF integer AS
 $BODY$

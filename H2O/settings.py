@@ -31,6 +31,11 @@ IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
 # see send_alert_task
 DEVELOPER_EMAIL = 'milovanov@octabrain.com'
 
+#
+PAYPAL_MODE = 'sandbox'
+PAYPAL_CLIENT_ID = 'AdQu6ps7PTocovEhNp2dZOveHIxnqsTR508XsCZS7L0e6Hx_BLtfmT-ySgec-H5HrNhrWviWc7-IMB0g'
+PAYPAL_CLIENT_SECRET = 'EPDbaqv-Byti_Rizm92wWN5-__3lDIqDnBDr1xN3abhdyIzASu4WuhvaL7LK6x_cfSBPtCsP5ThDVX2K'
+
 INSTALLED_APPS = (
     'api',
     'daemons',

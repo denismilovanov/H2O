@@ -5,13 +5,6 @@ from rest_framework import status
 import json
 
 class TransactionsTestCase(MyAPITestCase):
-    def get_balance(self, headers):
-        user_controller = self.user_controller + 'me'
-        response = self.client.get(user_controller, {}, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
-        balance = json.loads(response.content)['balance']
-        return balance
-
     def get_stat_overall(self, headers):
         statistics_controller = self.statistics_controller + '/my/overall'
         response = self.client.get(statistics_controller, {}, format=self.format, headers=headers)

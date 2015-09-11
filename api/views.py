@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
-from views_helpers import created, bad_request, unavailable, forbidden, unauthorized, ok, ok_raw, internal_server_error, not_found, not_acceptable, no_content
+from views_helpers import created, bad_request, unavailable, forbidden, unauthorized, conflict
+from views_helpers import ok, ok_raw, internal_server_error, not_found, not_acceptable, no_content
 from models import *
 from models.exceptions import *
 import datetime
@@ -407,7 +408,7 @@ def post_support(request, user):
 
     try:
         uuid = request.data['uuid']
-        amount = request.data['amount']
+        amount = float(request.data['amount'])
         currency = request.data['currency']
         is_anonymous = get_boolean(request.data['is_anonymous'])
     except Exception, e:
@@ -557,4 +558,26 @@ def graph_user(request, user_uuid, user):
         'follows': Graph.get_follows(graph_user['id']),
         'followed_by': Graph.get_followed_by(graph_user['id']),
     })
+
+# deposits
+@api_view(['POST'])
+@authorization_needed
+def post_deposit(request, user):
+    logger.info('METHOD: post_deposit')
+
+    try:
+        provider = request.data['provider']
+        provider_transaction_id = request.data['provider_transaction_id']
+        amount = float(request.data['amount'])
+        currency = request.data['currency']
+    except:
+        return bad_request(BadRequest(None))
+
+    try:
+        transaction_id = Transaction.add_deposit(user['id'], provider, provider_transaction_id, amount, currency)
+        return created(transaction_id=transaction_id)
+    except ConflictException, e:
+        return conflict()
+    except ResourceIsNotFound, e:
+        return not_acceptable(e)
 

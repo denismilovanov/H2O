@@ -51,3 +51,11 @@ class UserIsNotFound(Exception):
 class ResourceIsNotFound(Exception):
     def __str__(self):
         return 'RESOURCE_IS_NOT_FOUND'
+
+class Forbidden(Exception):
+    def __str__(self):
+        return 'FORBIDDEN'
+
+class ConflictException(Exception):
+    def __str__(self):
+        return 'CONFLICT'

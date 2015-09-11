@@ -6,6 +6,7 @@ MarkupSafe==0.23
 TornadIO2==0.0.3
 amqp==1.4.6
 anyjson==0.3.3
+apns==2.0.1
 argparse==1.2.1
 backports.ssl-match-hostname==3.4.0.2
 billiard==3.3.0.20
@@ -30,6 +31,7 @@ mandrill==1.0.57
 meld3==1.0.2
 ndg-httpsclient==0.4.0
 paramiko==1.15.2
+paypalrestsdk==1.11.0
 pika==0.10.0b2
 psutil==3.1.1
 psycopg2==2.6.1
@@ -37,6 +39,7 @@ pyOpenSSL==0.15.1
 pyasn1==0.1.8
 pycparser==2.14
 pycrypto==2.6.1
+python-dateutil==2.4.2
 python-gcm==0.2
 pytz==2015.4
 pyzmq==14.7.0

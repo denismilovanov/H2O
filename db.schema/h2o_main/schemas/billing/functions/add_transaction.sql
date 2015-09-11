@@ -9,7 +9,9 @@ CREATE OR REPLACE FUNCTION billing.add_transaction(
     t_direction billing.transaction_direction,
     n_amount numeric,
     t_currency main.currency,
-    b_is_anonymous boolean
+    b_is_anonymous boolean,
+    t_provider billing.transaction_provider,
+    s_provider_transaction_id varchar
 )
     RETURNS bigint AS
 $BODY$
@@ -17,23 +19,32 @@ DECLARE
     i_id bigint;
 BEGIN
 
-    INSERT INTO billing.transactions
-        (user_id, user_uuid, counter_user_id, counter_user_uuid,
-        amount, currency, direction, status, is_anonymous)
-        VALUES (
-            i_user_id,
-            u_user_uuid,
-            i_counter_user_id,
-            u_counter_user_uuid,
-            n_amount,
-            t_currency,
-            t_direction,
-            'success',
-            b_is_anonymous
-        )
-        RETURNING id INTO i_id;
+    BEGIN
 
-    RETURN i_id;
+        INSERT INTO billing.transactions
+            (user_id, user_uuid, counter_user_id, counter_user_uuid,
+            amount, currency, direction, status, is_anonymous,
+            provider, provider_transaction_id)
+            VALUES (
+                i_user_id,
+                u_user_uuid,
+                i_counter_user_id,
+                u_counter_user_uuid,
+                n_amount,
+                t_currency,
+                t_direction,
+                'success',
+                b_is_anonymous,
+                t_provider,
+                s_provider_transaction_id
+            )
+            RETURNING id INTO i_id;
+
+        RETURN i_id;
+
+    EXCEPTION WHEN unique_violation THEN
+        RETURN 0;
+    END;
 
 END
 $BODY$
@@ -48,6 +59,8 @@ GRANT EXECUTE ON FUNCTION billing.add_transaction(
     t_direction billing.transaction_direction,
     n_amount numeric,
     t_currency main.currency,
-    b_is_anonymous boolean
+    b_is_anonymous boolean,
+    t_provider billing.transaction_provider,
+    s_provider_transaction_id varchar
 ) TO h2o_front;
 

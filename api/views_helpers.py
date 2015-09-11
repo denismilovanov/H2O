@@ -94,6 +94,10 @@ def no_content():
     logger.info('no content')
     return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
+def conflict():
+    logger.info('conflict')
+    return HttpResponse(status=status.HTTP_409_CONFLICT)
+
 def ok(**v):
     logger.info('OK')
     logger.info(v)

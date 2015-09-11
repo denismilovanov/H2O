@@ -36,9 +36,9 @@ class Graph:
 
     @staticmethod
     @raw_queries(['auth'])
-    def get_first_generation(auth):
+    def get_zero_generation(auth):
         first_generation_users = auth.select_table('''
-            SELECT main.get_users_ids_by_generation(1) AS user_id;
+            SELECT main.get_users_ids_by_generation(0) AS user_id;
         ''')
 
         first_generation_users_ids = [first_generation_user['user_id'] for first_generation_user in first_generation_users]

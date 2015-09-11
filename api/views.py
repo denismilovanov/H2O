@@ -535,7 +535,7 @@ def graph(request):
 
     return ok_raw({
         'users_counts': Graph.get_users_counts(),
-        'first_generation': Graph.get_first_generation(),
+        'zero_generation': Graph.get_zero_generation(),
         'me': me,
     })
 

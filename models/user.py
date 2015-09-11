@@ -194,6 +194,11 @@ class User:
             for user in users:
                 user['networks'] = UserNetwork.get_user_networks(user['id'])
 
+        if scope == 'graph':
+            for user in users:
+                user['follows'] = []
+                user['followed_by'] = []
+
         return users
 
     @staticmethod

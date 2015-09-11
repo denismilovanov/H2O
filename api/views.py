@@ -529,16 +529,14 @@ def notification(request, notification_id, user):
 def graph(request):
     logger.info('METHOD: graph')
 
+    me = User.get_all_by_ids([100008], scope='graph')[0]
+    me['follows'] = Graph.get_follows(100008)
+    me['followed_by'] = Graph.get_followed_by(100008)
+
     return ok_raw({
         'users_counts': Graph.get_users_counts(),
         'first_generation': Graph.get_first_generation(),
-        # 'follows': Graph.get_follows(user['id']),
-        # 'followed_by': Graph.get_followed_by(user['id']),
-        'me': {
-            'follows': Graph.get_follows(100008),
-            'followed_by': Graph.get_followed_by(100008),
-            'user': User.get_all_by_ids([100008], scope='graph')[0],
-        },
+        'me': me,
     })
 
 # graph
@@ -556,11 +554,11 @@ def graph_user(request, user_uuid, user):
 
     logger.info(graph_user)
 
-    return ok_raw({
-        'user': User.get_all_by_ids([graph_user['id']], scope='graph')[0],
-        'follows': Graph.get_follows(graph_user['id']),
-        'followed_by': Graph.get_followed_by(graph_user['id']),
-    })
+    me = User.get_all_by_ids([graph_user['id']], scope='graph')[0]
+    me['follows'] = Graph.get_follows(graph_user['id'])
+    me['followed_by'] = Graph.get_followed_by(graph_user['id'])
+
+    return ok_raw(me)
 
 # deposits
 @api_view(['POST'])

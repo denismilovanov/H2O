@@ -109,7 +109,7 @@ class User:
                 SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s);
             ''', user_id=user_id, name=user_data['name'], avatar_url=user_data['avatar_url'])
 
-        # for is_deleted in response
+        # for is_deleted and generation in response
         user = User.find_by_user_uuid(user_uuid, scope='all')
 
         # upsert network
@@ -122,12 +122,15 @@ class User:
             'avatar_url': user_data['avatar_url'],
             'name': user_data['name'],
             'is_deleted': user['is_deleted'],
+            'generation': user['generation'],
+            'num_in_generation': user['num_in_generation'],
         }, user_id
 
     @staticmethod
     def scope(scope):
         if scope == 'public_profile' or scope == 'my_personal_profile':
-            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
+            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted',
+                              'generation', 'num_in_generation'])
         elif scope == 'public_profile_with_id':
             return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
         elif scope == 'graph':

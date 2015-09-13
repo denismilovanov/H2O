@@ -14,7 +14,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk'
+SECRET_KEY = os.environ.get('SECRET_KEY', '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk')
 
 DEBUG = True
 
@@ -89,7 +89,7 @@ DATABASES = {
 }
 
 RABBITMQ_USER =  'rabbitmq_user'
-RABBITMQ_PASSWORD = '1Gh_7*2aS#+2K'
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', '1Gh_7*2aS#+2K')
 RABBITMQ_HOST = 'localhost'
 RABBITMQ_PORT = 5672
 

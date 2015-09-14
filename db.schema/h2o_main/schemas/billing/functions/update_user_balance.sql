@@ -9,13 +9,14 @@ CREATE OR REPLACE FUNCTION billing.update_user_balance(
     RETURNS void AS
 $BODY$
 DECLARE
-
+    n_balance numeric;
 BEGIN
 
     UPDATE billing.users_accounts
         SET balance = balance + n_amount
         WHERE   user_id = i_user_id AND
-                currency = 'usd';
+                currency = 'usd'
+        RETURNING balance INTO n_balance;
 
 END
 $BODY$

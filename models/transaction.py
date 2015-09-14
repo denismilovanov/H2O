@@ -167,7 +167,7 @@ class Transaction:
 
     @staticmethod
     def update_user_balance(db, user_id, amount, currency):
-        db.select_field('''
+        return db.select_field('''
             SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(currency)s);
         ''', user_id=user_id, amount=amount, currency=currency)
 
@@ -196,10 +196,15 @@ class Transaction:
                 )
 
                 # decrease balance
-                Transaction.update_user_balance(db, user_id, -amount, currency)
+                new_balance = Transaction.update_user_balance(db, user_id, -amount, currency)
 
                 # check balance again
-                if False:
+                # it is actual because between selecting and updating balance there is small time gap
+                #
+                # Trans1 ----- SELECT balance ------- UPDATE balance
+                # Trans2 --------- SELECT balance -------- UPDATE balance (will wait and then return negative)
+                #
+                if new_balance < 0:
                     raise NotEnoughMoneyException()
 
                 # receive

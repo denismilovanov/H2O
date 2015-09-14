@@ -7,11 +7,30 @@ class MyAPITestCase(APITestCase):
     multi_db = True
 
     def get_balance(self, headers):
-        user_controller = self.user_controller + 'me'
+        return self.get_profile('me', headers)['balance']
+
+    def get_follows(self, who, search_query, headers):
+        follows_controller = self.follows_controller + '/' + who
+        if search_query:
+            response = self.client.get(follows_controller, {
+                'limit': 10,
+                'offset': 0,
+                'search_query': search_query,
+            }, format=self.format, headers=headers)
+        else:
+            response = self.client.get(follows_controller, {
+                'limit': 10,
+                'offset': 0,
+            }, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        return json.loads(response.content)
+
+    def get_profile(self, who, headers):
+        user_controller = self.user_controller + who
         response = self.client.get(user_controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
-        balance = json.loads(response.content)['balance']
-        return balance
+        profile = json.loads(response.content)
+        return profile
 
     def authorization(self, user_id=1, facebook_token=None):
         data = {

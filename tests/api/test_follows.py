@@ -29,29 +29,20 @@ class FollowsTestCase(MyAPITestCase):
 
         # get my
 
-        follows_controller = self.follows_controller + '/my'
-        response = self.client.get(follows_controller, {
-            'limit': 10,
-            'offset': 0,
-        }, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        follows = self.get_follows('my', None, headers)
 
-        follows_controller = self.follows_controller + '/my'
-        response = self.client.get(follows_controller, {
-            'limit': 10,
-            'offset': 0,
-            'search_query': 'test9',
-        }, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        # first of them
 
-        found = json.loads(response.content)
-        self.assertTrue(len(found) > 0)
+        follow = self.get_profile(follows[0]['uuid'], headers)
+
+        # search him by name
+
+        follows = self.get_follows('my', follow['name'], headers)
+        self.assertTrue(len(follows) > 0)
 
         # get others
 
-        follows_controller = self.follows_controller + '/00000002-0000-0000-0000-000000000002'
-        response = self.client.get(follows_controller, {}, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
+        follows = self.get_follows('00000002-0000-0000-0000-000000000002', None, headers)
 
         # delete
 

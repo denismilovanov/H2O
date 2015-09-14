@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION billing.update_user_balance(
     n_amount numeric,
     t_currency main.currency
 )
-    RETURNS void AS
+    RETURNS numeric AS
 $BODY$
 DECLARE
     n_balance numeric;
@@ -17,6 +17,8 @@ BEGIN
         WHERE   user_id = i_user_id AND
                 currency = 'usd'
         RETURNING balance INTO n_balance;
+
+    RETURN n_balance;
 
 END
 $BODY$

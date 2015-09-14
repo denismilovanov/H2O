@@ -419,7 +419,10 @@ def post_support(request, user):
     if not supported_user:
         return not_found(UserIsNotFound())
 
-    transaction_id = Transaction.add_support(user['id'], supported_user['id'], amount, currency, is_anonymous)
+    try:
+        transaction_id = Transaction.add_support(user['id'], supported_user['id'], amount, currency, is_anonymous)
+    except NotEnoughMoneyException, e:
+        return not_acceptable(e)
 
     return created(transaction_id=transaction_id)
 

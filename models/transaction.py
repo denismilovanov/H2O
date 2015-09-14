@@ -1,6 +1,6 @@
 from decorators import *
 from models import User, UserFollow
-from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException
+from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException, NotEnoughMoneyException
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -174,7 +174,14 @@ class Transaction:
     @staticmethod
     @raw_queries()
     def add_support(user_id, counter_user_id, amount, currency, is_anonymous, db):
-        user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
+        amount = float(amount)
+        user = User.get_all_by_ids([user_id], scope='all_with_balance')[0]
+        user_uuid = user['uuid']
+        user_balance = user['balance']
+
+        if user_balance < amount:
+            raise NotEnoughMoneyException()
+
         counter_user_uuid = User.get_all_by_ids([counter_user_id], scope='all')[0]['uuid']
 
         try:
@@ -190,6 +197,10 @@ class Transaction:
 
                 # decrease balance
                 Transaction.update_user_balance(db, user_id, -amount, currency)
+
+                # check balance again
+                if False:
+                    raise NotEnoughMoneyException()
 
                 # receive
                 counter_transaction_id = Transaction.add_transaction_raw(

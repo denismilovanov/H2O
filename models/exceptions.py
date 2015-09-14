@@ -63,3 +63,7 @@ class ConflictException(Exception):
 class NotAcceptableException(Exception):
     def __str__(self):
         return 'NOT_ACCEPTABLE'
+
+class NotEnoughMoneyException(Exception):
+    def __str__(self):
+        return 'NOT_ENOUGH_MONEY'

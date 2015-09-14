@@ -155,7 +155,7 @@ class User:
 
         if scope == 'my_personal_profile':
             me_id = User.extract_user_id_from_uuid(user['uuid'])
-            user['balance'] = UserAccount.get_user_account(me_id)['balance']
+            user['balance'] = float(UserAccount.get_user_account(me_id)['balance'])
             user['push_notifications'] = True # UserSettings.get_user_settings(me_id)['push_notifications']
 
         return user
@@ -198,6 +198,10 @@ class User:
             for user in users:
                 user['follows'] = []
                 user['followed_by'] = []
+
+        if scope == 'all_with_balance':
+            for user in users:
+                user['balance'] = float(UserAccount.get_user_account(user['id'])['balance'])
 
         return users
 

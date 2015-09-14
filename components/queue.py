@@ -22,7 +22,15 @@ class GeneralTask:
     def commit(self):
         self.bag.channel.basic_ack(delivery_tag=self.bag.method.delivery_tag)
 
-    def rollback(self, delay):
+    def rollback(self, delay, max_attempts=10):
+        # inc attempts count
+        self.task_data['attempts'] += 1
+        # check
+        if self.task_data['attempts'] > max_attempts:
+            # remove old by ack
+            self.commit()
+            return
+
         channel = self.bag.channel
         hold_queue = self.bag.queue + '_delayed_' + str(delay)
 
@@ -34,12 +42,6 @@ class GeneralTask:
         self.bag.channel.exchange_declare(exchange=hold_queue, durable=True)
         self.bag.channel.queue_declare(queue=hold_queue, durable=True, exclusive=False, arguments=hold_queue_arguments)
         self.bag.channel.queue_bind(exchange=hold_queue, queue=hold_queue, routing_key=hold_queue)
-
-        # inc attempts count
-        try:
-            self.task_data['attempts'] += 1
-        except:
-            self.task_data['attempts'] = 1
 
         # remove old by ack
         self.commit()
@@ -78,6 +80,7 @@ class Queue:
         channel.queue_declare(queue=queue, durable=True)
         channel.exchange_declare(exchange=queue, durable=True)
         channel.queue_bind(exchange=queue, queue=queue, routing_key=queue)
+        message['attempts'] = 1
         body = json.dumps(message)
         channel.basic_publish(exchange=queue, routing_key=queue, body=body)
         connection.close()

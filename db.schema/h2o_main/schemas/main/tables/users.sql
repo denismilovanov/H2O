@@ -20,4 +20,8 @@ CREATE UNIQUE INDEX users_facebook_id_ukey
     USING btree(facebook_id)
     WHERE id > 0;
 
+CREATE UNIQUE INDEX users_generations_ukey
+    ON main.users
+    USING btree(generation, num_in_generation);
+
 

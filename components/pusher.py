@@ -76,7 +76,14 @@ class ApplePusher:
                 key_file = BASE_DIR + '/resources/certs/push_H2O_Dev.key'
                 ApplePusher.apns = APNs(use_sandbox=True, cert_file=cert_file, key_file=key_file)
 
-            payload = Payload(alert=data, sound="default", badge=1)
+            # dummy alert, all real information in 'data'
+            alert = {
+                "title": "H2O",
+                "body": "body"
+            }
+
+            payload = Payload(alert=alert, sound="default", badge=1, custom=data)
+
             ApplePusher.apns.gateway_server.send_notification(push_token, payload)
 
         except Exception, e:

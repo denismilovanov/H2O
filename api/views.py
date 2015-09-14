@@ -581,4 +581,6 @@ def post_deposit(request, user):
         return conflict()
     except ResourceIsNotFound, e:
         return not_acceptable(e)
+    except NotAcceptableException, e:
+        return not_acceptable(e)
 

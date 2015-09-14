@@ -1,6 +1,6 @@
 from decorators import *
 from models import User, UserFollow
-from models.exceptions import ResourceIsNotFound, ConflictException
+from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -227,6 +227,7 @@ class Transaction:
     @staticmethod
     @raw_queries()
     def add_deposit(user_id, provider, provider_transaction_id, amount, currency, db):
+        amount = float(amount)
         user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
 
         from paypalrestsdk import Payment, ResourceNotFound
@@ -241,7 +242,12 @@ class Transaction:
             })
 
             payment = Payment.find(provider_transaction_id)
-            amount = float(payment['transactions'][0]['amount']['total'])
+            provider_amount = float(payment['transactions'][0]['amount']['total'])
+            provider_currency = payment['transactions'][0]['amount']['currency']
+
+            if amount != provider_amount or currency.lower() != provider_currency.lower():
+                raise NotAcceptableException()
+
         except ResourceNotFound as error:
             logger.warn(error)
             raise ResourceIsNotFound()

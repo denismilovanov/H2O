@@ -59,3 +59,7 @@ class Forbidden(Exception):
 class ConflictException(Exception):
     def __str__(self):
         return 'CONFLICT'
+
+class NotAcceptableException(Exception):
+    def __str__(self):
+        return 'NOT_ACCEPTABLE'

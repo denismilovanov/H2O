@@ -524,14 +524,14 @@ def notification(request, notification_id, user):
 
 # graph
 @api_view(['GET'])
-# @authorization_needed
-# def graph(request, user):
-def graph(request):
+@authorization_needed
+def graph(request, user):
     logger.info('METHOD: graph')
 
-    me = User.get_all_by_ids([100008], scope='graph')[0]
-    me['follows'] = Graph.get_follows(100008)
-    me['followed_by'] = Graph.get_followed_by(100008)
+    me_id = user['id']
+    me = User.get_all_by_ids([me_id], scope='graph')[0]
+    me['follows'] = Graph.get_follows(me_id)
+    me['followed_by'] = Graph.get_followed_by(me_id)
 
     return ok_raw({
         'users_counts': Graph.get_users_counts(),

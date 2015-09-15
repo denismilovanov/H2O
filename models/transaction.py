@@ -176,14 +176,14 @@ class Transaction:
     @raw_queries()
     def add_support(user_id, counter_user_id, amount, currency, is_anonymous, db):
         amount = float(amount)
-        user = User.get_all_by_ids([user_id], scope='all_with_balance')[0]
+        user = User.get_by_id(user_id, scope='all_with_balance')
         user_uuid = user['uuid']
         user_balance = user['balance']
 
         if user_balance < amount:
             raise NotEnoughMoneyException()
 
-        counter_user_uuid = User.get_all_by_ids([counter_user_id], scope='all')[0]['uuid']
+        counter_user_uuid = User.get_by_id(counter_user_id, scope='all')['uuid']
 
         try:
             with db.t():
@@ -245,7 +245,7 @@ class Transaction:
     @raw_queries()
     def add_deposit(user_id, provider, provider_transaction_id, amount, currency, db):
         amount = float(amount)
-        user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
+        user_uuid = User.get_by_id(user_id, scope='all')['uuid']
 
         from paypalrestsdk import Payment, ResourceNotFound
 

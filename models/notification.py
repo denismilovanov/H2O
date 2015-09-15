@@ -16,7 +16,7 @@ class Notification:
         # type with user
         if record['type'] in ['somebody_follows_me', 'somebody_sent_me_money']:
             try:
-                data_for_result['user'] = User.get_all_by_ids([record['counter_user_id']], scope='public_profile')[0]
+                data_for_result['user'] = User.get_by_id(record['counter_user_id'], scope='public_profile')
                 # for json.dumps:
                 data_for_result['user']['uuid'] = str(data_for_result['user']['uuid'])
             except Exception, e:

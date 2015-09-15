@@ -568,7 +568,7 @@ def graph(request, user):
     logger.info('METHOD: graph')
 
     me_id = user['id']
-    me = User.get_all_by_ids([me_id], scope='graph')[0]
+    me = User.get_by_id(me_id, scope='graph')
     me['follows'] = Graph.get_follows(me_id)
     me['followed_by'] = Graph.get_followed_by(me_id)
 
@@ -593,7 +593,7 @@ def graph_user(request, user_uuid, user):
 
     logger.info(graph_user)
 
-    me = User.get_all_by_ids([graph_user['id']], scope='graph')[0]
+    me = User.get_by_id(graph_user['id'], scope='graph')
     me['follows'] = Graph.get_follows(graph_user['id'])
     me['followed_by'] = Graph.get_followed_by(graph_user['id'])
 

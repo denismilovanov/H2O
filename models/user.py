@@ -60,7 +60,7 @@ class User:
                 raise InviteCodeAlreadyTakenException
 
             #
-            invite_owner = User.get_all_by_ids([invite['owner_id']], scope='all')[0]
+            invite_owner = User.get_by_id(invite['owner_id'], scope='all')
             logger.info(invite_owner)
 
             #
@@ -101,7 +101,7 @@ class User:
             UserAccount.create_user_accounts(user_id)
 
             # follow facebook friends
-            facebook_friends_ids = user_data['facebook_friends_ids']
+            facebook_friends_ids = user_data.get('facebook_friends_ids', [])
             facebook_friends_our_ids = UserNetwork.find_users_by_network(1, facebook_friends_ids)
             from user_follow import UserFollow
             for facebook_friend_our_id in facebook_friends_our_ids:

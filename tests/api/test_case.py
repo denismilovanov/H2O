@@ -1,10 +1,22 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 import json
-
+import requests
+import re
+import cookielib
 
 class MyAPITestCase(APITestCase):
     multi_db = True
+
+    def get_facebook_access_token(self):
+        from H2O.settings import BASE_DIR, FACEBOOK_CLIENT_ID
+        url = 'https://www.facebook.com/dialog/oauth?client_id=' + FACEBOOK_CLIENT_ID + '&redirect_uri=https://www.facebook.com/connect/login_success.html&scope=basic_info,email,public_profile,user_about_me,user_birthday,user_education_history,user_friends,user_likes,user_location,user_photos,user_relationship_details&response_type=token'
+        jar = cookielib.LWPCookieJar(BASE_DIR + '/resources/tests/facebook_cookies.txt')
+        jar.load()
+        r = requests.get(url, cookies=jar)
+        m = re.search('access_token=([A-Za-z\d]+)', r.url)
+        access_token = m.group(1)
+        return access_token
 
     def get_balance(self, headers):
         return self.get_profile('me', headers)['balance']
@@ -38,7 +50,7 @@ class MyAPITestCase(APITestCase):
             'access_token': facebook_token if facebook_token else 'TEST_TOKEN_' + str(user_id),
             'invite_code': 'Q123',
             'device_type': 'ios',
-            'push_token': 'push',
+            'push_token': '1' * 64,
         }
 
         response = self.client.post(self.session_controller, data, format=self.format)

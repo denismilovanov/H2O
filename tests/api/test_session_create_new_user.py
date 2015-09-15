@@ -6,7 +6,7 @@ import json
 
 class SessionCreateNewUserTestCase(MyAPITestCase):
     def test1(self):
-        token = 'CAAGm0PX4ZCpsBAIc08Q3AvKdQ8TjoUbIPK5Y8Uu9LlKddpKZAkxrCZBYvj5Lyrgoha5anxyTah5YgfNDt67zJNwa1ZC6HQoEkfOrmkGeZAW1qgCIApSpcAL7ZC4PquPhbZBrH4TbjRhohvSi2BWwUKLiyqiSx4UfpEZA6DZAvdmxXXyu4RTj56qNXBTUhlBIZCplyG0wzUQFQhIwZDZD'
+        token = self.get_facebook_access_token()
 
         authorization = self.authorization(None, token)
         headers = authorization['headers']

@@ -18,6 +18,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_0
 
 DEBUG = True
 
+FACEBOOK_CLIENT_ID = '401193696737876'
 FACEBOOK_TIMEOUT = 4
 
 ALLOWED_HOSTS = []

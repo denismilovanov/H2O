@@ -23,10 +23,12 @@ class DepositsTestCase(MyAPITestCase):
 
         amount = 1
 
-        code = self.post_deposit('PAY-8TK27125MK966472MKXZLDBY', amount, headers)
+        from H2O.settings import PAYPAL_SANDBOX_TRANSACTION_ID
+
+        code = self.post_deposit(PAYPAL_SANDBOX_TRANSACTION_ID, amount, headers)
         self.assertTrue(code == status.HTTP_201_CREATED)
 
-        code = self.post_deposit('PAY-8TK27125MK966472MKXZLDBY', amount, headers)
+        code = self.post_deposit(PAYPAL_SANDBOX_TRANSACTION_ID, amount, headers)
         self.assertTrue(code == status.HTTP_409_CONFLICT)
 
         code = self.post_deposit('PAY-ZZZZZZZZZZZZZZZZZZZZZZZZ', amount, headers)

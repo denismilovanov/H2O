@@ -59,6 +59,12 @@ class AndroidPusher:
 class ApplePusher:
     apns = None
 
+    @staticmethod
+    def get_apns():
+        from H2O.settings import APNS_USE_SANDBOX, APNS_CERT_FILE, APNS_KEY_FILE
+        ApplePusher.apns = APNs(use_sandbox=True, cert_file=APNS_CERT_FILE, key_file=APNS_KEY_FILE)
+        return ApplePusher.apns
+
     # push
     def push(self, user_id, push_token, data):
         logger.info('Push to token: ' + str(push_token) + ' ' + str(user_id) + ' ' + str(data))
@@ -71,10 +77,7 @@ class ApplePusher:
                 return True
 
             if not ApplePusher.apns:
-                from H2O.settings import BASE_DIR
-                cert_file = BASE_DIR + '/resources/certs/push_H2O_Dev.pem'
-                key_file = BASE_DIR + '/resources/certs/push_H2O_Dev.key'
-                ApplePusher.apns = APNs(use_sandbox=True, cert_file=cert_file, key_file=key_file)
+                ApplePusher.apns = ApplePusher.get_apns()
 
             # dummy alert, all real information in 'data'
             alert = {

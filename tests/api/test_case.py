@@ -77,6 +77,7 @@ class MyAPITestCase(APITestCase):
     statistics_controller = '/v1/statistics'
     notifications_controller = '/v1/notifications'
     graph_controller = '/v1/graph'
+    error_controller = '/v1/error'
     format = 'json'
 
 

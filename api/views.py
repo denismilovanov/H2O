@@ -99,6 +99,42 @@ def authorization_needed(func):
 
     return inner
 
+# error
+@api_view(['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
+@authorization_needed
+def error(request, http_code, user):
+    #http_code = request.data.get('http_code')
+    #if not http_code:
+    #    http_code = request.GET.get('http_code')
+
+    http_code = int(http_code)
+
+    # error description
+    error = ''
+    try:
+       error = {
+            400: 'BAD_REQUEST',
+            401: 'UNAUTHORIZED',
+            403: 'FORBIDDEN',
+            404: 'RESOURSE_IS_NOT_FOUND',
+            406: 'EMAIL_IS_ALREADY_USED',
+            500: 'INTERNAL_SERVER_ERROR',
+            503: 'UNAVAILABLE',
+        }[http_code]
+    except:
+        pass
+
+    data = {
+        'error': error,
+    }
+
+    logger.info('METHOD: error ' + str(http_code) + ' ' + str(error))
+
+    # response
+    from views_helpers import JSONResponse
+    return JSONResponse(data, status=http_code)
+
+
 # session
 @api_view(['POST', 'PATCH', 'DELETE'])
 @authorization_needed

@@ -46,16 +46,17 @@ class Transaction:
         return transaction
 
     @staticmethod
-    def extract_counter_users_ids(transactions):
+    def extract_counter_users_ids(transactions, user_id):
         # counter users ids
         counter_users_ids = []
         for transaction in transactions:
             if transaction['direction'] == 'receive' and transaction['is_anonymous']:
                 pass
-            else:
+            elif transaction['counter_user_id'] != user_id:
                 counter_users_ids.append(transaction['counter_user_id'])
 
-            counter_users_ids.append(transaction['user_id'])
+            if transaction['user_id'] != user_id:
+                counter_users_ids.append(transaction['user_id'])
 
         return list(set(counter_users_ids))
 
@@ -82,7 +83,7 @@ class Transaction:
         transactions = Transaction.get_transactions_by_dates_raw(users_ids, from_date, to_date, direction, db)
 
         #
-        return Transaction.prepare_transactions_response(transactions, whose)
+        return Transaction.prepare_transactions_response(transactions, whose, user_id)
 
 
     @staticmethod
@@ -95,13 +96,13 @@ class Transaction:
         transactions = Transaction.get_transactions_by_offset_raw(users_ids, limit, offset, db)
 
         #
-        return Transaction.prepare_transactions_response(transactions, whose)
+        return Transaction.prepare_transactions_response(transactions, whose, user_id)
 
 
     @staticmethod
-    def prepare_transactions_response(transactions, whose):
+    def prepare_transactions_response(transactions, whose, user_id):
         # extract counter users ids
-        counter_users_ids = Transaction.extract_counter_users_ids(transactions)
+        counter_users_ids = Transaction.extract_counter_users_ids(transactions, user_id)
 
         # get them all
         counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')

@@ -248,16 +248,8 @@ class Transaction:
         user_uuid = User.get_all_by_ids([user_id], scope='all')[0]['uuid']
 
         from paypalrestsdk import Payment, ResourceNotFound
-        import paypalrestsdk
 
         try:
-            from H2O.settings import PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
-            paypalrestsdk.configure({
-                'mode': PAYPAL_MODE,
-                'client_id': PAYPAL_CLIENT_ID,
-                'client_secret': PAYPAL_CLIENT_SECRET,
-            })
-
             payment = Payment.find(provider_transaction_id)
             provider_amount = float(payment['transactions'][0]['amount']['total'])
             provider_currency = payment['transactions'][0]['amount']['currency']

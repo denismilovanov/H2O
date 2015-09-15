@@ -38,6 +38,13 @@ PAYPAL_CLIENT_ID = 'AWGLmmsBsfBLu8ZqogVZp3SroEpHPLcyLsFTt9gvHIs0h-m-mqG0LaokDEPy
 PAYPAL_CLIENT_SECRET = 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs'
 PAYPAL_SANDBOX_TRANSACTION_ID = 'PAY-2G3660958Y2828046KX352DQ'
 
+import paypalrestsdk
+paypalrestsdk.configure({
+    'mode': PAYPAL_MODE,
+    'client_id': PAYPAL_CLIENT_ID,
+    'client_secret': PAYPAL_CLIENT_SECRET,
+})
+
 #
 APNS_USE_SANDBOX = DEBUG
 APNS_CERT_FILE = BASE_DIR + '/resources/certs/push_H2O_Dev.pem'
@@ -127,4 +134,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TEST_RUNNER = 'tests.no_db.NoDbTestRunner'
+
+
 

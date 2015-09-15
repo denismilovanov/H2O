@@ -31,6 +31,19 @@ class UserNetwork:
 
     @staticmethod
     @raw_queries(['auth'])
+    def find_users_by_network(network_id, users_network_ids, auth):
+        logger.info('find_users_by_network')
+        logger.info(users_network_ids)
+
+        users = auth.select_table('''
+            SELECT * FROM main.find_users_by_network(%(network_id)s, %(users_network_ids)s) AS user_id;
+        ''', network_id=network_id, users_network_ids=users_network_ids)
+        logger.info(users)
+
+        return [user['user_id'] for user in users]
+
+    @staticmethod
+    @raw_queries(['auth'])
     def get_user_networks(user_id, auth):
         facebook = auth.select_record('''
             SELECT * FROM main.get_user_networks(%(user_id)s);

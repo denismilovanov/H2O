@@ -100,6 +100,15 @@ class User:
             from user_account import UserAccount
             UserAccount.create_user_accounts(user_id)
 
+            # follow facebook friends
+            facebook_friends_ids = user_data['facebook_friends_ids']
+            facebook_friends_our_ids = UserNetwork.find_users_by_network(1, facebook_friends_ids)
+            from user_follow import UserFollow
+            for facebook_friend_our_id in facebook_friends_our_ids:
+                facebook_friend_in_our_system = User.get_by_id(facebook_friend_our_id, scope='all')
+                if facebook_friend_in_our_system:
+                    UserFollow.upsert_user_follow(user_id, facebook_friend_in_our_system['uuid'])
+
             # newness flag
             is_new = True
 
@@ -204,6 +213,17 @@ class User:
                 user['balance'] = float(UserAccount.get_user_account(user['id'])['balance'])
 
         return users
+
+    @staticmethod
+    def get_by_id(user_id, scope):
+        logger.info('get_by_id')
+        logger.info(user_id)
+
+        users = User.get_all_by_ids([user_id], scope)
+        try:
+            return users[0]
+        except:
+            return None
 
     @staticmethod
     @raw_queries()

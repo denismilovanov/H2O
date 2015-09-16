@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk')
 
-DEBUG = True
+DEBUG = os.environ.get('H2O_DEBUG', 'True') == 'True'
 
 FACEBOOK_CLIENT_ID = '401193696737876'
 FACEBOOK_TIMEOUT = 4
@@ -33,9 +33,9 @@ IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
 DEVELOPER_EMAIL = 'milovanov@octabrain.com'
 
 #
-PAYPAL_MODE = 'sandbox'
-PAYPAL_CLIENT_ID = 'AWGLmmsBsfBLu8ZqogVZp3SroEpHPLcyLsFTt9gvHIs0h-m-mqG0LaokDEPyDwgr6sIb4aDGeRIqj0pk'
-PAYPAL_CLIENT_SECRET = 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs'
+PAYPAL_MODE = 'sandbox' if DEBUG else 'live'
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', 'AWGLmmsBsfBLu8ZqogVZp3SroEpHPLcyLsFTt9gvHIs0h-m-mqG0LaokDEPyDwgr6sIb4aDGeRIqj0pk')
+PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs')
 PAYPAL_SANDBOX_TRANSACTION_ID = 'PAY-2G3660958Y2828046KX352DQ'
 
 import paypalrestsdk

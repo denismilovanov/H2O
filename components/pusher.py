@@ -57,13 +57,11 @@ class AndroidPusher:
 
 
 class ApplePusher:
-    apns = None
-
     @staticmethod
     def get_apns():
         from H2O.settings import APNS_USE_SANDBOX, APNS_CERT_FILE, APNS_KEY_FILE
-        ApplePusher.apns = APNs(use_sandbox=True, cert_file=APNS_CERT_FILE, key_file=APNS_KEY_FILE)
-        return ApplePusher.apns
+        apns = APNs(use_sandbox=True, cert_file=APNS_CERT_FILE, key_file=APNS_KEY_FILE)
+        return apns
 
     # push
     def push(self, user_id, push_token, data):
@@ -76,8 +74,7 @@ class ApplePusher:
                 logger.info('That was a test push')
                 return True
 
-            if not ApplePusher.apns:
-                ApplePusher.apns = ApplePusher.get_apns()
+            apns = ApplePusher.get_apns()
 
             # dummy alert, all real information in 'data'
             alert = {
@@ -87,7 +84,10 @@ class ApplePusher:
 
             payload = Payload(alert=alert, sound="default", badge=1, custom=data)
 
-            ApplePusher.apns.gateway_server.send_notification(push_token, payload)
+            apns.gateway_server.send_notification(push_token, payload)
+
+            # close connection
+            del apns
 
         except Exception, e:
             raise PusherException(e)

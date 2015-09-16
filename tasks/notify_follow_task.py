@@ -40,6 +40,7 @@ class NotifyFollowTask:
         if not counter_user:
             # it can happend in tests:
             # user is not present in db already, but the task in rabbit is
+            self.queue_task.commit()
             return True
 
         #

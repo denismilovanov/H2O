@@ -40,8 +40,8 @@ urlpatterns = [
     url(r'v1/notifications', views.notifications),
 
     # graph
-    url(r'v1/graph/user/(?P<user_uuid>(me|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))', views.graph_user_by_uuid),
-    url(r'v1/graph/user', views.graph_user),
+    url(r'v1/graph/users/(?P<user_uuid>(me|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))', views.graph_user_by_uuid),
+    url(r'v1/graph/users', views.graph_user),
     url(r'v1/graph', views.graph),
 
     # deposits

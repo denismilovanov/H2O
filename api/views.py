@@ -623,3 +623,28 @@ def post_deposit(request, user):
     except NotAcceptableException, e:
         return not_acceptable(e)
 
+# withdrawals
+@api_view(['POST'])
+@authorization_needed
+def post_withdrawal(request, user):
+    logger.info('METHOD: post_withdrawal')
+
+    try:
+        provider = request.data['provider']
+        amount = float(request.data['amount'])
+        currency = request.data['currency']
+        email = request.data['email']
+    except:
+        return bad_request(BadRequest(None))
+
+    try:
+        transaction_id = Transaction.add_withdrawal(user['id'], provider, email, amount, currency)
+        return created(transaction_id=transaction_id)
+    except ConflictException, e:
+        return conflict()
+    except ResourceIsNotFound, e:
+        return not_acceptable(e)
+    except NotAcceptableException, e:
+        return not_acceptable(e)
+
+

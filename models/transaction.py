@@ -167,6 +167,23 @@ class Transaction:
         )
 
     @staticmethod
+    def add_withdrawal_raw(db, user_id, user_uuid, amount, currency,
+                           provider, data):
+
+        return db.select_field('''
+            SELECT billing.add_transaction(
+                %(user_id)s, %(user_uuid)s,
+                NULL, NULL,
+                'withdraw', %(amount)s, %(currency)s, FALSE,
+                %(provider)s, NULL
+            );
+        ''',
+            user_id=user_id, user_uuid=user_uuid,
+            amount=amount, currency=currency,
+            provider=provider
+        )
+
+    @staticmethod
     def update_user_balance(db, user_id, amount, currency):
         return db.select_field('''
             SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(currency)s);
@@ -275,6 +292,72 @@ class Transaction:
 
             # increase balance
             Transaction.update_user_balance(db, user_id, +amount, currency)
+
+        # update statistics sync.
+        # TODO: make it async.
+        from models.statistics import Statistics
+        Statistics.update_statistics_via_transaction(user_id, transaction_id)
+
+        #
+        return transaction_id
+
+    @staticmethod
+    @raw_queries()
+    def add_withdrawal(user_id, provider, email, amount, currency, db):
+        amount = float(amount)
+        user_uuid = User.get_by_id(user_id, scope='all')['uuid']
+
+        from paypalrestsdk import Payout
+        import random
+        import string
+
+        try:
+            sender_batch_id = ''.join(random.choice(string.ascii_uppercase) for i in range(12))
+
+            payout = Payout({
+                "sender_batch_header": {
+                    "sender_batch_id": sender_batch_id,
+                    "email_subject": "You have a payment"
+                },
+                "items": [
+                    {
+                        "recipient_type": "EMAIL",
+                        "amount": {
+                            "value": amount,
+                            "currency": "USD"
+                        },
+                        "receiver": email,
+                        "note": "Thank you.",
+                        "sender_item_id": "item_1"
+                    }
+                ]
+            })
+
+            if payout.create(sync_mode=True):
+                pass
+            else:
+                raise Exception(payout.error)
+
+        except Exception, e:
+            logger.warn(e)
+            raise
+
+        # write to db
+        with db.t():
+            # transaction
+
+            transaction_id = Transaction.add_withdrawal_raw(
+                db,
+                user_id, user_uuid,
+                amount, currency,
+                'paypal',
+                {
+                    'email': email,
+                }
+            )
+
+            # increase balance
+            Transaction.update_user_balance(db, user_id, -amount, currency)
 
         # update statistics sync.
         # TODO: make it async.

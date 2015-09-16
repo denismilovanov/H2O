@@ -46,4 +46,7 @@ urlpatterns = [
     # deposits
     url(r'v1/deposits', views.post_deposit),
 
+    # withdrawals
+    url(r'v1/withdrawals', views.post_withdrawal),
+
 ]

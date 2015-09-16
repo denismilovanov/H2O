@@ -7,7 +7,7 @@ CREATE TABLE notifications.all(
     type notifications.type NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     data jsonb NOT NULL,
-    counter_user_id integer NULL
+    counter_user_id integer NULL REFERENCES main.users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 ALTER TABLE notifications.all

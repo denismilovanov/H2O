@@ -32,4 +32,9 @@ class NotificationsTestCase(MyAPITestCase):
             format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_404_NOT_FOUND)
 
+        # delete all
+
+        response = self.client.delete(self.notifications_controller, {}, format=self.format, headers=headers)
+        self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)
+
 

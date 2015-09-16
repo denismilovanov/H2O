@@ -75,6 +75,13 @@ class Notification:
 
     @staticmethod
     @raw_queries()
+    def delete_all_notifications_by_user_id(user_id, db):
+        db.select_field('''
+            SELECT notifications.delete_all_notifications_by_user_id(%(user_id)s);
+        ''', user_id=user_id)
+
+    @staticmethod
+    @raw_queries()
     def add_notification(user_id, notification_type, data, counter_user_id, db):
         return db.select_field('''
             SELECT notifications.add_notification(%(user_id)s, %(notification_type)s, %(data)s, %(counter_user_id)s);

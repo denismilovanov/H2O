@@ -532,21 +532,27 @@ def statistics_counter_users(request, transaction_direction, user_uuid, user):
 
     return ok_raw(statistics)
 
-# list of notifications
-@api_view(['GET'])
+# list of notifications or delete them all
+@api_view(['GET', 'DELETE'])
 @authorization_needed
 def notifications(request, user):
     logger.info('METHOD: notifications')
 
-    #input
-    try:
-        limit, offset = get_limit_and_offset(request)
-    except Exception, e:
-        return bad_request(BadRequest(e))
+    if request.method == 'GET':
+        #input
+        try:
+            limit, offset = get_limit_and_offset(request)
+        except Exception, e:
+            return bad_request(BadRequest(e))
 
-    notifications = Notification.get_notifications_by_user_id(user['id'], limit, offset)
+        notifications = Notification.get_notifications_by_user_id(user['id'], limit, offset)
 
-    return ok_raw(notifications)
+        return ok_raw(notifications)
+
+    elif request.method == 'DELETE':
+        Notification.delete_all_notifications_by_user_id(user['id'])
+
+        return no_content()
 
 # delete notification
 @api_view(['DELETE'])

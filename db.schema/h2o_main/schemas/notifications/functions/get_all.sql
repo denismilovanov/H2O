@@ -15,7 +15,7 @@ BEGIN
     RETURN QUERY SELECT *
                     FROM notifications.all
                     WHERE user_id = i_user_id
-                    ORDER BY id ASC
+                    ORDER BY id DESC
                     LIMIT i_limit
                     OFFSET i_offset;
 

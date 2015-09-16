@@ -55,6 +55,9 @@ class Statistics:
             user['transactions_amount_sum'] = transactions_amounts_sums[user['id']]
             del user['id']
 
+        # order by sum
+        users = sorted(users, key=lambda k: k['transactions_amount_sum'], reverse=True)
+
         #
         return users
 

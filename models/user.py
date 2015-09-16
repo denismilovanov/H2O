@@ -227,6 +227,13 @@ class User:
 
     @staticmethod
     @raw_queries()
+    def get_user_id_by_num_in_generation(generation, num_in_generation, db):
+        return db.select_field('''
+            SELECT main.get_user_id_by_num_in_generation(%(generation)s, %(num_in_generation)s);
+        ''', generation=generation, num_in_generation=num_in_generation)
+
+    @staticmethod
+    @raw_queries()
     def update_profile(user_id, visibility, status, push_notifications, is_deleted, db):
         logger.info('update_profile')
 

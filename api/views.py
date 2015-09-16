@@ -578,10 +578,16 @@ def graph(request, user):
         'me': me,
     })
 
-# graph
+def render_graph_user(user_id):
+    user = User.get_by_id(user_id, scope='graph')
+    user['follows'] = Graph.get_follows(user_id)
+    user['followed_by'] = Graph.get_followed_by(user_id)
+    return ok_raw(user)
+
+# graph user by uuid
 @api_view(['GET'])
 @authorization_needed
-def graph_user(request, user_uuid, user):
+def graph_user_by_uuid(request, user_uuid, user):
     logger.info('METHOD: graph_user')
 
     if user_uuid != 'me':
@@ -591,13 +597,23 @@ def graph_user(request, user_uuid, user):
     else:
         graph_user = user
 
-    logger.info(graph_user)
+    return render_graph_user(graph_user['id'])
 
-    me = User.get_by_id(graph_user['id'], scope='graph')
-    me['follows'] = Graph.get_follows(graph_user['id'])
-    me['followed_by'] = Graph.get_followed_by(graph_user['id'])
+# graph user by num_in_generation
+@api_view(['GET'])
+@authorization_needed
+def graph_user(request, user):
+    logger.info('METHOD: graph_user_by_num_in_generation')
 
-    return ok_raw(me)
+    generation = request.GET.get('generation')
+    num_in_generation = request.GET.get('num_in_generation')
+
+    user_id = User.get_user_id_by_num_in_generation(generation, num_in_generation)
+
+    if not user_id:
+        return not_found(UserIsNotFound())
+
+    return render_graph_user(user_id)
 
 # deposits
 @api_view(['POST'])

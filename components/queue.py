@@ -65,6 +65,15 @@ class MockTask:
         logger.info('mock rollback')
 
 class Queue:
+    test = True
+    test_prefix = '__test_'
+
+    @staticmethod
+    def get_queue_name(queue):
+        if Queue.test and not queue.startswith(Queue.test_prefix):
+            return Queue.test_prefix + queue
+        return queue
+
     @staticmethod
     def get_channel():
         from H2O.settings import RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_HOST, RABBITMQ_PORT
@@ -75,6 +84,7 @@ class Queue:
 
     @staticmethod
     def push(queue, message):
+        queue = Queue.get_queue_name(queue)
         logger.info('Enqueue into ' + str(queue) + ' ' + str(message))
         channel, connection = Queue.get_channel()
         channel.queue_declare(queue=queue, durable=True)
@@ -87,11 +97,15 @@ class Queue:
 
     @staticmethod
     def subscribe(queue, call):
+        queue = Queue.get_queue_name(queue)
+
         def callback(channel, method, properties, body):
             task = json.loads(body)
             call(GeneralTask(task, QueueBag(channel, method, queue)))
 
         channel, _ = Queue.get_channel()
         channel.queue_declare(queue=queue, durable=True)
+        channel.basic_qos(prefetch_count=1)
         channel.basic_consume(callback, queue=queue, no_ack=False)
         channel.start_consuming()
+

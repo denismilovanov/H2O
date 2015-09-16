@@ -45,6 +45,10 @@ paypalrestsdk.configure({
     'client_secret': PAYPAL_CLIENT_SECRET,
 })
 
+# to have test queues prefixed
+from components.queue import Queue
+Queue.test = DEBUG
+
 #
 APNS_USE_SANDBOX = DEBUG
 APNS_CERT_FILE = BASE_DIR + '/resources/certs/push_H2O_Dev.pem'

@@ -1,4 +1,5 @@
 from models.notification import Notification
+from models.user import User
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +36,11 @@ class NotifyFollowTask:
         # to whom
         user_id = self.user_id
         counter_user_id = self.follow_user_id
+        counter_user = User.get_by_id(counter_user_id, scope='all')
+        if not counter_user:
+            # it can happend in tests:
+            # user is not present in db already, but the task in rabbit is
+            return True
 
         #
         logger.info('Run somebody_follows_me ' + str(counter_user_id) + ' follows ' + str(user_id))

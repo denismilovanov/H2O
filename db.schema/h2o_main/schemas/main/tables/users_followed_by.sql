@@ -8,4 +8,6 @@ CREATE TABLE main.users_followed_by (
     CONSTRAINT users_followed_by_pkey PRIMARY KEY (user_id, followed_by_user_id)
 );
 
-
+ALTER TABLE main.users_followed_by
+    ADD CONSTRAINT users_followed_by_equal
+    CHECK (user_id != followed_by_user_id);

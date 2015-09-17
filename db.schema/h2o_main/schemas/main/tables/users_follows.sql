@@ -8,4 +8,6 @@ CREATE TABLE main.users_follows (
     CONSTRAINT users_follows_pkey PRIMARY KEY (user_id, follow_user_id)
 );
 
-
+ALTER TABLE main.users_follows
+    ADD CONSTRAINT users_follows_equal
+    CHECK (user_id != follow_user_id);

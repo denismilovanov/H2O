@@ -221,14 +221,21 @@ def user(request, user_uuid, user):
         me = True
 
     if not me:
-        user = User.find_by_user_uuid(user_uuid, scope='public_profile')
+        # user I want to view profile
+        user_to_view = User.find_by_user_uuid(user_uuid, scope='public_profile')
+        if not user_to_view:
+            return not_found(UserIsNotFound())
+
+        # get all data to check if I follow this user
+        user_to_view_all_data = User.find_by_user_uuid(user_uuid, scope='all')
+        # do I follow this user?
+        user_to_view['i_follow'] = UserFollow.does_user_follow_user(user['id'], user_to_view_all_data['id'])
+
     else:
-        user = User.find_by_user_uuid(user_uuid, scope='my_personal_profile')
+        # this is me
+        user_to_view = User.find_by_user_uuid(user_uuid, scope='my_personal_profile')
 
-    if not user:
-        return not_found(UserIsNotFound())
-
-    return ok_raw(user)
+    return ok_raw(user_to_view)
 
 # list of user
 @api_view(['GET'])
@@ -646,27 +653,31 @@ def post_deposit(request, user):
         return not_acceptable(e)
 
 # withdrawals
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @authorization_needed
-def post_withdrawal(request, user):
-    logger.info('METHOD: post_withdrawal')
+def withdrawal_requests(request, user):
+    logger.info('METHOD: withdrawal_requests')
 
-    try:
-        provider = request.data['provider']
-        amount = float(request.data['amount'])
-        currency = request.data['currency']
-        email = request.data['email']
-    except:
-        return bad_request(BadRequest(None))
+    if request.method == 'POST':
+        try:
+            provider = request.data['provider']
+            amount = float(request.data['amount'])
+            currency = request.data['currency']
+            email = None
+            if provider == 'paypal':
+                email = request.data['email']
+        except:
+            return bad_request(BadRequest(None))
 
-    try:
-        transaction_id = Transaction.add_withdrawal(user['id'], provider, email, amount, currency)
-        return created(transaction_id=transaction_id)
-    except ConflictException, e:
-        return conflict()
-    except ResourceIsNotFound, e:
-        return not_acceptable(e)
-    except NotAcceptableException, e:
-        return not_acceptable(e)
+        try:
+            request_id = WithdrawalRequest.add_withdrawal_request(
+                user['id'], user['uuid'], provider, {'email': email}, amount, currency
+            )
+            return created(request_id=request_id)
+        except NotAcceptableException, e:
+            return not_acceptable(e)
+
+    elif request.method == 'GET':
+        pass
 
 

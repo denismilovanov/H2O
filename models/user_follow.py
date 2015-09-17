@@ -88,6 +88,15 @@ class UserFollow:
 
     @staticmethod
     @raw_queries()
+    def does_user_follow_user(user_id, follow_user_id, db):
+        follow = db.select_table('''
+            SELECT * FROM main.get_user_follow(%(user_id)s, %(follow_user_id)s);
+        ''', user_id=user_id, follow_user_id=follow_user_id)
+
+        return len(follow) > 0 and follow[0]['user_id'] != None
+
+    @staticmethod
+    @raw_queries()
     def get_user_followed_by_ids(user_id, db):
         users = db.select_table('''
             SELECT main.get_user_followed_by_ids(%(user_id)s, 100000, 0) AS followed_by_user_id;

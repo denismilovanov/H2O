@@ -1,6 +1,9 @@
 from decorators import *
 from models import User, UserFollow
 from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException, NotEnoughMoneyException
+from H2O.settings import DEBUG
+
+import json
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -150,7 +153,7 @@ class Transaction:
         )
 
     @staticmethod
-    def add_deposit_raw(db, user_id, user_uuid, amount, currency,
+    def add_deposit_db(db, user_id, user_uuid, amount, currency,
                         provider, provider_transaction_id):
 
         return db.select_field('''
@@ -281,7 +284,7 @@ class Transaction:
         # write to db
         with db.t():
             # transaction
-            transaction_id = Transaction.add_deposit_raw(
+            transaction_id = Transaction.add_deposit_db(
                 db,
                 user_id, user_uuid,
                 amount, currency,
@@ -305,7 +308,12 @@ class Transaction:
     @raw_queries()
     def add_withdrawal(user_id, provider, email, amount, currency, db):
         amount = float(amount)
-        user_uuid = User.get_by_id(user_id, scope='all')['uuid']
+        user = User.get_by_id(user_id, scope='all_with_balance')
+        user_uuid = user['uuid']
+        user_balance = user['balance']
+
+        if user_balance < amount:
+            raise NotEnoughMoneyException()
 
         from paypalrestsdk import Payout
         import random
@@ -327,16 +335,21 @@ class Transaction:
                             "currency": "USD"
                         },
                         "receiver": email,
-                        "note": "Thank you.",
+                        "note": "We pay you.",
                         "sender_item_id": "item_1"
                     }
                 ]
             })
 
             if payout.create(sync_mode=True):
-                pass
+                logger.info(payout)
             else:
                 raise Exception(payout.error)
+
+            payout = payout['items'][0]
+
+            if not DEBUG and payout['transaction_status'] != 'SUCCESS':
+                raise NotAcceptableException()
 
         except Exception, e:
             logger.warn(e)
@@ -346,14 +359,12 @@ class Transaction:
         with db.t():
             # transaction
 
-            transaction_id = Transaction.add_withdrawal_raw(
+            transaction_id = Transaction.add_withdrawal_db(
                 db,
                 user_id, user_uuid,
                 amount, currency,
-                'paypal',
-                {
-                    'email': email,
-                }
+                'paypal', sender_batch_id,
+                email, payout
             )
 
             # increase balance

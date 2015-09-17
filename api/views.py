@@ -671,13 +671,23 @@ def withdrawal_requests(request, user):
 
         try:
             request_id = WithdrawalRequest.add_withdrawal_request(
-                user['id'], user['uuid'], provider, {'email': email}, amount, currency
+                user['id'],
+                amount, currency,
+                provider, {'email': email}
             )
             return created(request_id=request_id)
-        except NotAcceptableException, e:
+        except NotEnoughMoneyException, e:
             return not_acceptable(e)
+        except InvalidEmail, e:
+            return bad_request(e)
 
     elif request.method == 'GET':
-        pass
+        try:
+            limit, offset = get_limit_and_offset(request)
+        except BadRequest, e:
+            return bad_request(e)
 
+        requests = WithdrawalRequest.get_withdrawal_requests_by_user_id(user['id'], limit, offset)
+
+        return ok_raw(requests)
 

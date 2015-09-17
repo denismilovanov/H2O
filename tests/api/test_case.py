@@ -74,7 +74,7 @@ class MyAPITestCase(APITestCase):
     receives_controller = '/v1/receives'
     transactions_controller = '/v1/transactions'
     deposits_controller = '/v1/deposits'
-    withdrawals_controller = '/v1/withdrawals'
+    withdrawal_requests_controller = '/v1/withdrawal_requests'
     statistics_controller = '/v1/statistics'
     notifications_controller = '/v1/notifications'
     graph_controller = '/v1/graph'

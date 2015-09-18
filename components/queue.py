@@ -61,7 +61,7 @@ class MockTask:
     def commit(self):
         logger.info('mock commit')
 
-    def rollback(self, delay):
+    def rollback(self, delay, max_attempts=10):
         logger.info('mock rollback')
 
 class Queue:

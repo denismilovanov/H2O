@@ -312,10 +312,12 @@ def invite_code(request, invite_code, user):
 
     # making invite
     try:
-        Invite.invite_user_via_invite_code_and_email(invite_code, email, entrance_gift)
+        Invite.invite_user_via_invite_code_and_email(user['id'], invite_code, email, entrance_gift)
     except InvalidEmail, e:
         return bad_request(e, email)
     except EmailIsAlreadyUsed, e:
+        return not_acceptable(e, email)
+    except YouHaveInvitedThisEmail, e:
         return not_acceptable(e, email)
 
     return ok(email=email)

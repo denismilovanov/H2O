@@ -40,6 +40,10 @@ class EmailIsAlreadyUsed(Exception):
     def __str__(self):
         return 'EMAIL_IS_ALREADY_USED'
 
+class YouHaveInvitedThisEmail(Exception):
+    def __str__(self):
+        return 'YOU_HAVE_INVITED_THIS_EMAIL'
+
 class UserIsAlreadyFollowed(Exception):
     def __str__(self):
         return 'USER_IS_ALREADY_FOLLOWED'

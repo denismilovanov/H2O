@@ -1,5 +1,5 @@
 from decorators import *
-from models.exceptions import InvalidEmail, EmailIsAlreadyUsed
+from models.exceptions import InvalidEmail, EmailIsAlreadyUsed, YouHaveInvitedThisEmail
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -12,6 +12,18 @@ class Invite:
         code = db.select_record('''
             SELECT * FROM main.get_invite_code(%(invite_code)s);
         ''', invite_code=invite_code)
+
+        if not code['invite_code']:
+            return None
+
+        return code
+
+    @staticmethod
+    @raw_queries()
+    def get_invite_code_by_email(email, db):
+        code = db.select_record('''
+            SELECT * FROM main.get_invite_code_by_email(%(email)s);
+        ''', email=email)
 
         if not code['invite_code']:
             return None
@@ -61,7 +73,7 @@ class Invite:
 
     @staticmethod
     @raw_queries()
-    def invite_user_via_invite_code_and_email(invite_code, email, entrance_gift, db):
+    def invite_user_via_invite_code_and_email(user_id, invite_code, email, entrance_gift, db):
         logger.info('invite_user_via_invite_code_and_email')
         logger.info(str(invite_code) + ' ' + str(email) + ' ' + str(entrance_gift))
 
@@ -69,11 +81,21 @@ class Invite:
         if not email or not validate_email(email):
             raise InvalidEmail()
 
+        # looking for email
+        code_by_email = Invite.get_invite_code_by_email(email)
+        if code_by_email:
+            if code_by_email['owner_id'] == user_id:
+                raise YouHaveInvitedThisEmail()
+            else:
+                raise EmailIsAlreadyUsed()
+
+        # email is free
         try:
             db.select_field('''
                 SELECT main.invite_user_via_invite_code_and_email(%(invite_code)s, %(email)s, %(entrance_gift)s);
             ''', invite_code=invite_code, email=email, entrance_gift=entrance_gift)
         except Exception, e:
+            # check again
             raise EmailIsAlreadyUsed()
 
         # sending though queue

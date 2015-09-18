@@ -35,15 +35,20 @@ class PerformWithdrawalRequestTask:
         # data
         user_id = self.user_id
         withdrawal_request_id = self.withdrawal_request_id
-        user = User.get_by_id(user_id, scope='all')
 
-        #
+        # log
         logger.info('Run perform_withdrawal_requests ' + str(user_id) + \
                     ' withdrawal_request_id ' + str(withdrawal_request_id))
 
-        # withdrawal_request = WithdrawalRequest
+        # perform
+        try:
+            WithdrawalRequest.perform_withdrawal_request(user_id, withdrawal_request_id)
+        except Exception, e:
+            logger.warn(e)
+            # let's wait
+            self.queue_task.rollback(60*10, 5)
+            return False
 
         # commit
         self.queue_task.commit()
-
         return True

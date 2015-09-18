@@ -210,7 +210,9 @@ class User:
 
         if scope == 'all_with_balance':
             for user in users:
-                user['balance'] = float(UserAccount.get_user_account(user['id'])['balance'])
+                account = UserAccount.get_user_account(user['id'])
+                user['balance'] = float(account['balance'])
+                user['hold'] = float(account['hold'])
 
         return users
 

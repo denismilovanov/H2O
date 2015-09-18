@@ -2,8 +2,6 @@ from decorators import *
 from models import User, UserFollow, UserAccount
 from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException, NotEnoughMoneyException
 
-from H2O.settings import DEBUG
-
 import json
 
 import logging
@@ -171,20 +169,18 @@ class Transaction:
         )
 
     @staticmethod
-    def add_withdrawal_raw(db, user_id, user_uuid, amount, currency,
-                           provider, data):
-
+    def add_withdrawal_db(db, user_id, user_uuid, amount, currency, provider, provider_transaction_id):
         return db.select_field('''
             SELECT billing.add_transaction(
                 %(user_id)s, %(user_uuid)s,
                 NULL, NULL,
                 'withdraw', %(amount)s, %(currency)s, FALSE,
-                %(provider)s, NULL
+                %(provider)s, %(provider_transaction_id)s
             );
         ''',
             user_id=user_id, user_uuid=user_uuid,
             amount=amount, currency=currency,
-            provider=provider
+            provider=provider, provider_transaction_id=provider_transaction_id
         )
 
     @staticmethod
@@ -299,78 +295,5 @@ class Transaction:
         #
         return transaction_id
 
-    @staticmethod
-    @raw_queries()
-    def add_withdrawal(user_id, provider, email, amount, currency, db):
-        amount = float(amount)
-        user = User.get_by_id(user_id, scope='all_with_balance')
-        user_uuid = user['uuid']
-        user_balance = user['balance']
-
-        if user_balance < amount:
-            raise NotEnoughMoneyException()
-
-        from paypalrestsdk import Payout
-        import random
-        import string
-
-        try:
-            sender_batch_id = ''.join(random.choice(string.ascii_uppercase) for i in range(12))
-
-            payout = Payout({
-                "sender_batch_header": {
-                    "sender_batch_id": sender_batch_id,
-                    "email_subject": "You have a payment"
-                },
-                "items": [
-                    {
-                        "recipient_type": "EMAIL",
-                        "amount": {
-                            "value": amount,
-                            "currency": "USD"
-                        },
-                        "receiver": email,
-                        "note": "We pay you.",
-                        "sender_item_id": "item_1"
-                    }
-                ]
-            })
-
-            if payout.create(sync_mode=True):
-                logger.info(payout)
-            else:
-                raise Exception(payout.error)
-
-            payout = payout['items'][0]
-
-            if not DEBUG and payout['transaction_status'] != 'SUCCESS':
-                raise NotAcceptableException()
-
-        except Exception, e:
-            logger.warn(e)
-            raise
-
-        # write to db
-        with db.t():
-            # transaction
-
-            transaction_id = Transaction.add_withdrawal_db(
-                db,
-                user_id, user_uuid,
-                amount, currency,
-                'paypal', sender_batch_id,
-                email, payout
-            )
-
-            # increase balance
-            UserAccount.update_user_balance(db, user_id, -amount, currency)
-
-        # update statistics sync.
-        # TODO: make it async.
-        from models.statistics import Statistics
-        Statistics.update_statistics_via_transaction(user_id, transaction_id)
-
-        #
-        return transaction_id
 
 

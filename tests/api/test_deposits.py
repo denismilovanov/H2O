@@ -3,6 +3,7 @@ from tests.api.test_case import MyAPITestCase
 from models import *
 from rest_framework import status
 import json
+from H2O.settings import DEBUG
 
 class DepositsTestCase(MyAPITestCase):
     def post_deposit(self, provider_transaction_id, amount, headers):
@@ -15,6 +16,12 @@ class DepositsTestCase(MyAPITestCase):
         return response.status_code
 
     def test1(self):
+        # deposit method checks if given transaction exists and its params match
+        # then it moves money
+        # we cannot perform this operations in live mode
+        if not DEBUG:
+            return
+
         authorization = self.authorization(4)
         headers = authorization['headers']
         session = authorization['session']

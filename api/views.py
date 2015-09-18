@@ -259,7 +259,7 @@ def profile(request, user):
             visibility = request.data.get('visibility')
             status = request.data.get('status')
             push_notifications = get_boolean(request.data.get('push_notifications', True))
-            is_deleted = request.data.get('is_deleted')
+            is_deleted = get_boolean(request.data.get('is_deleted'))
             logger.info(request.data)
 
         except Exception, e:

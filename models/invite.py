@@ -19,8 +19,7 @@ class Invite:
         return code
 
     @staticmethod
-    @raw_queries()
-    def use_invite_code(invite_code, user_id, db):
+    def use_invite_code(user_id, invite_code, db):
         db.select_field('''
             SELECT main.use_invite_code(%(invite_code)s, %(user_id)s);
         ''', invite_code=invite_code, user_id=user_id)
@@ -53,7 +52,6 @@ class Invite:
         return codes
 
     @staticmethod
-    @raw_queries()
     def create_invite_codes_for_user_id(user_id, count, db):
         db.select_field('''
             SELECT main.create_invite_codes_for_user_id(%(user_id)s, %(count)s);

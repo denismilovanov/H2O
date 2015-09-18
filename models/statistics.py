@@ -62,7 +62,6 @@ class Statistics:
         return users
 
     @staticmethod
-    @raw_queries()
     def create_user_records(user_id, db):
         db.select_field('''
             SELECT statistics.create_user_records(%(user_id)s);

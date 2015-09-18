@@ -15,7 +15,6 @@ class UserAccount:
         return account
 
     @staticmethod
-    @raw_queries()
     def create_user_accounts(user_id, db):
         db.select_field('''
             SELECT billing.create_user_accounts(%(user_id)s);

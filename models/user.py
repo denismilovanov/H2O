@@ -72,33 +72,35 @@ class User:
             num_in_generation = Graph.get_last_num_in_generation(generation)
             logger.info(str(generation) + ' ' + str(num_in_generation))
 
-            # choose DB based on user_id:
-            db.select_field('''
-                SELECT main.upsert_user(
-                    %(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s,
-                    %(network_id)s, %(user_network_id)s,
-                    %(generation)s, %(num_in_generation)s
-                );
-            ''',
-                user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'],
-                network_id=network_id, user_network_id=user_network_id,
-                generation=generation, num_in_generation=num_in_generation
-            )
-            logger.info(user_uuid)
+            # FUTURE: you may choose DB shard based on user_id and work with this user within his database
+            # single transaction below:
+            with db.t():
+                db.select_field('''
+                    SELECT main.upsert_user(
+                        %(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s,
+                        %(network_id)s, %(user_network_id)s,
+                        %(generation)s, %(num_in_generation)s
+                    );
+                ''',
+                    user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'],
+                    network_id=network_id, user_network_id=user_network_id,
+                    generation=generation, num_in_generation=num_in_generation
+                )
+                logger.info(user_uuid)
 
-            # use code
-            Invite.use_invite_code(invite_code, user_id)
+                # use code
+                Invite.use_invite_code(user_id, invite_code, db)
 
-            # create codes
-            Invite.create_invite_codes_for_user_id(user_id, 3)
+                # create codes
+                Invite.create_invite_codes_for_user_id(user_id, 3, db)
 
-            # stat for user
-            from models.statistics import Statistics
-            Statistics.create_user_records(user_id)
+                # stat for user
+                from models.statistics import Statistics
+                Statistics.create_user_records(user_id, db)
 
-            # account
-            from user_account import UserAccount
-            UserAccount.create_user_accounts(user_id)
+                # account
+                from user_account import UserAccount
+                UserAccount.create_user_accounts(user_id, db)
 
             # follow facebook friends
             facebook_friends_ids = user_data.get('facebook_friends_ids', [])

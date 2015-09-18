@@ -43,8 +43,8 @@ class WithdrawalRequestsTestCase(MyAPITestCase):
 
         balance2 = self.get_balance(headers)
 
-        # there is no real w/d
-        self.assertTrue(balance1 == balance2)
+        # money are held
+        self.assertTrue(balance1 - amount == balance2)
 
         # requests list
         requests = self.get_withdrawal_requests(headers)

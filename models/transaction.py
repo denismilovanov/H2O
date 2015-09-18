@@ -187,10 +187,10 @@ class Transaction:
         )
 
     @staticmethod
-    def update_user_balance(db, user_id, amount, currency):
+    def update_user_balance(db, user_id, amount, currency, hold=None):
         return db.select_field('''
-            SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(currency)s);
-        ''', user_id=user_id, amount=amount, currency=currency)
+            SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(hold)s, %(currency)s);
+        ''', user_id=user_id, amount=amount, currency=currency, hold=hold)
 
     @staticmethod
     @raw_queries()

@@ -2,6 +2,7 @@ from decorators import *
 from models import User
 from H2O.settings import DEBUG
 from models.exceptions import NotEnoughMoneyException, InvalidEmail
+from models.transaction import Transaction
 
 import json
 import random
@@ -52,22 +53,34 @@ class WithdrawalRequest:
         # unique transaction id
         provider_transaction_id = ''.join(random.choice(string.ascii_uppercase) for i in range(12))
 
-        # insert into db
-        request_id = db.select_field('''
-            SELECT billing.add_withdrawal_request(
-                %(user_id)s, %(user_uuid)s,
-                %(amount)s, %(currency)s,
-                %(provider)s, %(provider_transaction_id)s,
-                %(email)s, %(data)s
-            );
-        ''',
-            user_id=user_id, user_uuid=user_uuid, amount=amount, currency=currency,
-            provider=provider, provider_transaction_id=provider_transaction_id,
-            data=json.dumps(data), email=email
-        )
 
-        if not request_id:
+        with db.t():
+            # insert into db
+            withdrawal_request_id = db.select_field('''
+                SELECT billing.add_withdrawal_request(
+                    %(user_id)s, %(user_uuid)s,
+                    %(amount)s, %(currency)s,
+                    %(provider)s, %(provider_transaction_id)s,
+                    %(email)s, %(data)s
+                );
+            ''',
+                user_id=user_id, user_uuid=user_uuid, amount=amount, currency=currency,
+                provider=provider, provider_transaction_id=provider_transaction_id,
+                data=json.dumps(data), email=email
+            )
+
+            # decrease balance, increase hold money
+            new_balance = Transaction.update_user_balance(db, user_id, -amount, currency, amount)
+            if new_balance < 0:
+                raise NotEnoughMoneyException()
+
+        if not withdrawal_request_id:
             raise Exception('Generated transaction id is not unique.')
+
+        # perform w/d async
+        from tasks.perform_withdrawal_request_task import PerformWithdrawalRequestTask
+        PerformWithdrawalRequestTask(user_id, withdrawal_request_id).enqueue()
+
 
     @staticmethod
     @raw_queries()

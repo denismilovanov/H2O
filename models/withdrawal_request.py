@@ -1,8 +1,7 @@
 from decorators import *
-from models import User
 from H2O.settings import DEBUG
 from models.exceptions import NotEnoughMoneyException, InvalidEmail
-from models.transaction import Transaction
+from models import User, Transaction, UserAccount
 
 import json
 import random
@@ -70,7 +69,7 @@ class WithdrawalRequest:
             )
 
             # decrease balance, increase hold money
-            new_balance = Transaction.update_user_balance(db, user_id, -amount, currency, amount)
+            new_balance = UserAccount.update_user_balance(db, user_id, -amount, currency, amount)
             if new_balance < 0:
                 raise NotEnoughMoneyException()
 
@@ -143,7 +142,7 @@ class WithdrawalRequest:
             )
 
             # increase balance
-            Transaction.update_user_balance(db, user_id, -amount, currency)
+            UserAccount.update_user_balance(db, user_id, -amount, currency)
 
         # update statistics sync.
         # TODO: make it async.

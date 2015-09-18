@@ -22,3 +22,9 @@ class UserAccount:
         ''', user_id=user_id)
 
         return True
+
+    @staticmethod
+    def update_user_balance(db, user_id, amount, currency, hold=None):
+        return db.select_field('''
+            SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(hold)s, %(currency)s);
+        ''', user_id=user_id, amount=amount, currency=currency, hold=hold)

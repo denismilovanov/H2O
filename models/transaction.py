@@ -1,6 +1,7 @@
 from decorators import *
-from models import User, UserFollow
+from models import User, UserFollow, UserAccount
 from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException, NotEnoughMoneyException
+
 from H2O.settings import DEBUG
 
 import json
@@ -187,12 +188,6 @@ class Transaction:
         )
 
     @staticmethod
-    def update_user_balance(db, user_id, amount, currency, hold=None):
-        return db.select_field('''
-            SELECT billing.update_user_balance(%(user_id)s, %(amount)s, %(hold)s, %(currency)s);
-        ''', user_id=user_id, amount=amount, currency=currency, hold=hold)
-
-    @staticmethod
     @raw_queries()
     def add_support(user_id, counter_user_id, amount, currency, is_anonymous, db):
         amount = float(amount)
@@ -217,7 +212,7 @@ class Transaction:
                 )
 
                 # decrease balance
-                new_balance = Transaction.update_user_balance(db, user_id, -amount, currency)
+                new_balance = UserAccount.update_user_balance(db, user_id, -amount, currency)
 
                 # check balance again
                 # it is actual because between selecting and updating balance there is small time gap
@@ -238,7 +233,7 @@ class Transaction:
                 )
 
                 # increase balance
-                Transaction.update_user_balance(db, counter_user_id, +amount, currency)
+                UserAccount.update_user_balance(db, counter_user_id, +amount, currency)
 
         except Exception, e:
             raise e
@@ -294,7 +289,7 @@ class Transaction:
                 raise ConflictException()
 
             # increase balance
-            Transaction.update_user_balance(db, user_id, +amount, currency)
+            UserAccount.update_user_balance(db, user_id, +amount, currency)
 
         # update statistics sync.
         # TODO: make it async.
@@ -368,7 +363,7 @@ class Transaction:
             )
 
             # increase balance
-            Transaction.update_user_balance(db, user_id, -amount, currency)
+            UserAccount.update_user_balance(db, user_id, -amount, currency)
 
         # update statistics sync.
         # TODO: make it async.

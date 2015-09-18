@@ -189,13 +189,17 @@ def session(request, user):
             return bad_request(BadRequest())
 
         if refresh_token:
-            access_token = UserSession.refresh_access_token(refresh_token)
+            access_token, access_token_expires_at = UserSession.refresh_access_token(refresh_token)
 
             if not access_token:
                 return unauthorized(ResfreshTokenDoesNotExist())
 
             from H2O.settings import ACCESS_TOKEN_EXPIRES_IN
-            return ok(access_token=access_token, access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN)
+            return ok(
+                access_token=access_token,
+                access_token_expires_in=ACCESS_TOKEN_EXPIRES_IN,
+                access_token_expires_at=access_token_expires_at
+            )
 
         if push_token:
             UserDevice.upsert_push_token(user['id'], push_token)

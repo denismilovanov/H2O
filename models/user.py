@@ -128,6 +128,7 @@ class User:
             'avatar_url': user_data['avatar_url'],
             'name': user_data['name'],
             'is_deleted': user['is_deleted'],
+            'is_banned': user['is_banned'],
             'generation': user['generation'],
             'num_in_generation': user['num_in_generation'],
         }, user_id

@@ -12,7 +12,8 @@ CREATE TABLE main.users (
     is_deleted boolean NOT NULL DEFAULT FALSE,
     facebook_id bigint NOT NULL,
     generation integer NOT NULL,
-    num_in_generation integer NOT NULL
+    num_in_generation integer NOT NULL,
+    is_banned boolean NOT NULL DEFAULT FALSE
 );
 
 CREATE UNIQUE INDEX users_facebook_id_ukey

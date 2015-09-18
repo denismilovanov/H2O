@@ -16,7 +16,7 @@ CREATE TABLE billing.withdrawal_requests (
     billed_at timestamptz NULL,
 
     -- через что будем выводить?
-    provider billing.transaction_provider NULL,
+    provider billing.transaction_provider NOT NULL DEFAULT 'paypal',
     -- какую транзакцию мы сделали на стороне провайдера?
     provider_transaction_id varchar NULL UNIQUE,
     -- какую транзакцию мы сделали у себя в случае успеха?
@@ -25,7 +25,7 @@ CREATE TABLE billing.withdrawal_requests (
     -- для пейпала персонально
     email varchar NULL,
     -- что мы отправляем еще?
-    request_data jsonb NOT NULL,
+    request_data jsonb NULL,
     -- что нам ответили?
     response_data jsonb NULL,
 

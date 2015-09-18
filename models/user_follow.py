@@ -47,6 +47,23 @@ class UserFollow:
         return True
 
     @staticmethod
+    def follow_my_facebook_fiends_by_their_ids(user_id, facebook_friends_ids):
+        logger.info('follow_my_facebook_fiends_by_their_ids')
+        logger.info(facebook_friends_ids)
+
+        # map facebook ids to our ids
+        from models import UserNetwork
+        facebook_friends_our_ids = UserNetwork.find_users_by_network(1, facebook_friends_ids)
+
+        # iterate
+        for facebook_friend_our_id in facebook_friends_our_ids:
+            # get uuid
+            facebook_friend_in_our_system = User.get_by_id(facebook_friend_our_id, scope='all')
+            # follow
+            if facebook_friend_in_our_system:
+                UserFollow.upsert_user_follow(user_id, facebook_friend_in_our_system['uuid'])
+
+    @staticmethod
     @raw_queries()
     def delete_user_follow(user_id, follow_user_uuid, db):
         follow_user = User.find_by_user_uuid(follow_user_uuid, scope='all')

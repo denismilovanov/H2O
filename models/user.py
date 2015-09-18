@@ -103,13 +103,8 @@ class User:
                 UserAccount.create_user_accounts(user_id, db)
 
             # follow facebook friends
-            facebook_friends_ids = user_data.get('facebook_friends_ids', [])
-            facebook_friends_our_ids = UserNetwork.find_users_by_network(1, facebook_friends_ids)
-            from user_follow import UserFollow
-            for facebook_friend_our_id in facebook_friends_our_ids:
-                facebook_friend_in_our_system = User.get_by_id(facebook_friend_our_id, scope='all')
-                if facebook_friend_in_our_system:
-                    UserFollow.upsert_user_follow(user_id, facebook_friend_in_our_system['uuid'])
+            from models import UserFollow
+            UserFollow.follow_my_facebook_fiends_by_their_ids(user_id, user_data.get('facebook_friends_ids', []))
 
             # newness flag
             is_new = True

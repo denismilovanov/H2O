@@ -200,6 +200,10 @@ class WithdrawalRequest:
             # any exception causes status 'failed'
             success = False
 
+            # notify developer
+            from tasks.send_exception_task import SendExceptionTask
+            SendExceptionTask(e).enqueue()
+
         #
         logger.info(success)
         logger.info(response_data)

@@ -2,6 +2,7 @@ from decorators import *
 from user import User
 import json
 from models.exceptions import ResourceIsNotFound
+from models import UserFollow
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class Notification:
     @staticmethod
-    def process_notification(record):
+    def process_notification(record, user_id):
         data_for_result = {}
         data = record['data'] # already json in db
 
@@ -38,6 +39,10 @@ class Notification:
             except Exception, e:
                 data_for_result['invites_count'] = 0
 
+        # do I follow this user?
+        if data_for_result['user']:
+            data_for_result['user']['i_follow'] = UserFollow.does_user_follow_user(user_id, record['counter_user_id'])
+
         # remove counter_user_id
         del record['counter_user_id']
 
@@ -56,7 +61,7 @@ class Notification:
         result = []
 
         for record in notifications:
-            Notification.process_notification(record)
+            Notification.process_notification(record, user_id)
 
         # that is all
         return notifications
@@ -99,7 +104,7 @@ class Notification:
                 FROM notifications.get_notification(%(user_id)s, %(notification_id)s);
         ''', user_id=user_id, notification_id=notification_id)
 
-        Notification.process_notification(notification)
+        Notification.process_notification(notification, user_id)
 
         return notification
 

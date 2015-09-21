@@ -26,13 +26,18 @@ class Transaction:
         ''', users_ids=users_ids, from_date=from_date, to_date=to_date, direction=direction)
 
     @staticmethod
-    def get_transactions_by_offset_raw(users_ids, limit, offset, db):
+    def get_transactions_by_offset_raw(users_ids, limit, offset, exclude_counter_users_ids, db):
         return db.select_table('''
             SELECT ''' + Transaction.scope('public') + ''',
                     public.format_datetime(created_at) AS created_at,
                     counter_user_id, user_id
-                FROM billing.get_transactions_by_users_ids_and_offset(%(users_ids)s, %(limit)s, %(offset)s);
-        ''', users_ids=users_ids, limit=limit, offset=offset)
+                FROM billing.get_transactions_by_users_ids_and_offset(
+                    %(users_ids)s, %(limit)s, %(offset)s, %(exclude_counter_users_ids)s
+                );
+        ''',
+            users_ids=users_ids, limit=limit, offset=offset,
+            exclude_counter_users_ids=exclude_counter_users_ids
+        )
 
     @staticmethod
     @raw_queries()
@@ -94,8 +99,13 @@ class Transaction:
         #
         users_ids = Transaction.get_users_ids(whose, user_id)
 
+        # exclude me as counter from my follows transactions
+        exclude_counter_users_ids = None
+        if whose == 'follows':
+            exclude_counter_users_ids = [user_id]
+
         # all transactions of them
-        transactions = Transaction.get_transactions_by_offset_raw(users_ids, limit, offset, db)
+        transactions = Transaction.get_transactions_by_offset_raw(users_ids, limit, offset, exclude_counter_users_ids, db)
 
         #
         return Transaction.prepare_transactions_response(transactions, whose, user_id)

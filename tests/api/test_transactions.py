@@ -91,6 +91,10 @@ class TransactionsTestCase(MyAPITestCase):
 
         counter_transactions = self.get_transactions('my', counter_headers)
 
+        # follows transactions
+
+        follows_transactions = self.get_transactions('follows', headers)
+
 
 
 

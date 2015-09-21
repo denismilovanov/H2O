@@ -4,6 +4,8 @@ from api import views
 urlpatterns = [
     # error
     url(r'v1/error/(?P<http_code>\d+)', views.error),
+    # params
+    url(r'v1/params', views.params),
 
     # sessions and users
     url(r'v1/session', views.session),

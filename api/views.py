@@ -134,6 +134,30 @@ def error(request, http_code, user):
     from views_helpers import JSONResponse
     return JSONResponse(data, status=http_code)
 
+# params
+@api_view(['GET'])
+@authorization_needed
+def params(request, user):
+    logger.info('METHOD: params')
+
+    params = {
+        'providers': {
+            'paypal': {
+                'commissions': {
+                    'deposit': {
+                        'percent': 2.9,
+                        'flat': 0.30,
+                    },
+                    'withdrawal': {
+                        'percent': 1.5,
+                        'flat': 0.30,
+                    },
+                },
+            },
+        },
+    }
+
+    return ok_raw(params)
 
 # session
 @api_view(['POST', 'PATCH', 'DELETE'])

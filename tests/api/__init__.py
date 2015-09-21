@@ -14,3 +14,4 @@ from test_graph import GraphTestCase
 from test_deposits import DepositsTestCase
 from test_withdrawal_requests import WithdrawalRequestsTestCase
 from test_error import ErrorTestCase
+from test_params import ParamsTestCase

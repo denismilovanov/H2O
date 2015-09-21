@@ -115,6 +115,9 @@ class WithdrawalRequest:
         from tasks.perform_withdrawal_request_task import PerformWithdrawalRequestTask
         PerformWithdrawalRequestTask(user_id, withdrawal_request_id).enqueue()
 
+        #
+        return withdrawal_request_id
+
 
     @staticmethod
     @raw_queries()

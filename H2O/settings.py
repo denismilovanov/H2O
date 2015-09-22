@@ -51,8 +51,13 @@ Queue.test = DEBUG
 
 #
 APNS_USE_SANDBOX = DEBUG
-APNS_CERT_FILE = BASE_DIR + '/resources/certs/push_H2O_Dev.pem'
-APNS_KEY_FILE = BASE_DIR + '/resources/certs/push_H2O_Dev.key'
+if APNS_USE_SANDBOX:
+    __APNS_SUFFIX = 'Dev'
+else:
+    __APNS_SUFFIX = 'Prod'
+
+APNS_CERT_FILE = BASE_DIR + '/resources/certs/push_H2O_' + __APNS_SUFFIX + '.pem'
+APNS_KEY_FILE = BASE_DIR + '/resources/certs/push_H2O_' + __APNS_SUFFIX + '.key'
 
 INSTALLED_APPS = (
     'api',

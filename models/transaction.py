@@ -272,10 +272,46 @@ class Transaction:
 
         try:
             payment = Payment.find(provider_transaction_id)
+            logger.info(payment)
+
+            # amount
             provider_amount = float(payment['transactions'][0]['amount']['total'])
             provider_currency = payment['transactions'][0]['amount']['currency']
+            logger.info(str(provider_amount) + ' ' + str(provider_currency))
 
-            if amount != provider_amount or currency.lower() != provider_currency.lower():
+            # fee
+            try:
+                fee = payment['transactions'][0]['related_resources'][0]['sale']['transaction_fee']
+                logger.info(fee)
+                provider_fee_amount = float(fee['value'])
+                provider_fee_currency = fee['currency']
+                logger.info(str(provider_fee_amount) + ' ' + str(provider_fee_currency))
+            except:
+                logger.info('No data about fee')
+                provider_fee_amount = 0
+                provider_fee_currency = provider_currency
+
+            if amount != provider_amount:
+                # fraud
+                logger.info('Amounts do not match')
+                raise NotAcceptableException()
+
+            if currency.lower() != provider_currency.lower():
+                # fraud
+                logger.info('Currencies do not match')
+                raise NotAcceptableException()
+
+            if currency.lower() != provider_fee_currency.lower():
+                # do not know how to handle it
+                logger.info('Fee currencies do not match')
+                raise NotAcceptableException()
+
+            # subtract fee
+            provider_amount -= provider_fee_amount
+            logger.info('Amount - fee = ' + str(provider_amount))
+
+            if provider_amount < 0:
+                # fee > amount
                 raise NotAcceptableException()
 
         except ResourceNotFound as error:

@@ -22,4 +22,7 @@ CREATE TABLE billing.transactions (
     provider_transaction_id varchar NULL UNIQUE
 );
 
+-- комиссия
+ALTER TABLE billing.transactions
+    ADD COLUMN fee numeric(9,2) NULL;
 

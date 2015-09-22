@@ -11,7 +11,8 @@ CREATE OR REPLACE FUNCTION billing.add_transaction(
     t_currency main.currency,
     b_is_anonymous boolean,
     t_provider billing.transaction_provider,
-    s_provider_transaction_id varchar
+    s_provider_transaction_id varchar,
+    n_fee numeric DEFAULT NULL
 )
     RETURNS bigint AS
 $BODY$
@@ -24,7 +25,7 @@ BEGIN
         INSERT INTO billing.transactions
             (user_id, user_uuid, counter_user_id, counter_user_uuid,
             amount, currency, direction, status, is_anonymous,
-            provider, provider_transaction_id)
+            provider, provider_transaction_id, fee)
             VALUES (
                 i_user_id,
                 u_user_uuid,
@@ -36,7 +37,8 @@ BEGIN
                 'success',
                 b_is_anonymous,
                 t_provider,
-                s_provider_transaction_id
+                s_provider_transaction_id,
+                n_fee
             )
             RETURNING id INTO i_id;
 
@@ -61,6 +63,7 @@ GRANT EXECUTE ON FUNCTION billing.add_transaction(
     t_currency main.currency,
     b_is_anonymous boolean,
     t_provider billing.transaction_provider,
-    s_provider_transaction_id varchar
+    s_provider_transaction_id varchar,
+    n_fee numeric
 ) TO h2o_front;
 

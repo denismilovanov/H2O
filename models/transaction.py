@@ -162,7 +162,7 @@ class Transaction:
         )
 
     @staticmethod
-    def add_deposit_db(db, user_id, user_uuid, amount, currency,
+    def add_deposit_db(db, user_id, user_uuid, amount, fee, currency,
                         provider, provider_transaction_id):
 
         return db.select_field('''
@@ -170,12 +170,14 @@ class Transaction:
                 %(user_id)s, %(user_uuid)s,
                 NULL, NULL,
                 'deposit', %(amount)s, %(currency)s, FALSE,
-                %(provider)s, %(provider_transaction_id)s
+                %(provider)s, %(provider_transaction_id)s,
+                %(fee)s
             );
         ''',
             user_id=user_id, user_uuid=user_uuid,
             amount=amount, currency=currency,
-            provider=provider, provider_transaction_id=provider_transaction_id
+            provider=provider, provider_transaction_id=provider_transaction_id,
+            fee=fee
         )
 
     @staticmethod
@@ -324,7 +326,7 @@ class Transaction:
             transaction_id = Transaction.add_deposit_db(
                 db,
                 user_id, user_uuid,
-                amount, currency,
+                amount, provider_fee_amount, currency,
                 'paypal', provider_transaction_id,
             )
             if not transaction_id:

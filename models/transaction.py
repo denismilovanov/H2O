@@ -307,10 +307,10 @@ class Transaction:
                 raise NotAcceptableException()
 
             # subtract fee
-            provider_amount -= provider_fee_amount
+            amount -= provider_fee_amount
             logger.info('Amount - fee = ' + str(provider_amount))
 
-            if provider_amount < 0:
+            if amount < 0:
                 # fee > amount
                 raise NotAcceptableException()
 

@@ -9,10 +9,10 @@ $BODY$
 DECLARE
 BEGIN
 
-   RETURN QUERY SELECT user_id
-                    FROM main.generations_users
-                    WHERE generation_id = i_generation_id
-                    ORDER BY user_id ASC;
+   RETURN QUERY SELECT id
+                    FROM main.users
+                    WHERE generation = i_generation_id
+                    ORDER BY id ASC;
 
 END
 $BODY$

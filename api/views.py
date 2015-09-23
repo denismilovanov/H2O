@@ -234,6 +234,10 @@ def session(request, user):
     elif request.method == 'DELETE':
         UserSession.delete_session(user['id'], user['access_token'])
 
+        push_token = request.data.get('push_token')
+        if push_token:
+            UserDevice.delete_push_token(user['id'], str(push_token))
+
         return no_content()
 
 # profile

@@ -11,11 +11,21 @@ DECLARE
 
 BEGIN
 
-    INSERT INTO main.invite_codes
-        (invite_code, owner_id)
-        SELECT  upper(encode(gen_random_bytes(6), 'hex')),
-                i_user_id
-            FROM generate_series(1, i_count);
+    WHILE TRUE LOOP
+
+        BEGIN
+            INSERT INTO main.invite_codes
+                (invite_code, owner_id)
+                SELECT  -- upper(encode(gen_random_bytes(6), 'hex')),
+                        lpad((random() * 1e6)::integer::varchar, 6, '0'),
+                        i_user_id
+                    FROM generate_series(1, i_count);
+
+            RETURN;
+        EXCEPTION WHEN unique_violation THEN
+        END;
+
+    END LOOP;
 
 
 END

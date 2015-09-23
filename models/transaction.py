@@ -53,21 +53,6 @@ class Transaction:
         return transaction
 
     @staticmethod
-    def extract_counter_users_ids(transactions, user_id):
-        # counter users ids
-        counter_users_ids = []
-        for transaction in transactions:
-            if transaction['direction'] == 'receive' and transaction['is_anonymous']:
-                pass
-            elif transaction['counter_user_id'] != user_id:
-                counter_users_ids.append(transaction['counter_user_id'])
-
-            if transaction['user_id'] != user_id:
-                counter_users_ids.append(transaction['user_id'])
-
-        return list(set(counter_users_ids))
-
-    @staticmethod
     def get_users_ids(whose, user_id):
         users_ids = []
 
@@ -110,34 +95,47 @@ class Transaction:
         #
         return Transaction.prepare_transactions_response(transactions, whose, user_id)
 
-
     @staticmethod
     def prepare_transactions_response(transactions, whose, user_id):
-        # extract counter users ids
-        counter_users_ids = Transaction.extract_counter_users_ids(transactions, user_id)
-
-        # get them all
-        counter_users = User.get_all_by_ids(counter_users_ids, scope='public_profile')
+        # collect participants ids
+        participants_users_ids = []
 
         # remove some indeces
-        # perform some transformation depening on circumstances
+        # perform some transformation depending on circumstances
         for transaction in transactions:
-            # anonymous reveives
-            if transaction['direction'] == 'receive' and transaction['is_anonymous']:
-                transaction['counter_user_uuid'] = None
 
-            if whose == 'follows':
+            # add counter_user_id to participants_users_ids
+
+            if transaction['direction'] == 'receive' and transaction['is_anonymous']:
+                # anonymous receives
+                transaction['counter_user_uuid'] = None
+            elif transaction['counter_user_id'] != user_id:
+                # public receives
+                participants_users_ids.append(transaction['counter_user_id'])
+
+            # add user_id to participants_users_ids
+
+            if whose == 'me':
+                if transaction['user_id'] != user_id:
+                    participants_users_ids.append(transaction['user_id'])
+
+            elif whose == 'follows':
                 if transaction['direction'] == 'support' and transaction['is_anonymous']:
                     transaction['user_uuid'] = None
+                elif transaction['user_id'] != user_id:
+                    participants_users_ids.append(transaction['user_id'])
 
             # no need to output this
             del transaction['counter_user_id']
             del transaction['user_id']
 
+        # uniq
+        participants_users_ids = list(set(participants_users_ids))
+
         # gather all
         result = {
             'transactions': transactions,
-            'users': counter_users,
+            'users': User.get_all_by_ids(participants_users_ids, scope='public_profile_with_i_follow', viewer_id=user_id),
         }
 
         # we are ready!

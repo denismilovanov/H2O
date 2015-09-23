@@ -135,7 +135,7 @@ class User:
 
     @staticmethod
     def scope(scope):
-        if scope == 'public_profile' or scope == 'my_personal_profile':
+        if scope in ['public_profile', 'my_personal_profile', 'public_profile_with_i_follow']:
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted',
                               'generation', 'num_in_generation'])
         elif scope == 'public_profile_with_id':
@@ -189,7 +189,7 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def get_all_by_ids(users_ids, scope, db):
+    def get_all_by_ids(users_ids, scope, db, viewer_id=None):
         logger.info('get_all_by_ids')
         logger.info(users_ids)
 
@@ -211,6 +211,13 @@ class User:
                 account = UserAccount.get_user_account(user['id'])
                 user['balance'] = float(account['balance'])
                 user['hold'] = float(account['hold'])
+
+        if scope == 'public_profile_with_i_follow':
+            from models import UserFollow
+            for user in users:
+                user['i_follow'] = UserFollow.does_user_follow_user(
+                    viewer_id, User.extract_user_id_from_uuid(user['uuid'])
+                )
 
         return users
 

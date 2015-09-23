@@ -60,7 +60,9 @@ class SessionTestCase(MyAPITestCase):
 
         # logout
 
-        response = self.client.delete(self.session_controller, {}, format=self.format, headers={
+        response = self.client.delete(self.session_controller, {
+            'push_token': 'PUSH_TOKEN',
+        }, format=self.format, headers={
             'Access-Token': new_session['access_token']
         })
         self.assertTrue(response.status_code == status.HTTP_204_NO_CONTENT)

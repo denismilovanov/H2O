@@ -10,6 +10,7 @@ BEGIN
 
    RETURN QUERY SELECT *
                     FROM main.generations
+                    WHERE id >= 0
                     ORDER BY id ASC;
 
 END

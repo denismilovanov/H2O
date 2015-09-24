@@ -101,14 +101,6 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': os.environ.get('DB_PORT', 5432),
     },
-    'auth': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'h2o_auth',
-        'USER': 'h2o_front',
-        'PASSWORD': os.environ.get('DB_PASSWORD', '1g2Az8_lJ'),
-        'HOST': '127.0.0.1',
-        'PORT': os.environ.get('DB_PORT', 5432),
-    }
 }
 
 RABBITMQ_USER =  'rabbitmq_user'

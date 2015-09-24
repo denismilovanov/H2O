@@ -47,7 +47,7 @@ class Statistics:
         users_ids = [record['counter_user_id'] for record in statistics]
 
         # get all users
-        users = User.get_all_by_ids(users_ids, scope='public_profile_with_id')
+        users = User.get_all_by_ids(users_ids, scope='public_profile_with_i_follow', viewer_id=user_id)
 
         # add transactions_count to user
         for user in users:

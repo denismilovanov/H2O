@@ -92,7 +92,8 @@ class User:
                 Invite.use_invite_code(user_id, invite_code, db)
 
                 # create codes
-                Invite.create_invite_codes_for_user_id(user_id, 3, db)
+                from H2O.settings import INVITES_COUNT_FOR_NEW_USER
+                Invite.create_invite_codes_for_user_id(user_id, INVITES_COUNT_FOR_NEW_USER, db)
 
                 # stat for user
                 from models.statistics import Statistics

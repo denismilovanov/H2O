@@ -51,6 +51,7 @@ class Statistics:
 
         # add transactions_count to user
         for user in users:
+            user['id'] = User.extract_user_id_from_uuid(user['uuid'])
             user['transactions_count'] = transactions_counts[user['id']]
             user['transactions_amount_sum'] = transactions_amounts_sums[user['id']]
             del user['id']

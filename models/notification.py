@@ -39,9 +39,11 @@ class Notification:
             except Exception, e:
                 data_for_result['invites_count'] = 0
 
-        # do I follow this user?
-        if data_for_result['user']:
-            data_for_result['user']['i_follow'] = UserFollow.does_user_follow_user(user_id, record['counter_user_id'])
+        # type with user again
+        if record['type'] in ['somebody_follows_me', 'somebody_sent_me_money']:
+            # do I follow this user?
+            if data_for_result['user']:
+                data_for_result['user']['i_follow'] = UserFollow.does_user_follow_user(user_id, record['counter_user_id'])
 
         # remove counter_user_id
         del record['counter_user_id']

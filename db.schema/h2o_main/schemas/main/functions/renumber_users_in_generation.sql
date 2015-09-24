@@ -1,5 +1,6 @@
 ----------------------------------------------------------------------------
---
+-- перенумерация всех пользователей поколения
+-- очень тяжелая операция, обращаться с осторожностью!
 
 CREATE OR REPLACE FUNCTION main.renumber_users_in_generation(
     i_generation_id integer
@@ -30,6 +31,12 @@ BEGIN
     END LOOP;
 
 
+    UPDATE main.generations
+        SET users_count = i_count,
+            user_last_number = i_count - 1
+        WHERE id = i_generation_id;
+
+
     CREATE UNIQUE INDEX users_generations_ukey
         ON main.users
         USING btree(generation, num_in_generation);
@@ -43,6 +50,6 @@ $BODY$
 
 GRANT EXECUTE ON FUNCTION main.renumber_users_in_generation(
     i_generation_id integer
-) TO PUBLIC;
+) TO h2o_owner;
 
 

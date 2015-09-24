@@ -9,20 +9,20 @@ logger = logging.getLogger(__name__)
 
 class Graph:
     @staticmethod
-    @raw_queries(['auth'])
-    def get_last_num_in_generation(generation, auth):
+    @raw_queries()
+    def get_last_num_in_generation(generation, db):
         logger.info('get_last_num_in_generation')
 
-        last_num_in_generation = auth.select_field('''
+        last_num_in_generation = db.select_field('''
             SELECT main.get_last_num_in_generation(%(generation)s);
         ''', generation=generation)
 
         return last_num_in_generation
 
     @staticmethod
-    @raw_queries(['auth'])
-    def get_users_counts(auth):
-        generations = auth.select_table('''
+    @raw_queries()
+    def get_users_counts(db):
+        generations = db.select_table('''
             SELECT * FROM main.get_generations();
         ''')
 

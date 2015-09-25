@@ -60,7 +60,7 @@ class ApplePusher:
     @staticmethod
     def get_apns():
         from H2O.settings import APNS_USE_SANDBOX, APNS_CERT_FILE, APNS_KEY_FILE
-        apns = APNs(use_sandbox=True, cert_file=APNS_CERT_FILE, key_file=APNS_KEY_FILE)
+        apns = APNs(use_sandbox=APNS_USE_SANDBOX, cert_file=APNS_CERT_FILE, key_file=APNS_KEY_FILE)
         return apns
 
     # push
@@ -84,7 +84,7 @@ class ApplePusher:
 
             payload = Payload(alert=alert, sound="default", badge=1, custom=data)
 
-            apns.gateway_server.send_notification(push_token, payload)
+            logger.info(apns.gateway_server.send_notification(push_token, payload))
 
             # close connection
             del apns

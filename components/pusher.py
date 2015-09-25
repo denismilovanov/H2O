@@ -26,6 +26,9 @@ class AndroidPusher:
                 from H2O.settings import GCM_API_KEY
                 AndroidPusher.gcm = GCM(GCM_API_KEY)
 
+            # only for apple
+            del data['push_header']
+
             # sending
             res = AndroidPusher.gcm.json_request(
                 registration_ids=[push_token],
@@ -79,12 +82,15 @@ class ApplePusher:
             # dummy alert, all real information in 'data'
             alert = {
                 "title": "H2O",
-                "body": "body"
+                "body": data['push_header'],
             }
+            del data['push_header']
 
+            # payload
             payload = Payload(alert=alert, sound="default", badge=1, custom=data)
 
-            logger.info(apns.gateway_server.send_notification(push_token, payload))
+            # send
+            apns.gateway_server.send_notification(push_token, payload)
 
             # close connection
             del apns

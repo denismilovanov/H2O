@@ -103,6 +103,23 @@ class User:
                 from user_account import UserAccount
                 UserAccount.create_user_accounts(user_id, db)
 
+                # entrance gift
+                if invite['entrance_gift']:
+                    from models import Transaction
+                    from H2O.settings import ENTRANCE_GIFT_AMOUNT, SYSTEM_CURRENCY
+                    try:
+                        Transaction.add_support(
+                            invite['owner_id'],
+                            user_id,
+                            ENTRANCE_GIFT_AMOUNT,
+                            SYSTEM_CURRENCY,
+                            False # is_anonymous
+                        )
+                    except NotEnoughMoneyException:
+                        # oh, ok
+                        pass
+
+
             # follow facebook friends
             from models import UserFollow
             UserFollow.follow_my_facebook_fiends_by_their_ids(user_id, user_data.get('facebook_friends_ids', []))

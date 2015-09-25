@@ -111,11 +111,11 @@ class Notification:
         # make push header, see pusher.py
         header = None
         if notification['type'] == 'somebody_follows_me':
-            header = 'You have new follower'
+            header = 'You have a new follower'
         elif notification['type'] == 'somebody_sent_me_money':
             header = 'You have been supported'
         elif notification['type'] == 'new_invites_available':
-            header = 'New invites are available for you now'
+            header = 'New invites are available for you'
 
         notification['push_header'] = header
 

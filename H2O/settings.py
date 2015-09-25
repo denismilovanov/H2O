@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import os
 
+SYSTEM_CURRENCY = 'usd'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk')
@@ -22,6 +24,8 @@ FACEBOOK_CLIENT_ID = '401193696737876'
 FACEBOOK_TIMEOUT = 4
 
 INVITES_COUNT_FOR_NEW_USER = 0
+
+ENTRANCE_GIFT_AMOUNT = 10.0
 
 ALLOWED_HOSTS = []
 
@@ -120,6 +124,10 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
 }
+
+BASIC_FORMAT = '%(asctime)s %(message)s'
+
+LOGGING_CONFIG = None
 
 GCM_API_KEY = 'AIzaSyDl8iM7UK3rIBlefHx6Ofh173TZdDVltxs'
 MANDRILL_API_KEY = 'fDlj32_-RH461igdYhjZQg'

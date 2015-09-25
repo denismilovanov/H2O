@@ -267,6 +267,10 @@ def user(request, user_uuid, user):
         # this is me
         user_to_view = User.find_by_user_uuid(user_uuid, scope='my_personal_profile')
 
+    # add follows_count
+    user_to_view['follows_count'] = UserFollow.get_user_follows_count(User.extract_user_id_from_uuid(user_to_view['uuid']))
+
+    # that is all
     return ok_raw(user_to_view)
 
 # list of user

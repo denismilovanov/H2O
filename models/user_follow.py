@@ -114,6 +114,13 @@ class UserFollow:
 
     @staticmethod
     @raw_queries()
+    def get_user_follows_count(user_id, db):
+        return db.select_field('''
+            SELECT main.get_user_follows_count(%(user_id)s);
+        ''', user_id=user_id)
+
+    @staticmethod
+    @raw_queries()
     def get_user_followed_by_ids(user_id, db):
         users = db.select_table('''
             SELECT main.get_user_followed_by_ids(%(user_id)s, 100000, 0) AS followed_by_user_id;

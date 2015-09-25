@@ -412,17 +412,17 @@ def follows_inner(request, user_uuid, user):
     follows = UserFollow.get_user_follows(user_id, limit, offset, search_query)
 
     # if we need to get list of other user's follows
-    # then we shall calculate i_follow
+    is_me = False
+    my_follows_uuids = []
     if user['id'] != user_id:
         my_follows = UserFollow.get_user_follows(user['id'], int(1e6), 0, None)
-
         my_follows_uuids = [my_follow['uuid'] for my_follow in my_follows]
+        is_me = True
 
-        for follow in follows:
-            follow['i_follow'] = follow['uuid'] in my_follows_uuids
-    else:
-        for follow in follows:
-            follow['i_follow'] = True
+    # then we shall calculate i_follow and follows count
+    for follow in follows:
+        follow['i_follow'] = follow['uuid'] in my_follows_uuids if is_me else True
+        follow['follows_count'] = UserFollow.get_user_follows_count(User.extract_user_id_from_uuid(follow['uuid']))
 
     # that's all
     return ok_raw(follows)

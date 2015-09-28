@@ -125,10 +125,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-BASIC_FORMAT = '%(asctime)s %(message)s'
-
-LOGGING_CONFIG = None
-
 GCM_API_KEY = 'AIzaSyDl8iM7UK3rIBlefHx6Ofh173TZdDVltxs'
 MANDRILL_API_KEY = 'fDlj32_-RH461igdYhjZQg'
 

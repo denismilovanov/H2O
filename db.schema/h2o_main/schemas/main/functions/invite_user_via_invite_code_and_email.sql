@@ -14,7 +14,8 @@ BEGIN
 
     UPDATE main.invite_codes
         SET email = s_email,
-            status = 'sending'
+            status = 'sending',
+            entrance_gift = b_entrance_gift
         WHERE invite_code = s_invite_code;
 
 END

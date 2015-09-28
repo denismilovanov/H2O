@@ -65,6 +65,9 @@ class Notification:
         for record in notifications:
             Notification.process_notification(record, user_id)
 
+        # mark all as read
+        Notification.read_all_notifications(user_id)
+
         # that is all
         return notifications
 
@@ -122,4 +125,17 @@ class Notification:
         #
         return notification
 
+    @staticmethod
+    @raw_queries()
+    def get_unread_notifications_count(user_id, db):
+        return db.select_field('''
+            SELECT notifications.get_unread_notifications_count(%(user_id)s);
+        ''', user_id=user_id)
+
+    @staticmethod
+    @raw_queries()
+    def read_all_notifications(user_id, db):
+        return db.select_field('''
+            SELECT notifications.read_all_notifications(%(user_id)s);
+        ''', user_id=user_id)
 

@@ -80,6 +80,7 @@ class MyAPITestCase(APITestCase):
     graph_controller = '/v1/graph'
     error_controller = '/v1/error'
     params_controller = '/v1/params'
+    counts_controller = '/v1/counts'
     format = 'json'
 
 

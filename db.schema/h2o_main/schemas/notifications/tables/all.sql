@@ -20,3 +20,6 @@ ALTER TABLE notifications.all
 CREATE INDEX all_user_id_idx
     ON notifications.all
     USING btree(user_id);
+
+ALTER TABLE notifications.all
+    ADD COLUMN is_read boolean NOT NULL DEFAULT FALSE;

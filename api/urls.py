@@ -49,4 +49,7 @@ urlpatterns = [
     # withdrawals
     url(r'v1/withdrawal_requests', views.withdrawal_requests),
 
+    # counts
+    url(r'v1/counts/(?P<type>[a-z]+)', views.counts),
+
 ]

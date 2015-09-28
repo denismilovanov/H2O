@@ -15,3 +15,4 @@ from test_deposits import DepositsTestCase
 from test_withdrawal_requests import WithdrawalRequestsTestCase
 from test_error import ErrorTestCase
 from test_params import ParamsTestCase
+from test_counts import CountsTestCase

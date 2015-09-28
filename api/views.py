@@ -661,3 +661,13 @@ def withdrawal_requests(request, user):
 
         return ok_raw(requests)
 
+# counts
+@api_view(['GET'])
+@authorization_needed
+def counts(request, type, user):
+    logger.info('METHOD: counts')
+
+    unread_notifications_count = Notification.get_unread_notifications_count(user['id'])
+
+    return ok_raw(unread_notifications_count)
+

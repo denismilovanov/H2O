@@ -17,15 +17,6 @@ class Transaction:
             return '*'
 
     @staticmethod
-    def get_transactions_by_dates_raw(users_ids, from_date, to_date, direction, db):
-        return db.select_table('''
-            SELECT ''' + Transaction.scope('public') + ''',
-                    public.format_datetime(created_at) AS created_at,
-                    counter_user_id, user_id
-                FROM billing.get_transactions_by_users_ids_and_dates(%(users_ids)s, %(from_date)s::date, %(to_date)s::date, %(direction)s);
-        ''', users_ids=users_ids, from_date=from_date, to_date=to_date, direction=direction)
-
-    @staticmethod
     def get_transactions_by_offset_raw(users_ids, limit, offset, exclude_counter_users_ids, db):
         return db.select_table('''
             SELECT ''' + Transaction.scope('public') + ''',
@@ -64,19 +55,6 @@ class Transaction:
             users_ids = UserFollow.get_user_follows_ids(user_id)
 
         return users_ids
-
-    @staticmethod
-    @raw_queries()
-    def get_transactions_by_dates(user_id, whose, direction, from_date, to_date, db):
-        #
-        users_ids = Transaction.get_users_ids(whose, user_id)
-
-        # all transactions of them
-        transactions = Transaction.get_transactions_by_dates_raw(users_ids, from_date, to_date, direction, db)
-
-        #
-        return Transaction.prepare_transactions_response(transactions, whose, user_id)
-
 
     @staticmethod
     @raw_queries()

@@ -24,10 +24,7 @@ urlpatterns = [
     url(r'v1/follows/(?P<user_uuid>my)', views.follows),
 
     # supports
-    url(r'v1/supports/(?P<whose>(my|follows))', views.supports),
     url(r'v1/supports', views.post_support),
-    # receives
-    url(r'v1/receive(d|s)/(?P<whose>(my|follows))', views.receives),
     # transactions
     url(r'v1/transactions/(?P<whose>(my|follows))', views.transactions),
 

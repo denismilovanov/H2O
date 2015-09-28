@@ -422,43 +422,7 @@ def follows_inner(request, user_uuid, user):
     # that's all
     return ok_raw(follows)
 
-def get_from_date_to_date(request):
-    try:
-        from_date = request.GET['from_date']
-        to_date = request.GET['to_date']
-    except Exception, e:
-        raise BadRequestException(e)
-
-    # special dates
-    if from_date == 'now':
-        from_date = str(datetime.datetime.now().date())
-    if to_date == 'now':
-        to_date = str(datetime.datetime.now().date())
-
-    # parse string repr
-    try:
-        from dateutil.parser import parse
-        from_date = parse(from_date)
-        to_date = parse(to_date)
-    except Exception, e:
-        raise BadRequestException(e)
-
-    return from_date, to_date
-
-
-# supports
-@api_view(['GET'])
-@authorization_needed
-def supports(request, whose, user):
-    logger.info('METHOD: supports')
-
-    from_date, to_date = get_from_date_to_date(request)
-
-    supports = Transaction.get_transactions_by_dates(user['id'], whose, 'support', from_date, to_date)
-
-    return ok_raw(supports)
-
-
+# list of transactions
 @api_view(['GET'])
 @authorization_needed
 def transactions(request, whose, user):
@@ -496,18 +460,6 @@ def post_support(request, user):
 
     return created(transaction_id=transaction_id)
 
-# receives
-@api_view(['GET'])
-@authorization_needed
-def receives(request, whose, user):
-    logger.info('METHOD: receives')
-
-    from_date, to_date = get_from_date_to_date(request)
-
-    # getting data
-    receives = Transaction.get_transactions_by_dates(user['id'], whose, 'receive', from_date, to_date)
-
-    return ok_raw(receives)
 
 # statistics
 @api_view(['GET'])

@@ -126,7 +126,7 @@ REST_FRAMEWORK = {
 }
 
 GCM_API_KEY = 'AIzaSyDl8iM7UK3rIBlefHx6Ofh173TZdDVltxs'
-MANDRILL_API_KEY = 'fDlj32_-RH461igdYhjZQg'
+MANDRILL_API_KEY = 'zbAi_yqI1IkJ9WKhKky-8A'
 
 URL = 'http://localhost:8000'
 API_URL = URL

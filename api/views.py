@@ -363,7 +363,7 @@ def follow(request, user_uuid, user):
     if request.method == 'POST':
         try:
             UserFollow.upsert_user_follow(user['id'], user_uuid)
-        except UserIsAlreadyFollowedExceptionException, e:
+        except UserIsAlreadyFollowedException, e:
             return not_acceptable(e)
         except UserIsNotFoundException, e:
             return not_found(UserIsNotFoundException())

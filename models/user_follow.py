@@ -1,5 +1,5 @@
 from decorators import *
-from exceptions import UserIsAlreadyFollowedExceptionException, UserIsNotFoundException
+from exceptions import UserIsAlreadyFollowedException, UserIsNotFoundException
 from models import User
 
 import logging
@@ -17,7 +17,7 @@ class UserFollow:
             raise UserIsNotFoundException()
 
         if follow_user['id'] == user_id:
-            raise UserIsAlreadyFollowedExceptionException()
+            raise UserIsAlreadyFollowedException()
 
         # insert into follows and followed_by
         with db.t():
@@ -27,7 +27,7 @@ class UserFollow:
 
             # check
             if not result:
-                raise UserIsAlreadyFollowedExceptionException()
+                raise UserIsAlreadyFollowedException()
 
             db.select_field('''
                 SELECT main.upsert_user_followed_by(%(follow_user_id)s, %(user_id)s);

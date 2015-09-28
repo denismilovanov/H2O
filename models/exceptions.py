@@ -44,7 +44,7 @@ class YouHaveInvitedThisEmailException(Exception):
     def __str__(self):
         return 'YOU_HAVE_INVITED_THIS_EMAIL'
 
-class UserIsAlreadyFollowedExceptionException(Exception):
+class UserIsAlreadyFollowedException(Exception):
     def __str__(self):
         return 'USER_IS_ALREADY_FOLLOWED'
 

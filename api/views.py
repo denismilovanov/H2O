@@ -196,13 +196,13 @@ def session(request, user):
         except (InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException), e:
             return forbidden(e)
         except Exception, e:
-            return internal_server_error(e)
+            raise
 
         # creating session
         try:
             session = UserSession.upsert_user_session(user_id, device_type, push_token)
         except Exception, e:
-            return internal_server_error(e)
+            raise
 
         # result
         return created(user=user, session=session)

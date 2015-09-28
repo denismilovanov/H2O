@@ -36,7 +36,7 @@ def get_limit_and_offset(request):
         limit = 100
 
     return limit, offset
-    # raise Exception()
+    # raise BadRequestException(e)
 
 # decorator for all methods
 def authorization_needed(func):
@@ -94,6 +94,8 @@ def authorization_needed(func):
         # call decorated function
         try:
             return func(*k, **v)
+        except BadRequestException, e:
+            return bad_request(e)
         except UserIsNotFoundException, e:
             return not_found(e)
         except Exception, e:
@@ -178,7 +180,6 @@ def session(request, user):
             device_type = request.data['device_type']
             push_token = request.data.get('push_token')
             logger.info(request.data)
-
         except Exception, e:
             return bad_request(BadRequestException(e))
 
@@ -300,7 +301,6 @@ def profile(request, user):
             push_notifications = get_boolean(request.data.get('push_notifications', True))
             is_deleted = get_boolean(request.data.get('is_deleted'))
             logger.info(request.data)
-
         except Exception, e:
             return bad_request(BadRequestException(e))
 
@@ -390,11 +390,8 @@ def follows_inner(request, user_uuid, user):
     logger.info('METHOD: follows')
 
     #input
-    try:
-        limit, offset = get_limit_and_offset(request)
-        search_query = request.GET.get('search_query')
-    except Exception, e:
-        return bad_request(BadRequestException(e))
+    limit, offset = get_limit_and_offset(request)
+    search_query = request.GET.get('search_query')
 
     # look at the user to get follows list about
     if user_uuid == 'my':
@@ -455,10 +452,7 @@ def get_from_date_to_date(request):
 def supports(request, whose, user):
     logger.info('METHOD: supports')
 
-    try:
-        from_date, to_date = get_from_date_to_date(request)
-    except BadRequestException, e:
-        return bad_request(e)
+    from_date, to_date = get_from_date_to_date(request)
 
     supports = Transaction.get_transactions_by_dates(user['id'], whose, 'support', from_date, to_date)
 
@@ -470,10 +464,7 @@ def supports(request, whose, user):
 def transactions(request, whose, user):
     logger.info('METHOD: transactions')
 
-    try:
-        limit, offset = get_limit_and_offset(request)
-    except BadRequestException, e:
-        return bad_request(e)
+    limit, offset = get_limit_and_offset(request)
 
     transactions = Transaction.get_transactions_by_offset(user['id'], whose, limit, offset)
 
@@ -511,10 +502,7 @@ def post_support(request, user):
 def receives(request, whose, user):
     logger.info('METHOD: receives')
 
-    try:
-        from_date, to_date = get_from_date_to_date(request)
-    except BadRequestException, e:
-        return bad_request(e)
+    from_date, to_date = get_from_date_to_date(request)
 
     # getting data
     receives = Transaction.get_transactions_by_dates(user['id'], whose, 'receive', from_date, to_date)
@@ -554,10 +542,7 @@ def statistics_counter_users(request, transaction_direction, user_uuid, user):
         transaction_direction = 'receive'
 
     #
-    try:
-        limit, offset = get_limit_and_offset(request)
-    except Exception, e:
-        return bad_request(BadRequestException(e))
+    limit, offset = get_limit_and_offset(request)
 
     #
     if user_uuid == 'my':
@@ -583,10 +568,7 @@ def notifications(request, user):
 
     if request.method == 'GET':
         #input
-        try:
-            limit, offset = get_limit_and_offset(request)
-        except Exception, e:
-            return bad_request(BadRequestException(e))
+        limit, offset = get_limit_and_offset(request)
 
         notifications = Notification.get_notifications_by_user_id(user['id'], limit, offset)
 

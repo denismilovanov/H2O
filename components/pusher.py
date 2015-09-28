@@ -87,7 +87,10 @@ class ApplePusher:
             del data['push_header']
 
             # payload
-            payload = Payload(alert=alert, sound="default", badge=1, custom=data)
+            from models.notification import Notification
+            badge = Notification.get_unread_notifications_count(user_id)
+            logger.info('badge = ' + str(badge))
+            payload = Payload(alert=alert, sound="default", badge=badge, custom=data)
 
             # send
             apns.gateway_server.send_notification(push_token, payload)

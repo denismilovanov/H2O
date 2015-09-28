@@ -129,7 +129,7 @@ class User:
             ''', user_id=user_id, name=user_data['name'], avatar_url=user_data['avatar_url'])
 
         # for is_deleted and generation in response
-        user = User.find_by_user_uuid(user_uuid, scope='all')
+        user = User.find_by_user_uuid(user_uuid, scope='all_with_balance')
 
         # upsert network
         UserNetwork.upsert_network(user_id, network_id, user_network_id, access_token)
@@ -149,6 +149,8 @@ class User:
             'is_banned': user['is_banned'],
             'generation': user['generation'],
             'num_in_generation': user['num_in_generation'],
+            'balance': user['balance'],
+            'hold': user['hold'],
         }, user_id
 
     @staticmethod
@@ -182,6 +184,11 @@ class User:
             me_id = User.extract_user_id_from_uuid(user['uuid'])
             user['balance'] = float(UserAccount.get_user_account(me_id)['balance'])
             user['push_notifications'] = True # UserSettings.get_user_settings(me_id)['push_notifications']
+
+        if scope == 'all_with_balance':
+            account = UserAccount.get_user_account(User.extract_user_id_from_uuid(user['uuid']))
+            user['balance'] = float(account['balance'])
+            user['hold'] = float(account['hold'])
 
         return user
 

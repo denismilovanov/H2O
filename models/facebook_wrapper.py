@@ -37,19 +37,8 @@ class FacebookWrapper:
             except Exception, e:
                 pass
 
-            facebook_friends_ids = []
-
-            # am I new user?
-            from models.user_network import UserNetwork
-            me_id = UserNetwork.find_user_by_network(1, profile['id'])
-
-            # yes, I am
-            if not me_id:
-                # friends
-                facebook_friends_ids = FacebookWrapper.get_user_friends_ids(graph, profile['id'])
-
         except Exception, e:
-            logger.info(e)
+            logger.warn(e)
             # ok, let's raise
             raise FacebookException(e)
 
@@ -57,28 +46,35 @@ class FacebookWrapper:
             'name': profile['name'],
             'avatar_url': avatar_url,
             'id': profile['id'],
-            'facebook_friends_ids': facebook_friends_ids,
         }
 
     @staticmethod
-    def get_user_friends_ids(graph, id):
-        facebook_friends_ids = []
-        friends_url = id + '/friends'
+    def get_user_friends_ids(access_token, facebook_id):
+        try:
+            from H2O.settings import FACEBOOK_TIMEOUT
+            graph = facebook.GraphAPI(access_token=access_token, version="2.4", timeout=FACEBOOK_TIMEOUT)
 
-        while True:
-            logger.info(friends_url)
-            facebook_friends = graph.get_object(friends_url)
+            facebook_friends_ids = []
+            friends_url = str(facebook_id) + '/friends'
 
-            try:
-                friends_batch = facebook_friends['data']
-                for friend in friends_batch:
-                    facebook_friends_ids.append(int(friend['id']))
+            while True:
+                logger.info(friends_url)
+                facebook_friends = graph.get_object(friends_url)
 
-                friends_url = facebook_friends['paging']['next']
-            except Exception, e:
-                break
+                try:
+                    friends_batch = facebook_friends['data']
+                    for friend in friends_batch:
+                        facebook_friends_ids.append(int(friend['id']))
 
-            if not friends_batch:
-                break
+                    friends_url = facebook_friends['paging']['next']
+                except Exception, e:
+                    break
 
-        return facebook_friends_ids
+                if not friends_batch:
+                    break
+
+            return facebook_friends_ids
+
+        except Exception, e:
+            logger.warn(e)
+            return False

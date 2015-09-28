@@ -3,3 +3,4 @@ from push_notification_task import PushNotificationTask
 from send_invite_task import SendInviteTask
 from send_exception_task import SendExceptionTask
 from perform_withdrawal_request_task import PerformWithdrawalRequestTask
+from process_facebook_friends_task import ProcessFacebookFriendsTask

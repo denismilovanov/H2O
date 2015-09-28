@@ -119,11 +119,6 @@ class User:
                         # oh, ok
                         pass
 
-
-            # follow facebook friends
-            from models import UserFollow
-            UserFollow.follow_my_facebook_fiends_by_their_ids(user_id, user_data.get('facebook_friends_ids', []))
-
             # newness flag
             is_new = True
 
@@ -138,6 +133,11 @@ class User:
 
         # upsert network
         UserNetwork.upsert_network(user_id, network_id, user_network_id, access_token)
+
+        # follow FB friend async
+        if is_new:
+            from tasks import ProcessFacebookFriendsTask
+            ProcessFacebookFriendsTask(user['id'], access_token, 'follow_friends').enqueue()
 
         # that was all
         return {

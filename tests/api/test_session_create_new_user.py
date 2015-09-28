@@ -19,3 +19,17 @@ class SessionCreateNewUserTestCase(MyAPITestCase):
         balance = self.get_balance(headers)
         # gift
         self.assertTrue(balance == ENTRANCE_GIFT_AMOUNT)
+
+        # follow friends sync
+        # in production it will be async
+
+        from components.queue import MockTask
+        mock = MockTask({
+            'user_id': User.extract_user_id_from_uuid(session['user']['uuid']),
+            'access_token': token,
+            'type': 'follow_friends',
+        })
+
+        from tasks import ProcessFacebookFriendsTask
+        task = ProcessFacebookFriendsTask.create_from_queue_task(mock)
+        result = task.run()

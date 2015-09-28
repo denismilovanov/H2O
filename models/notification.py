@@ -1,7 +1,7 @@
 from decorators import *
 from user import User
 import json
-from models.exceptions import ResourceIsNotFound
+from models.exceptions import ResourceIsNotFoundException
 from models import UserFollow
 
 import logging
@@ -76,7 +76,7 @@ class Notification:
         ''', user_id=user_id, notification_id=notification_id)
 
         if not result:
-            raise ResourceIsNotFound()
+            raise ResourceIsNotFoundException()
 
         return True
 

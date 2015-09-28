@@ -1,6 +1,6 @@
 from decorators import *
 from H2O.settings import DEBUG
-from models.exceptions import NotEnoughMoneyException, InvalidEmail, NotImplementedException
+from models.exceptions import NotEnoughMoneyException, InvalidEmailException, NotImplementedException
 from models import User, Transaction, UserAccount
 
 import json
@@ -74,7 +74,7 @@ class WithdrawalRequest:
             email = data['email']
             from validate_email import validate_email
             if not email or not validate_email(email):
-                raise InvalidEmail()
+                raise InvalidEmailException()
 
         user = User.get_by_id(user_id, scope='all_with_balance')
         user_uuid = user['uuid']

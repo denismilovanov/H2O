@@ -1,18 +1,18 @@
-class BadRequest(Exception):
+class BadRequestException(Exception):
     def __init__(self, e):
         self.e = e
     def __str__(self):
         return 'BAD_REQUEST'
 
-class AccessTokenDoesNotExist(Exception):
+class AccessTokenDoesNotExistException(Exception):
     def __str__(self):
         return 'ACCESS_TOKEN_DOES_NOT_EXIST'
 
-class ResfreshTokenDoesNotExist(Exception):
+class RefreshTokenDoesNotExistException(Exception):
     def __str__(self):
         return 'REFRESH_TOKEN_DOES_NOT_EXIST'
 
-class UserIsNotFound(Exception):
+class UserIsNotFoundException(Exception):
     def __str__(self):
         return 'USER_IS_NOT_FOUND'
 
@@ -32,31 +32,31 @@ class NotImplementedException(Exception):
     def __str__(self):
         return 'NOT_IMPLEMENTED'
 
-class InvalidEmail(Exception):
+class InvalidEmailException(Exception):
     def __str__(self):
         return 'INVALID_EMAIL'
 
-class EmailIsAlreadyUsed(Exception):
+class EmailIsAlreadyUsedException(Exception):
     def __str__(self):
         return 'EMAIL_IS_ALREADY_USED'
 
-class YouHaveInvitedThisEmail(Exception):
+class YouHaveInvitedThisEmailException(Exception):
     def __str__(self):
         return 'YOU_HAVE_INVITED_THIS_EMAIL'
 
-class UserIsAlreadyFollowed(Exception):
+class UserIsAlreadyFollowedExceptionException(Exception):
     def __str__(self):
         return 'USER_IS_ALREADY_FOLLOWED'
 
-class UserIsNotFound(Exception):
+class UserIsNotFoundException(Exception):
     def __str__(self):
         return 'USER_IS_NOT_FOUND'
 
-class ResourceIsNotFound(Exception):
+class ResourceIsNotFoundException(Exception):
     def __str__(self):
         return 'RESOURCE_IS_NOT_FOUND'
 
-class Forbidden(Exception):
+class ForbiddenException(Exception):
     def __str__(self):
         return 'FORBIDDEN'
 

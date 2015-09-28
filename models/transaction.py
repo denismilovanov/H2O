@@ -1,6 +1,6 @@
 from decorators import *
 from models import User, UserFollow, UserAccount
-from models.exceptions import ResourceIsNotFound, ConflictException, NotAcceptableException, NotEnoughMoneyException
+from models.exceptions import ResourceIsNotFoundException, ConflictException, NotAcceptableException, NotEnoughMoneyException
 
 import json
 
@@ -316,7 +316,7 @@ class Transaction:
 
         except ResourceNotFound as error:
             logger.warn(error)
-            raise ResourceIsNotFound()
+            raise ResourceIsNotFoundException()
 
         # write to db
         with db.t():

@@ -1,5 +1,5 @@
 from decorators import *
-from exceptions import UserIsAlreadyFollowed, UserIsNotFound
+from exceptions import UserIsAlreadyFollowedExceptionException, UserIsNotFoundException
 from models import User
 
 import logging
@@ -14,10 +14,10 @@ class UserFollow:
         follow_user = User.find_by_user_uuid(follow_user_uuid, scope='all')
 
         if not follow_user: # or follow_user['is_deleted']:
-            raise UserIsNotFound()
+            raise UserIsNotFoundException()
 
         if follow_user['id'] == user_id:
-            raise UserIsAlreadyFollowed()
+            raise UserIsAlreadyFollowedExceptionException()
 
         # insert into follows and followed_by
         with db.t():
@@ -27,7 +27,7 @@ class UserFollow:
 
             # check
             if not result:
-                raise UserIsAlreadyFollowed()
+                raise UserIsAlreadyFollowedExceptionException()
 
             db.select_field('''
                 SELECT main.upsert_user_followed_by(%(follow_user_id)s, %(user_id)s);
@@ -69,7 +69,7 @@ class UserFollow:
         follow_user = User.find_by_user_uuid(follow_user_uuid, scope='all')
 
         if not follow_user:
-            raise UserIsNotFound()
+            raise UserIsNotFoundException()
 
         with db.t():
             result = db.select_field('''
@@ -77,7 +77,7 @@ class UserFollow:
             ''', user_id=user_id, follow_user_id=follow_user['id'])
 
             if not result:
-                raise UserIsNotFound()
+                raise UserIsNotFoundException()
 
             db.select_field('''
                 SELECT main.delete_user_followed_by(%(follow_user_id)s, %(user_id)s);

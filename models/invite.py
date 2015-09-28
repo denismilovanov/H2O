@@ -1,5 +1,5 @@
 from decorators import *
-from models.exceptions import InvalidEmail, EmailIsAlreadyUsed, YouHaveInvitedThisEmail
+from models.exceptions import InvalidEmailException, EmailIsAlreadyUsedException, YouHaveInvitedThisEmailException
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -79,15 +79,15 @@ class Invite:
 
         from validate_email import validate_email
         if not email or not validate_email(email):
-            raise InvalidEmail()
+            raise InvalidEmailException()
 
         # looking for email
         code_by_email = Invite.get_invite_code_by_email(email)
         if code_by_email:
             if code_by_email['owner_id'] == user_id:
-                raise YouHaveInvitedThisEmail()
+                raise YouHaveInvitedThisEmailException()
             else:
-                raise EmailIsAlreadyUsed()
+                raise EmailIsAlreadyUsedException()
 
         # email is free
         try:
@@ -96,7 +96,7 @@ class Invite:
             ''', invite_code=invite_code, email=email, entrance_gift=entrance_gift)
         except Exception, e:
             # check again
-            raise EmailIsAlreadyUsed()
+            raise EmailIsAlreadyUsedException()
 
         # sending though queue
         try:

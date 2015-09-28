@@ -14,10 +14,10 @@ class JSONResponse(HttpResponse):
 
 def bad_request(e, data=None):
     logger.info(e)
-    from models.exceptions import BadRequest
+    from models.exceptions import BadRequestException
     v = {
         'error': str(e),
-        'additional_data': str(e.e) if type(e) is BadRequest else None,
+        'additional_data': str(e.e) if type(e) is BadRequestException else None,
     }
     if data:
         logger.info(data)

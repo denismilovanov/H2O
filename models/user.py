@@ -201,19 +201,6 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def get_all(limit, offset, scope, db):
-        logger.info('get_all')
-
-        users = db.select_table('''
-            SELECT id FROM main.get_users(%(limit)s, %(offset)s);
-        ''', limit=limit, offset=offset)
-
-        users_ids = [user['id'] for user in users]
-
-        return User.get_all_by_ids(users_ids, scope)
-
-    @staticmethod
-    @raw_queries()
     def get_all_by_ids(users_ids, scope, db, viewer_id=None):
         logger.info('get_all_by_ids')
         logger.info(users_ids)

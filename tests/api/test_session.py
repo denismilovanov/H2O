@@ -32,12 +32,6 @@ class SessionTestCase(MyAPITestCase):
         response = self.client.get(controller, {}, format=self.format, headers=headers)
         self.assertTrue(response.status_code == status.HTTP_200_OK)
 
-        # all
-
-        controller = self.user_controller
-        response = self.client.get(controller, {}, format=self.format, headers=headers)
-        self.assertTrue(response.status_code == status.HTTP_200_OK)
-
         # not found
 
         user_controller = self.user_controller + '10000000-0000-0000-0000-000000000000'

@@ -10,7 +10,6 @@ urlpatterns = [
     # sessions and users
     url(r'v1/session', views.session),
     url(r'v1/users/(?P<user_uuid>([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|me)', views.user),
-    url(r'v1/users', views.users),
     url(r'v1/profile', views.profile),
 
     # invites

@@ -23,12 +23,4 @@ def index(request):
     }, RequestContext(request))
 
 
-def users(request):
-    limit = request.GET.get('limit', 20)
-    offset = request.GET.get('offset', 0)
-
-    return render_to_response('users/users.html', {
-        'users': User.get_all(limit=limit, offset=offset, scope='admin')
-    }, RequestContext(request))
-
 

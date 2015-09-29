@@ -277,15 +277,6 @@ def user(request, user_uuid, user):
     # that is all
     return ok_raw(user_to_view)
 
-# list of user
-@api_view(['GET'])
-@authorization_needed
-def users(request, user):
-    logger.info('METHOD: users')
-
-    users = User.get_all(1000, 0, scope='public_profile')
-
-    return ok_raw(users)
 
 # profile
 @api_view(['PATCH', 'DELETE'])

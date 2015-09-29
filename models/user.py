@@ -72,8 +72,8 @@ class User:
 
             with db.t():
                 user_id, user_uuid = UserNetwork.get_new_user_id()
-                from models.graph import Graph
-                num_in_generation = Graph.get_last_num_in_generation(generation)
+                from models.generation import Generation
+                num_in_generation = Generation.get_last_num_in_generation(generation)
                 logger.info(str(generation) + ' ' + str(num_in_generation))
 
                 db.select_field('''

@@ -9,4 +9,4 @@ from transaction import Transaction
 from withdrawal_request import WithdrawalRequest
 from statistics import Statistics
 from notification import Notification
-from graph import Graph
+from generation import Generation

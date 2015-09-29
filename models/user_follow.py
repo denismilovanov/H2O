@@ -11,7 +11,7 @@ class UserFollow:
     @raw_queries()
     def upsert_user_follow(user_id, follow_user_uuid, db):
         logger.info('upsert_user_follow ' + str(user_id) + ' ' + str(follow_user_uuid))
-        follow_user = User.find_by_user_uuid(follow_user_uuid, scope='all')
+        follow_user = User.get_user_by_uuid(follow_user_uuid, scope='all')
 
         if not follow_user: # or follow_user['is_deleted']:
             raise UserIsNotFoundException()
@@ -66,7 +66,7 @@ class UserFollow:
     @staticmethod
     @raw_queries()
     def delete_user_follow(user_id, follow_user_uuid, db):
-        follow_user = User.find_by_user_uuid(follow_user_uuid, scope='all')
+        follow_user = User.get_user_by_uuid(follow_user_uuid, scope='all')
 
         if not follow_user:
             raise UserIsNotFoundException()

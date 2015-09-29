@@ -129,7 +129,7 @@ class User:
             ''', user_id=user_id, name=user_data['name'], avatar_url=user_data['avatar_url'])
 
         # for is_deleted and generation in response
-        user = User.find_by_user_uuid(user_uuid, scope='all_with_balance')
+        user = User.get_user_by_uuid(user_uuid, scope='all_with_balance')
 
         # upsert network
         UserNetwork.upsert_network(user_id, network_id, user_network_id, access_token)
@@ -167,8 +167,8 @@ class User:
 
     @staticmethod
     @raw_queries()
-    def find_by_user_uuid(user_uuid, scope, db):
-        logger.info('find_by_user_uuid')
+    def get_user_by_uuid(user_uuid, scope, db):
+        logger.info('get_user_by_uuid')
 
         # user_uuid contains user_id
         # user_id maps to database
@@ -235,9 +235,6 @@ class User:
 
     @staticmethod
     def get_by_id(user_id, scope):
-        logger.info('get_by_id')
-        logger.info(user_id)
-
         users = User.get_all_by_ids([user_id], scope)
         try:
             return users[0]
@@ -247,6 +244,8 @@ class User:
     @staticmethod
     @raw_queries()
     def get_user_id_by_num_in_generation(generation, num_in_generation, db):
+        logger.info('get_user_id_by_num_in_generation')
+
         return db.select_field('''
             SELECT main.get_user_id_by_num_in_generation(%(generation)s, %(num_in_generation)s);
         ''', generation=generation, num_in_generation=num_in_generation)

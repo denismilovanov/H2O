@@ -77,7 +77,7 @@ def authorization_needed(func):
 
                 user = None
                 if uuid:
-                    user = User.find_by_user_uuid(uuid, 'all')
+                    user = User.get_user_by_uuid(uuid, 'all')
 
                 if not user:
                     raise AccessTokenDoesNotExistException()
@@ -258,18 +258,18 @@ def user(request, user_uuid, user):
 
     if not me:
         # user I want to view profile
-        user_to_view = User.find_by_user_uuid(user_uuid, scope='public_profile')
+        user_to_view = User.get_user_by_uuid(user_uuid, scope='public_profile')
         if not user_to_view:
             raise UserIsNotFoundException()
 
         # get all data to check if I follow this user
-        user_to_view_all_data = User.find_by_user_uuid(user_uuid, scope='all')
+        user_to_view_all_data = User.get_user_by_uuid(user_uuid, scope='all')
         # do I follow this user?
         user_to_view['i_follow'] = UserFollow.does_user_follow_user(user['id'], user_to_view_all_data['id'])
 
     else:
         # this is me
-        user_to_view = User.find_by_user_uuid(user_uuid, scope='my_personal_profile')
+        user_to_view = User.get_user_by_uuid(user_uuid, scope='my_personal_profile')
 
     # add follows_count
     user_to_view['follows_count'] = UserFollow.get_user_follows_count(User.extract_user_id_from_uuid(user_to_view['uuid']))
@@ -388,7 +388,7 @@ def follows_inner(request, user_uuid, user):
     if user_uuid == 'my':
         user_id = user['id']
     else:
-        user_by_uuid = User.find_by_user_uuid(user_uuid, scope='all')
+        user_by_uuid = User.get_user_by_uuid(user_uuid, scope='all')
         if not user_by_uuid:
             raise UserIsNotFoundException()
 
@@ -439,7 +439,7 @@ def post_support(request, user):
     except Exception, e:
         return bad_request(BadRequestException(e))
 
-    supported_user = User.find_by_user_uuid(uuid, scope='all')
+    supported_user = User.get_user_by_uuid(uuid, scope='all')
 
     if not supported_user:
         raise UserIsNotFoundException()
@@ -462,7 +462,7 @@ def statistics_overall(request, user_uuid, user):
         user_uuid = user['uuid']
         statistics_user = user
     else:
-        statistics_user = User.find_by_user_uuid(user_uuid, scope='all')
+        statistics_user = User.get_user_by_uuid(user_uuid, scope='all')
 
     if not statistics_user:
         raise UserIsNotFoundException()
@@ -492,7 +492,7 @@ def statistics_counter_users(request, transaction_direction, user_uuid, user):
         user_uuid = user['uuid']
         statistics_user = user
     else:
-        statistics_user = User.find_by_user_uuid(user_uuid, scope='all')
+        statistics_user = User.get_user_by_uuid(user_uuid, scope='all')
 
     # 404?
     if not statistics_user:
@@ -565,7 +565,7 @@ def graph_user_by_uuid(request, user_uuid, user):
     logger.info('METHOD: graph_user')
 
     if user_uuid != 'me':
-        graph_user = User.find_by_user_uuid(user_uuid, scope='all')
+        graph_user = User.get_user_by_uuid(user_uuid, scope='all')
         if not graph_user:
             raise UserIsNotFoundException()
     else:

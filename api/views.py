@@ -543,19 +543,17 @@ def graph(request, user):
 
     me_id = user['id']
     me = User.get_by_id(me_id, scope='graph')
-    me['follows'] = Generation.get_follows(me_id)
-    me['followed_by'] = Generation.get_followed_by(me_id)
+    me['follows'] = User.get_all_by_ids(UserFollow.get_user_follows_ids(me_id), scope='graph')
 
     return ok_raw({
         'users_counts': Generation.get_users_counts(),
-        'zero_generation': Generation.get_zero_generation(),
+        'zero_generation': User.get_zero_generation(),
         'me': me,
     })
 
 def render_graph_user(user_id):
     user = User.get_by_id(user_id, scope='graph')
-    user['follows'] = Generation.get_follows(user_id)
-    user['followed_by'] = Generation.get_followed_by(user_id)
+    user['follows'] = User.get_all_by_ids(UserFollow.get_user_follows_ids(user_id), scope='graph')
     return ok_raw(user)
 
 # graph user by uuid

@@ -217,7 +217,6 @@ class User:
         if scope == 'graph':
             for user in users:
                 user['follows'] = []
-                user['followed_by'] = []
 
         if scope == 'all_with_balance':
             for user in users:
@@ -286,3 +285,15 @@ class User:
         ''', user_id=user_id)
 
         return True
+
+    @staticmethod
+    @raw_queries()
+    def get_zero_generation(db):
+        first_generation_users = db.select_table('''
+            SELECT main.get_users_ids_by_generation(0) AS user_id;
+        ''')
+
+        first_generation_users_ids = [first_generation_user['user_id'] for first_generation_user in first_generation_users]
+
+        return User.get_all_by_ids(first_generation_users_ids, scope='graph')
+

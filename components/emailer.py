@@ -64,6 +64,8 @@ class LocalEmailer:
             msg['From'] = us = 'dev@h2o-project.com'
             msg['To'] = email
 
+            logger.info('Sending ' + subject + ' to ' + email + ' via local smtp')
+
             s = smtplib.SMTP('localhost')
             s.sendmail(us, [email], msg.as_string())
             s.quit()

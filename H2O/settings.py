@@ -39,6 +39,9 @@ IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
 DEVELOPER_EMAIL = 'milovanov@octabrain.com'
 
 #
+TEST_INVITE_CODE = 'TEST_INVITE_CODE1'
+
+#
 PAYPAL_MODE = 'sandbox' if DEBUG else 'live'
 PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', 'AWGLmmsBsfBLu8ZqogVZp3SroEpHPLcyLsFTt9gvHIs0h-m-mqG0LaokDEPyDwgr6sIb4aDGeRIqj0pk')
 PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs')

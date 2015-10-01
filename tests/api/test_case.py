@@ -45,10 +45,11 @@ class MyAPITestCase(APITestCase):
         return profile
 
     def authorization(self, user_id=1, facebook_token=None):
+        from H2O.settings import TEST_INVITE_CODE
         data = {
             'network_id': 1,
             'access_token': facebook_token if facebook_token else 'TEST_TOKEN_' + str(user_id),
-            'invite_code': 'Q123',
+            'invite_code': TEST_INVITE_CODE,
             'device_type': 'ios',
             'push_token': '1' * 64,
         }

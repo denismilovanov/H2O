@@ -5,9 +5,10 @@ from components.emailer import Emailer
 
 class SendInviteTestCase(SimpleTestCase):
     def test1(self):
+        from H2O.settings import TEST_INVITE_CODE
         mock = MockTask({
             'email': 'TEST_EMAIL_me@denismilovanov.net',
-            'invite_code': 'Q123',
+            'invite_code': TEST_INVITE_CODE,
         })
 
         task = SendInviteTask.create_from_queue_task(mock)

@@ -49,7 +49,7 @@ class SendExceptionTask:
     def run(self, email=None):
         try:
             #
-            emailer = Emailer.get()
+            emailer = Emailer.get_local()
             #
             exception = self.exception
             traceback = ''

@@ -45,7 +45,7 @@ class SendInviteTask:
             # send
             emailer.send(email, invite, 'Registration at H2O project')
             # do not change status of test code
-            if not invite.startswith('TEST_INVITE_CODE'):
+            if not invite_code.startswith('TEST_INVITE_CODE'):
                 # change status
                 Invite.send_invite_code(invite_code)
 

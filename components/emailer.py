@@ -1,4 +1,5 @@
 import mandrill
+import smtplib
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -47,8 +48,37 @@ class MandrillEmailer:
             logger.info(e)
             raise EmailerException(e)
 
+
+class LocalEmailer:
+    def send(self, email, content, subject):
+        import re
+        m = re.search('TEST_EMAIL', email)
+        if m:
+            logger.info('Test send: ' + str(content))
+            return True
+
+        try:
+            from email.mime.text import MIMEText
+            msg = MIMEText(content.encode('UTF-8'), 'html', 'UTF-8')
+            msg['Subject'] = subject
+            msg['From'] = us = 'dev@h2o-project.com'
+            msg['To'] = email
+
+            s = smtplib.SMTP('localhost')
+            s.sendmail(us, [email], msg.as_string())
+            s.quit()
+
+            return True
+
+        except:
+            logger.info(e)
+            raise EmailerException(e)
+
+
+
 class Emailer:
     emailer = None
+    local_emailer = None
 
     @staticmethod
     def get():
@@ -57,3 +87,11 @@ class Emailer:
 
         Emailer.emailer = MandrillEmailer()
         return Emailer.emailer
+
+    @staticmethod
+    def get_local():
+        if Emailer.local_emailer:
+            return Emailer.local_emailer
+
+        Emailer.local_emailer = LocalEmailer()
+        return Emailer.local_emailer

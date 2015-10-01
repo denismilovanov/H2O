@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'v1/profile', views.profile),
 
     # invites
-    url(r'v1/invite_codes/(?P<invite_code>[0-9a-zA-Z]+)', views.invite_code),
+    url(r'v1/invite_codes/(?P<invite_code>[0-9a-zA-Z_]+)', views.invite_code),
     url(r'v1/invite_codes', views.invite_codes),
 
     # add follow (post)

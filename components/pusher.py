@@ -26,9 +26,6 @@ class AndroidPusher:
                 from H2O.settings import GCM_API_KEY
                 AndroidPusher.gcm = GCM(GCM_API_KEY)
 
-            # only for apple
-            del data['push_header']
-
             # sending
             res = AndroidPusher.gcm.json_request(
                 registration_ids=[push_token],

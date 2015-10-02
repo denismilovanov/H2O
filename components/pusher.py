@@ -81,7 +81,6 @@ class ApplePusher:
                 "title": "H2O",
                 "body": data['push_header'],
             }
-            del data['push_header']
 
             # payload
             from models.notification import Notification

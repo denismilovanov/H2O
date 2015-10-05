@@ -11,6 +11,7 @@ DECLARE
 BEGIN
 
     INSERT INTO statistics.overall
+        (user_id, transaction_direction)
         SELECT  i_user_id, unnest(array['support', 'receive']::billing.transaction_direction[]);
 
 END

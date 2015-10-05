@@ -71,3 +71,11 @@ class NotAcceptableException(Exception):
 class NotEnoughMoneyException(Exception):
     def __str__(self):
         return 'NOT_ENOUGH_MONEY'
+
+class GoneException(Exception):
+    def __str__(self):
+        return 'GONE'
+
+class LockedException(Exception):
+    def __str__(self):
+        return 'LOCKED'

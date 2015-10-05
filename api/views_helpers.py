@@ -98,6 +98,14 @@ def conflict():
     logger.info('conflict')
     return HttpResponse(status=status.HTTP_409_CONFLICT)
 
+def gone(e):
+    logger.info('gone')
+    return HttpResponse(status=status.HTTP_410_GONE)
+
+def locked(e):
+    logger.info('locked')
+    return HttpResponse(status=status.HTTP_423_LOCKED)
+
 def ok(**v):
     logger.info('OK')
     logger.info(v)

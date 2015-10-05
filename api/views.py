@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from views_helpers import created, bad_request, unavailable, forbidden, unauthorized, conflict
-from views_helpers import ok, ok_raw, internal_server_error, not_found, not_acceptable, no_content
+from views_helpers import ok, ok_raw, internal_server_error, not_found, not_acceptable, no_content, gone, locked
 from models import *
 from models.exceptions import *
 import datetime
@@ -82,8 +82,19 @@ def authorization_needed(func):
                 if not user:
                     raise AccessTokenDoesNotExistException()
 
+                if  user['is_deleted'] and \
+                    not (request.path.startswith('/v1/profile') and request.method == 'PATCH'):
+                    raise GoneException()
+
+                if user['is_banned']:
+                    raise LockedException()
+
             except AccessTokenDoesNotExistException, e:
                 return unauthorized(e)
+            except GoneException,e:
+                return gone(e)
+            except LockedException,e:
+                return locked(e)
             except Exception, e:
                 return internal_server_error(e)
 

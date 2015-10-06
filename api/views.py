@@ -84,10 +84,12 @@ def authorization_needed(func):
 
                 if  user['is_deleted'] and \
                     not (request.path.startswith('/v1/profile') and request.method == 'PATCH') and \
+                    not (request.path.startswith('/v1/counts') and request.method == 'GET') and \
                     not (request.path.startswith('/v1/users/me') and request.method == 'GET'):
                     raise GoneException()
 
                 if  user['is_banned'] and \
+                    not (request.path.startswith('/v1/counts') and request.method == 'GET') and \
                     not (request.path.startswith('/v1/users/me') and request.method == 'GET'):
                     raise LockedException()
 

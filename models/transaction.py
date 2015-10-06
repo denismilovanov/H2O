@@ -1,6 +1,8 @@
 from decorators import *
 from models import User, UserFollow, UserAccount
-from models.exceptions import ResourceIsNotFoundException, ConflictException, NotAcceptableException, NotEnoughMoneyException
+from models.exceptions import ResourceIsNotFoundException, ConflictException, NotAcceptableException, NotEnoughMoneyException, NotImplementedException
+from paypalrestsdk import Payment, ResourceNotFound
+import stripe
 
 import json
 
@@ -241,13 +243,7 @@ class Transaction:
         return transaction_id
 
     @staticmethod
-    @raw_queries()
-    def add_deposit(user_id, provider, provider_transaction_id, amount, currency, db):
-        amount = float(amount)
-        user_uuid = User.get_by_id(user_id, scope='all')['uuid']
-
-        from paypalrestsdk import Payment, ResourceNotFound
-
+    def validate_paypal_deposit_transaction(provider_transaction_id, amount, currency):
         try:
             payment = Payment.find(provider_transaction_id)
             logger.info(payment)
@@ -292,9 +288,58 @@ class Transaction:
                 # fee > amount
                 raise NotAcceptableException()
 
+            #
+            return amount, provider_fee_amount
+
         except ResourceNotFound as error:
             logger.warn(error)
             raise ResourceIsNotFoundException()
+
+    @staticmethod
+    def calculate_stripe_fee(amount):
+        from math import ceil
+        from H2O.settings import STRIPE_FEE_PERCENT, STRIPE_FEE_FLAT
+        rate = STRIPE_FEE_PERCENT / 100
+        return int(ceil((amount * rate + STRIPE_FEE_FLAT) * 100)) / 100.0
+
+    @staticmethod
+    def perform_stripe_deposit_transaction(provider_transaction_token, amount, currency):
+        amount = float(amount)
+        try:
+            charge = stripe.Charge.create(
+                amount=int(amount * 100), # amount in cents
+                currency=currency,
+                source=provider_transaction_token,
+                description="H2O charge"
+            )
+            logger.info(charge)
+
+        except stripe.error.CardError, e:
+            logger.warn(e)
+            raise NotAcceptableException(e)
+
+        fee = Transaction.calculate_stripe_fee(amount)
+
+        logger.info(str(amount) + ' ' + str(fee))
+
+        return amount - fee, fee
+
+    @staticmethod
+    @raw_queries()
+    def add_deposit(user_id, provider, provider_transaction_id, provider_transaction_token, amount, currency, db):
+        amount = float(amount)
+        user_uuid = User.get_by_id(user_id, scope='all')['uuid']
+
+        if provider == 'paypal':
+            amount, provider_fee_amount = Transaction.validate_paypal_deposit_transaction(
+                provider_transaction_id, amount, currency
+            )
+        elif provider == 'stripe':
+            amount, provider_fee_amount = Transaction.perform_stripe_deposit_transaction(
+                provider_transaction_token, amount, currency
+            )
+        else:
+            raise NotImplementedException()
 
         # write to db
         with db.t():
@@ -303,7 +348,7 @@ class Transaction:
                 db,
                 user_id, user_uuid,
                 amount, provider_fee_amount, currency,
-                'paypal', provider_transaction_id,
+                provider, provider_transaction_id,
             )
             if not transaction_id:
                 raise ConflictException()

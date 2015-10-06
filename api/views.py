@@ -160,6 +160,7 @@ def error(request, http_code, user):
 def params(request, user):
     logger.info('METHOD: params')
 
+    from H2O.settings import STRIPE_FEE_PERCENT, STRIPE_FEE_FLAT
     params = {
         'providers': {
             'paypal': {
@@ -171,6 +172,18 @@ def params(request, user):
                     'withdrawal': {
                         'percent': 1.5,
                         'flat': 0.30,
+                    },
+                },
+            },
+            'stripe': {
+                'commissions': {
+                    'deposit': {
+                        'percent': STRIPE_FEE_PERCENT,
+                        'flat': STRIPE_FEE_FLAT,
+                    },
+                    'withdrawal': {
+                        'percent': 0,
+                        'flat': 0,
                     },
                 },
             },
@@ -610,14 +623,22 @@ def post_deposit(request, user):
 
     try:
         provider = request.data['provider']
-        provider_transaction_id = request.data['provider_transaction_id']
+        provider_transaction_id = request.data['provider_transaction_id'] if provider == 'paypal' else None
+        provider_transaction_token = request.data['provider_transaction_token'] if provider == 'stripe' else None
+        if not provider_transaction_id and not provider_transaction_token:
+            raise BadRequestException(None)
+
         amount = float(request.data['amount'])
         currency = request.data['currency']
     except:
         return bad_request(BadRequestException(None))
 
     try:
-        transaction_id = Transaction.add_deposit(user['id'], provider, provider_transaction_id, amount, currency)
+        transaction_id = Transaction.add_deposit(
+            user['id'], provider,
+            provider_transaction_id, provider_transaction_token,
+            amount, currency
+        )
         return created(transaction_id=transaction_id)
     except ConflictException, e:
         return conflict()

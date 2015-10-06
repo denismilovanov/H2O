@@ -47,12 +47,22 @@ PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', 'AWGLmmsBsfBLu8ZqogVZp3Sro
 PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs')
 PAYPAL_SANDBOX_TRANSACTION_ID = 'PAY-2G3660958Y2828046KX352DQ'
 
+#
+STRIPE_CLIENT_ID = os.environ.get('STRIPE_CLIENT_ID', 'pk_test_A4E5DX6OPfdZJnFEprqeEOjJ')
+STRIPE_CLIENT_SECRET = os.environ.get('STRIPE_CLIENT_SECRET', 'sk_test_9Hc6zpdwLTZkbINTeuVZ6NP9')
+STRIPE_SANDBOX_CARD = '4242424242424242'
+STRIPE_FEE_PERCENT = 2.9
+STRIPE_FEE_FLAT = 0.30
+
 import paypalrestsdk
 paypalrestsdk.configure({
     'mode': PAYPAL_MODE,
     'client_id': PAYPAL_CLIENT_ID,
     'client_secret': PAYPAL_CLIENT_SECRET,
 })
+
+import stripe
+stripe.api_key = STRIPE_CLIENT_SECRET
 
 # to have test queues prefixed
 from components.queue import Queue

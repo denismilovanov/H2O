@@ -83,10 +83,12 @@ def authorization_needed(func):
                     raise AccessTokenDoesNotExistException()
 
                 if  user['is_deleted'] and \
-                    not (request.path.startswith('/v1/profile') and request.method == 'PATCH'):
+                    not (request.path.startswith('/v1/profile') and request.method == 'PATCH') and \
+                    not (request.path.startswith('/v1/users/me') and request.method == 'GET'):
                     raise GoneException()
 
-                if user['is_banned']:
+                if  user['is_banned'] and \
+                    not (request.path.startswith('/v1/users/me') and request.method == 'GET'):
                     raise LockedException()
 
             except AccessTokenDoesNotExistException, e:

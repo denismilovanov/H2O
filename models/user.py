@@ -159,11 +159,12 @@ class User:
     def scope(scope):
         if scope in ['public_profile', 'my_personal_profile', 'public_profile_with_i_follow']:
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted',
-                              'generation', 'num_in_generation'])
+                              'generation', 'num_in_generation', 'is_banned'])
         elif scope == 'public_profile_with_id':
-            return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted'])
+            return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility',
+                              'facebook_id', 'is_deleted', 'is_banned'])
         elif scope == 'graph':
-            return ', '.join(['uuid', 'name', 'generation', 'num_in_generation', 'is_deleted', 'status'])
+            return ', '.join(['uuid', 'name', 'generation', 'num_in_generation', 'is_deleted', 'is_banned', 'status'])
         else:
             return '*'
 

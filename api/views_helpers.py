@@ -104,7 +104,7 @@ def gone(e):
 
 def locked(e):
     logger.info('locked')
-    return HttpResponse(status=status.HTTP_423_LOCKED)
+    return HttpResponse(status=423) # HTTP_423_LOCKED
 
 def ok(**v):
     logger.info('OK')

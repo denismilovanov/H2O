@@ -152,6 +152,7 @@ class User:
             'num_in_generation': user['num_in_generation'],
             'balance': user['balance'],
             'hold': user['hold'],
+            'free_invites_count': user['free_invites_count'],
         }, user_id
 
     @staticmethod
@@ -185,11 +186,14 @@ class User:
             me_id = User.extract_user_id_from_uuid(user['uuid'])
             user['balance'] = float(UserAccount.get_user_account(me_id)['balance'])
             user['push_notifications'] = True # UserSettings.get_user_settings(me_id)['push_notifications']
+            user['free_invites_count'] = User.get_free_invites_count(me_id)
 
         if scope == 'all_with_balance':
-            account = UserAccount.get_user_account(User.extract_user_id_from_uuid(user['uuid']))
+            me_id = User.extract_user_id_from_uuid(user['uuid'])
+            account = UserAccount.get_user_account(me_id)
             user['balance'] = float(account['balance'])
             user['hold'] = float(account['hold'])
+            user['free_invites_count'] = User.get_free_invites_count(me_id)
 
         return user
 
@@ -198,6 +202,13 @@ class User:
     def get_devices(user_id, db):
         return db.select_table('''
             SELECT * FROM main.get_user_devices(%(user_id)s);
+        ''', user_id=user_id)
+
+    @staticmethod
+    @raw_queries()
+    def get_free_invites_count(user_id, db):
+        return db.select_field('''
+            SELECT * FROM main.get_user_free_invites_count(%(user_id)s);
         ''', user_id=user_id)
 
     @staticmethod

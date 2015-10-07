@@ -38,6 +38,16 @@ def get_limit_and_offset(request):
     return limit, offset
     # raise BadRequestException(e)
 
+# these cases are still enabled for banned or deleted user
+def is_request_enabled_for_banned_or_deleted_user(request):
+    return  (request.path.startswith('/v1/counts') and request.method == 'GET') or \
+            (request.path.startswith('/v1/session') and request.method == 'DELETE') or \
+            (request.path.startswith('/v1/users/me') and request.method == 'GET')
+
+# only for deleted user
+def is_request_enabled_for_deleted_user(request):
+    return  (request.path.startswith('/v1/profile') and request.method == 'PATCH')
+
 # decorator for all methods
 def authorization_needed(func):
     def inner(*k, **v):
@@ -83,14 +93,12 @@ def authorization_needed(func):
                     raise AccessTokenDoesNotExistException()
 
                 if  user['is_deleted'] and \
-                    not (request.path.startswith('/v1/profile') and request.method == 'PATCH') and \
-                    not (request.path.startswith('/v1/counts') and request.method == 'GET') and \
-                    not (request.path.startswith('/v1/users/me') and request.method == 'GET'):
+                    not is_request_enabled_for_deleted_user(request) and \
+                    not is_request_enabled_for_banned_or_deleted_user(request):
                     raise GoneException()
 
                 if  user['is_banned'] and \
-                    not (request.path.startswith('/v1/counts') and request.method == 'GET') and \
-                    not (request.path.startswith('/v1/users/me') and request.method == 'GET'):
+                    not is_request_enabled_for_banned_or_deleted_user(request):
                     raise LockedException()
 
             except AccessTokenDoesNotExistException, e:

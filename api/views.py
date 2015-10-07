@@ -41,6 +41,7 @@ def get_limit_and_offset(request):
 # these cases are still enabled for banned or deleted user
 def is_request_enabled_for_banned_or_deleted_user(request):
     return  (request.path.startswith('/v1/counts') and request.method == 'GET') or \
+            (request.path.startswith('/v1/params') and request.method == 'GET') or \
             (request.path.startswith('/v1/session') and request.method == 'DELETE') or \
             (request.path.startswith('/v1/users/me') and request.method == 'GET')
 

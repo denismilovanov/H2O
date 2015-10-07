@@ -69,7 +69,7 @@ from components.queue import Queue
 Queue.test = DEBUG
 
 #
-APNS_USE_SANDBOX = DEBUG
+APNS_USE_SANDBOX = False
 if APNS_USE_SANDBOX:
     __APNS_SUFFIX = 'Dev'
 else:

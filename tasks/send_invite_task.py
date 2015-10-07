@@ -54,6 +54,11 @@ class SendInviteTask:
         except EmailerException, e:
             #
             logger.warn(e)
+
+            # notify dev
+            from tasks.send_exception_task import send_exception
+            send_exception(e)
+
             # delay task
             self.queue_task.rollback(60)
             return False

@@ -45,6 +45,11 @@ class PerformWithdrawalRequestTask:
             WithdrawalRequest.perform_withdrawal_request(user_id, withdrawal_request_id)
         except Exception, e:
             logger.warn(e)
+
+            # notify dev
+            from tasks.send_exception_task import send_exception
+            send_exception(e)
+
             # let's wait
             self.queue_task.rollback(60*10, 5)
             return False

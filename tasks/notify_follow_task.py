@@ -60,6 +60,8 @@ class NotifyFollowTask:
             PushNotificationTask(user_id, notification).enqueue()
         except Exception, e:
             logger.warn(e)
+            from tasks.send_exception_task import send_exception
+            send_exception(e)
 
         # commit
         self.queue_task.commit()

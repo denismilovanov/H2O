@@ -5,6 +5,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def send_exception(e):
+    SendExceptionTask(e).enqueue()
+
 class SendExceptionTask:
     # constructor for using in models
     def __init__(self, exception):

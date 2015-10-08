@@ -1,4 +1,5 @@
 from models.notification import Notification
+from models.user import User
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -47,6 +48,13 @@ class NotifySupportTask:
         # to whom
         user_id = self.user_id
         counter_user_id = self.counter_user_id
+        # user
+        user = User.get_by_id(user_id, scope='all')
+        if not user:
+            # it can happend in tests:
+            # user is not present in db already, but the task in rabbit is
+            self.queue_task.commit()
+            return True
 
         #
         logger.info('Run somebody_sent_me_money ' + str(counter_user_id) + ' supports ' + str(user_id))

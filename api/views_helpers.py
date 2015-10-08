@@ -12,6 +12,21 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
+# custom exceptions handler to catch 405 for example
+def custom_exception_handler(e, context):
+    logger.info(e)
+
+    from rest_framework.views import exception_handler
+    response = exception_handler(e, context)
+    code = response.status_code
+    if response is not None:
+        code = response.status_code
+    else:
+        code = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    return JSONResponse({}, status=response.status_code)
+
+
 def bad_request(e, data=None):
     logger.info(e)
     from models.exceptions import BadRequestException

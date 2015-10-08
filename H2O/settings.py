@@ -136,6 +136,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
+    'EXCEPTION_HANDLER': 'api.views_helpers.custom_exception_handler',
 }
 
 GCM_API_KEY = 'AIzaSyDl8iM7UK3rIBlefHx6Ofh173TZdDVltxs'

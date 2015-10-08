@@ -79,3 +79,7 @@ class GoneException(Exception):
 class LockedException(Exception):
     def __str__(self):
         return 'LOCKED'
+
+class UnavailableException(Exception):
+    def __str__(self):
+        return 'UNAVAILABLE'

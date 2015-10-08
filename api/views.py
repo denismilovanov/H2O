@@ -61,7 +61,7 @@ def authorization_needed(func):
         # 503?
         try:
             if redis_connection.get('unavailable'):
-                return unavailable(None)
+                return unavailable(UnavailableException())
         except:
             pass
 

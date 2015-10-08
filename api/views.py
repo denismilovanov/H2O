@@ -4,6 +4,7 @@ from views_helpers import ok, ok_raw, internal_server_error, not_found, not_acce
 from models import *
 from models.exceptions import *
 import datetime
+from H2O.settings import redis_connection
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -57,6 +58,14 @@ def authorization_needed(func):
         access_token = None
         user = {}
 
+        # 503?
+        try:
+            if redis_connection.get('unavailable'):
+                return unavailable(None)
+        except:
+            pass
+
+        #
         if  not refresh_token and \
             not (request.path.startswith('/v1/session') and request.method == 'POST'):
 

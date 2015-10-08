@@ -64,6 +64,9 @@ paypalrestsdk.configure({
 import stripe
 stripe.api_key = STRIPE_CLIENT_SECRET
 
+import redis
+redis_connection = redis.StrictRedis(host='localhost', port=6379)
+
 # to have test queues prefixed
 from components.queue import Queue
 Queue.test = DEBUG

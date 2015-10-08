@@ -301,13 +301,14 @@ class User:
     @staticmethod
     @raw_queries()
     def get_zero_generation(type, db):
+        from H2O.settings import DEBUG
         first_generation_users = db.select_table('''
-            SELECT main.get_users_ids_by_generation(0) AS user_id;
-        ''')
+            SELECT main.get_users_ids_by_generation(0, %(debug)s) AS user_id;
+        ''', debug=DEBUG)
 
-        first_generation_users_ids = [first_generation_user['user_id'] for first_generation_user in first_generation_users]
+        zero_generation_users_ids = [first_generation_user['user_id'] for first_generation_user in first_generation_users]
 
-        users = User.get_all_by_ids(first_generation_users_ids, scope='graph')
+        users = User.get_all_by_ids(zero_generation_users_ids, scope='graph')
 
         if type == 'extended':
             from models import UserFollow

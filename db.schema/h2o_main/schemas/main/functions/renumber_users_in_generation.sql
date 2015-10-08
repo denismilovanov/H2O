@@ -3,7 +3,8 @@
 -- очень тяжелая операция, обращаться с осторожностью!
 
 CREATE OR REPLACE FUNCTION main.renumber_users_in_generation(
-    i_generation_id integer
+    i_generation_id integer,
+    b_debug boolean DEFAULT FALSE
 )
     RETURNS integer AS
 $BODY$
@@ -16,7 +17,11 @@ BEGIN
 
     FOR r_user IN SELECT *
                     FROM main.users
-                    WHERE generation = i_generation_id
+                    WHERE   generation = i_generation_id AND
+                            CASE WHEN b_debug
+                                THEN TRUE
+                                ELSE id >= 0 -- skip test users in production
+                            END
                     ORDER BY id ASC
     LOOP
 
@@ -49,7 +54,8 @@ $BODY$
 
 
 GRANT EXECUTE ON FUNCTION main.renumber_users_in_generation(
-    i_generation_id integer
+    i_generation_id integer,
+    b_debug boolean
 ) TO h2o_owner;
 
 

@@ -67,11 +67,11 @@ class SendExceptionTask:
                 traceback=exception['traceback']
             )
             # send
-            from H2O.settings import DEVELOPER_EMAIL
+            from H2O.settings import DEVELOPER_EMAIL, DEBUG
             if not email:
                 email = DEVELOPER_EMAIL
 
-            emailer.send(email, exception, 'Exception')
+            emailer.send(email, exception, 'Exception at ' + ('PRODUCTION' if not DEBUG else 'TEST'))
             # remove task
             self.queue_task.commit()
         except EmailerException, e:

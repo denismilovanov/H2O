@@ -282,7 +282,7 @@ class Transaction:
 
             # subtract fee
             amount -= provider_fee_amount
-            logger.info('Amount - fee = ' + str(provider_amount))
+            logger.info('Amount - fee = ' + str(amount))
 
             if amount < 0:
                 # fee > amount

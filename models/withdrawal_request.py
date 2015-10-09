@@ -112,8 +112,8 @@ class WithdrawalRequest:
             raise Exception('Generated transaction id is not unique.')
 
         # perform w/d async
-        from tasks.perform_withdrawal_request_task import PerformWithdrawalRequestTask
-        PerformWithdrawalRequestTask(user_id, withdrawal_request_id).enqueue()
+        # from tasks.perform_withdrawal_request_task import PerformWithdrawalRequestTask
+        # PerformWithdrawalRequestTask(user_id, withdrawal_request_id).enqueue()
 
         #
         return withdrawal_request_id

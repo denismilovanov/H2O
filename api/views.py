@@ -593,11 +593,15 @@ def graph(request, user):
     me = User.get_by_id(me_id, scope='graph')
     me['follows'] = User.get_all_by_ids(UserFollow.get_user_follows_ids(me_id), scope='graph')
 
-    return ok_raw({
+    data = {
         'users_counts': Generation.get_users_counts(),
-        'zero_generation': User.get_zero_generation(type),
         'me': me,
-    })
+    }
+
+    if type != 'short':
+        data['zero_generation'] = User.get_zero_generation(type)
+
+    return ok_raw(data)
 
 def render_graph_user(user_id):
     user = User.get_by_id(user_id, scope='graph')

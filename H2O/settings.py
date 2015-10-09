@@ -19,6 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk')
 
 DEBUG = os.environ.get('H2O_DEBUG', 'True') == 'True'
+PRERELEASE = os.environ.get('H2O_PRERELEASE', 'False') == 'True'
 
 FACEBOOK_CLIENT_ID = '401193696737876'
 FACEBOOK_TIMEOUT = 4
@@ -41,13 +42,21 @@ DEVELOPER_EMAIL = 'milovanov@octabrain.com'
 #
 TEST_INVITE_CODE = 'TEST_INVITE_CODE1'
 
-#
-PAYPAL_MODE = 'sandbox' if DEBUG else 'live'
-PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', 'AWGLmmsBsfBLu8ZqogVZp3SroEpHPLcyLsFTt9gvHIs0h-m-mqG0LaokDEPyDwgr6sIb4aDGeRIqj0pk')
-PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs')
+# sandbox params
+PAYPAL_CLIENT_ID = 'AWGLmmsBsfBLu8ZqogVZp3SroEpHPLcyLsFTt9gvHIs0h-m-mqG0LaokDEPyDwgr6sIb4aDGeRIqj0pk'
+PAYPAL_CLIENT_SECRET = 'EIvwAxzFZ57ZI38Tfr9lHWWMi33_a_XCGfjkn_Xf8U4ULnTKB8Du1_o_TdslL2uCVq7hKnm4Q2al7mfs'
 PAYPAL_SANDBOX_TRANSACTION_ID = 'PAY-2G3660958Y2828046KX352DQ'
 
-#
+if not PRERELEASE:
+    PAYPAL_MODE = 'sandbox' if DEBUG else 'live'
+    PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', PAYPAL_CLIENT_ID)
+    PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', PAYPAL_CLIENT_SECRET)
+else:
+    PAYPAL_MODE = 'sandbox'
+    print 'PRELEASE'
+    # prerelease = production + payment sandbox
+
+# stripe
 STRIPE_CLIENT_ID = os.environ.get('STRIPE_CLIENT_ID', 'pk_test_A4E5DX6OPfdZJnFEprqeEOjJ')
 STRIPE_CLIENT_SECRET = os.environ.get('STRIPE_CLIENT_SECRET', 'sk_test_9Hc6zpdwLTZkbINTeuVZ6NP9')
 STRIPE_SANDBOX_CARD = '4242424242424242'
@@ -85,7 +94,7 @@ INSTALLED_APPS = (
     'api',
     'daemons',
     #'admin',
-    #'django.contrib.auth',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
     #'django.contrib.staticfiles',
     'rest_framework',

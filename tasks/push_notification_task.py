@@ -36,6 +36,18 @@ class PushNotificationTask:
     # run this kind of tasks
     def run(self):
         from models.user import User
+
+        # get user
+        user = User.get_by_id(self.user_id, scope='all')
+        if not user:
+            return True
+
+        # check
+        if user['is_deleted'] or user['is_banned']:
+            logger.info('No need to push, user = ' + str(self.user_id) + ' is deleted or banned')
+            return True
+
+        # get devices
         devices = User.get_devices(self.user_id)
 
         logger.info('Need to push to devices, user = ' + str(self.user_id) + ':')

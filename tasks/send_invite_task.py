@@ -1,6 +1,7 @@
 from components.emailer import Emailer, EmailerException
-from models import Invite
+from models import Invite, User
 from jinja2 import Template, Environment, FileSystemLoader
+from H2O.settings import CONTACT_EMAIL, BASE_URL
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -40,10 +41,26 @@ class SendInviteTask:
             #
             email = self.email
             invite_code = self.invite_code
+
+            #
+            invite = Invite.get_invite_code(invite_code)
+            owner = User.get_by_id(invite['owner_id'], scope='all')
+            owner_name = owner['name']
+            owner_avatar_url = owner['avatar_url']
+            if not owner['id']:
+                # anonymous -> team
+                owner_name = 'H2O team'
+                owner_avatar_url = BASE_URL + '/images/team.png'
+
             # template
-            invite = SendInviteTask.template().render(invite_code=invite_code)
+            invite = SendInviteTask.template().render(
+                invite_code=invite_code,
+                owner_name=owner_name,
+                owner_avatar_url=owner_avatar_url,
+                contact_email=CONTACT_EMAIL
+            )
             # send
-            emailer.send(email, invite, 'Registration at H2O project')
+            emailer.send(email, invite, owner_name + ' invited you to join Hearts2Open community')
             # do not change status of test code
             if not invite_code.startswith('TEST_INVITE_CODE'):
                 # change status

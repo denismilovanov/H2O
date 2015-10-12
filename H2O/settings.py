@@ -36,8 +36,14 @@ ACCESS_TOKEN_EXPIRES_IN = 3600
 ANDROID_PUSH_TOKEN_EXPIRES_IN = 7 * 86400
 IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
 
+#
+BASE_URL = 'https://hearts2open.com'
+
 # see send_alert_task
 DEVELOPER_EMAIL = 'milovanov@octabrain.com'
+# other emails
+CONTACT_EMAIL = 'hello@hearts2open.com'
+SUPPORT_EMAIL = 'support@hearts2open.com'
 
 #
 TEST_INVITE_CODE = 'TEST_INVITE_CODE1'

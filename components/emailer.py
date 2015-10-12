@@ -13,7 +13,7 @@ class MandrillEmailer:
         import re
         m = re.search('TEST_EMAIL', email)
         if m:
-            logger.info('Test send: ' + str(content))
+            logger.info('Test send')
             return True
 
         try:
@@ -54,7 +54,7 @@ class LocalEmailer:
         import re
         m = re.search('TEST_EMAIL', email)
         if m:
-            logger.info('Test send: ' + str(content))
+            logger.info('Test send')
             return True
 
         try:

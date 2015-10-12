@@ -40,11 +40,15 @@ class PushNotificationTask:
         # get user
         user = User.get_by_id(self.user_id, scope='all')
         if not user:
+            # remove task
+            self.queue_task.commit()
             return True
 
         # check
         if user['is_deleted'] or user['is_banned']:
             logger.info('No need to push, user = ' + str(self.user_id) + ' is deleted or banned')
+            # remove task
+            self.queue_task.commit()
             return True
 
         # get devices

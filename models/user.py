@@ -153,6 +153,7 @@ class User:
             'balance': user['balance'],
             'hold': user['hold'],
             'free_invites_count': user['free_invites_count'],
+            'follows_count': user['follows_count'],
         }, user_id
 
     @staticmethod
@@ -195,6 +196,8 @@ class User:
             user['balance'] = float(account['balance'])
             user['hold'] = float(account['hold'])
             user['free_invites_count'] = User.get_free_invites_count(me_id)
+            from models import UserFollow
+            user['follows_count'] = UserFollow.get_user_follows_count(me_id)
 
         return user
 

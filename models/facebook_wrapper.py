@@ -30,7 +30,7 @@ class FacebookWrapper:
             profile = graph.get_object('me')
 
             # avatar
-            avatar = graph.get_object(profile['id'] + '/picture?type=square&width=100&height=100')
+            avatar = graph.get_object(profile['id'] + '/picture?type=square&width=200&height=200')
             avatar_url = avatar.get('url')
 
         except Exception, e:

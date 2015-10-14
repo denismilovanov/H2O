@@ -54,6 +54,7 @@ class Statistics:
             user['id'] = User.extract_user_id_from_uuid(user['uuid'])
             user['transactions_count'] = transactions_counts[user['id']]
             user['transactions_amount_sum'] = transactions_amounts_sums[user['id']]
+            user['follows_count'] = UserFollow.get_user_follows_count(user['id'])
             del user['id']
 
         # order by sum

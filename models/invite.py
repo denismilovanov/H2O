@@ -40,6 +40,15 @@ class Invite:
 
     @staticmethod
     @raw_queries()
+    def request_ios_build(user_id, invite_code, db):
+        db.select_field('''
+            SELECT main.request_ios_build(%(invite_code)s, %(user_id)s);
+        ''', invite_code=invite_code, user_id=user_id)
+
+        return True
+
+    @staticmethod
+    @raw_queries()
     def send_invite_code(invite_code, db):
         db.select_field('''
             SELECT main.send_invite_code(%(invite_code)s);

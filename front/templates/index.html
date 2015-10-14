@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<style>
+    div {
+        width: 400px;
+        height: 100px;
+
+        position: absolute;
+        top:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        margin: auto;
+        margin-top: 100px;
+
+        font-size: 22px;
+    }
+</style>
+
+<noindex>
+
+    <div>
+
+        Your email {{ email }}<br />
+        Invite code {{ invite_code }}<br />
+
+        <br />
+
+        {%if status %}
+            Ok, we will send your build soon!
+        {%else %}
+            Unable to request iOS build.
+            <br />
+            Please, contact support.
+        {%endif %}
+
+    </div>
+
+</noindex>
+
+{% endblock %}
+
+
+

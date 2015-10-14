@@ -99,6 +99,7 @@ APNS_KEY_FILE = BASE_DIR + '/resources/certs/push_H2O_' + __APNS_SUFFIX + '.key'
 INSTALLED_APPS = (
     'api',
     'daemons',
+    'front',
     #'admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -57,7 +57,8 @@ class SendInviteTask:
                 invite_code=invite_code,
                 owner_name=owner_name,
                 owner_avatar_url=owner_avatar_url,
-                contact_email=CONTACT_EMAIL
+                contact_email=CONTACT_EMAIL,
+                email=email,
             )
             # send
             emailer.send(email, invite, owner_name + ' invited you to join Hearts2Open community')

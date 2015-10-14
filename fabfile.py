@@ -35,11 +35,6 @@ GLOBAL = {
 SERVICES = {
 
     'front': {
-        '__global__': {
-            'persistent_data': {
-                'app/storage': {}
-            }
-        },
         'test': {
             'user': 'h2o_front_test',
             'source_branch': 'develop',
@@ -60,12 +55,19 @@ SERVICES = {
         },
     },
 
-    'daemons': {
-        '__global__': {
-            'persistent_data': {
-                'app/storage': {}
-            }
+    'admin': {
+        'production': {
+            'user': 'h2o_admin',
+            'source_branch': 'develop-future',
+            'hosts': HOSTS['production'],
+            'host_string': HOSTS['production'][0],
+            'reload_commands': [
+                '/usr/bin/uwsgi --reload /tmp/h2o_admin_prod.pid',
+            ],
         },
+    },
+
+    'daemons': {
         'test': {
             'user': 'h2o_daemons_test',
             'source_branch': 'develop',
@@ -96,8 +98,6 @@ SERVICES = {
 def get_settings(service, stage):
     if service not in SERVICES:
         raise Exception('Несуществующий сервис: ' + service)
-    if stage == '__global__':
-        raise Exception('Нельзя использовать окружение __global__')
     if stage not in SERVICES[service]:
         raise Exception('Настройки окружения ' + stage + ' отсутствуют у сервиса ' + service)
     settings = {}
@@ -105,8 +105,6 @@ def get_settings(service, stage):
     for option, value in GLOBAL.items():
         settings[option] = value
     # Загрузка глобальных настроек на уровне сервиса
-    for option, value in SERVICES[service]['__global__'].items():
-        settings[option] = value
     # Затем локальные
     for option, value in SERVICES[service][stage].items():
         settings[option] = value
@@ -166,31 +164,16 @@ def deploy(service_name, branch=None):
             run('cp -r {}/{} {}'.format(env.source_dir, source, env.release_dir_new))
 
     with cd(env.release_dir_new):
-        # run('virtualenv env')
-        # run('source env/bin/activate')
-        # run('which env/bin/pip')
-        # run('pip install -r requirements.txt')
-        run('sudo /usr/local/bin/pip install -r requirements.txt')
+        if service_name != 'admin':
+            run('sudo /usr/local/bin/pip install -r requirements.txt')
+        else:
+            run('/home/h2o_admin/releases/env/bin/pip install -r requirements.txt')
+            run('/home/h2o_admin/releases/env/bin/python manage.py migrate')
+            run('mkdir static')
+            run('/home/h2o_admin/releases/env/bin/python manage.py collectstatic --noinput')
+
 
     with cd(env.project_root):
-        # Сохраняем туда файл конфиги приложения
-        #rsync_local_dir = 'configs/{}/{}/*'.format(service_name, env.stage)
-        #rsync_remote_dir = run('echo {}'.format(env.release_dir_new))
-        #rsync_project(local_dir=rsync_local_dir, remote_dir=rsync_remote_dir)
-
-        # Создаем линки на сессии, логи и прочие постоянные данные
-        #if not files.exists(env.persistent_data_dir):
-        #    run('mkdir -p {}'.format(env.persistent_data_dir))
-
-        #for link in env.persistent_data:
-        #    # Создаем директории первый раз
-        #    if not files.exists('{}/{}'.format(env.persistent_data_dir, link)):
-        #        run('mkdir -p {}/{}'.format(env.persistent_data_dir, link))
-        #        run('[ "$(ls -A {0}/{2})" ] && cp -r {0}/{2}/* {1}/{2}'.format(env.release_dir_new, env.persistent_data_dir, link))
-
-        # Удаляем существующие и линкуем
-        # run('rm -rf {1}/{2} && ln -sfn {0}/{2} {1}/{2}'.format(env.persistent_data_dir, env.release_dir_new, link))
-
         # При подтверждении делаем новый релиз текущим
         if confirm('Do you want change release to "{}"?'.format(env.release_dir_new), default=False):
             run('ln -sfn {} {}'.format(env.release_dir_new, env.release_dir_current))

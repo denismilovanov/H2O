@@ -180,6 +180,7 @@ def params(request, user):
 
     from H2O.settings import STRIPE_FEE_PERCENT, STRIPE_FEE_FLAT
     params = {
+        'new_invites_will_be_available_at': None,
         'providers': {
             'paypal': {
                 'commissions': {

@@ -59,7 +59,7 @@ class Invite:
     @staticmethod
     def scope(scope):
         if scope == 'public_invite_codes':
-            return ', '.join(['invite_code', 'status', 'email', 'entrance_gift', 'invited_user_id'])
+            return ', '.join(['invite_code', 'status', 'email', 'entrance_gift', 'invited_user_id', 'invited_at'])
         else:
             return '*'
 
@@ -67,8 +67,7 @@ class Invite:
     @raw_queries()
     def get_invite_codes_by_user_id(user_id, scope, db):
         codes = db.select_table('''
-            SELECT  ''' + Invite.scope(scope) + ''',
-                    CASE WHEN status != 'free' THEN now()::timestamptz ELSE NULL END AS invited_at
+            SELECT  ''' + Invite.scope(scope) + '''
                  FROM main.get_invite_codes_by_user_id(%(user_id)s);
         ''', user_id=user_id)
 

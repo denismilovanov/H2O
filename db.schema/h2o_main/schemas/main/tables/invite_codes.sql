@@ -17,4 +17,9 @@ CREATE UNIQUE INDEX invite_codes_email_ukey
     ON main.invite_codes
     USING btree(lower(email));
 
+-- батч
+ALTER TABLE main.invite_codes
+    ADD COLUMN batch integer NULL;
 
+ALTER TABLE main.invite_codes
+    ADD COLUMN invited_at timestamptz NULL;

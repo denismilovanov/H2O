@@ -11,7 +11,8 @@ DECLARE
 BEGIN
 
     UPDATE main.invite_codes
-        SET status = 'awaiting_registration'
+        SET status = 'awaiting_registration',
+            invited_at = now()::timestamptz
         WHERE invite_code = s_invite_code;
 
 END

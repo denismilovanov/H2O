@@ -1,7 +1,13 @@
 # coding: utf-8
 
 '''
-    Usage: fab test deploy:front
+    Usage:
+        fab test deploy:front
+        fab test deploy:daemons
+        fab test deploy:admin
+        fab production deploy:front
+        fab production deploy:daemons
+        fab production deploy:admin
     (do it from host machine, not vagrant)
 '''
 
@@ -167,10 +173,11 @@ def deploy(service_name, branch=None):
         if service_name != 'admin':
             run('sudo /usr/local/bin/pip install -r requirements.txt')
         else:
-            run('/home/h2o_admin/releases/env/bin/pip install -r requirements.txt')
-            run('/home/h2o_admin/releases/env/bin/python manage.py migrate')
-            run('mkdir static')
-            run('/home/h2o_admin/releases/env/bin/python manage.py collectstatic --noinput')
+            if env.stage == 'production':
+                run('/home/h2o_admin/releases/env/bin/pip install -r requirements.txt')
+                run('/home/h2o_admin/releases/env/bin/python manage.py migrate')
+                run('mkdir static')
+                run('/home/h2o_admin/releases/env/bin/python manage.py collectstatic --noinput')
 
 
     with cd(env.project_root):

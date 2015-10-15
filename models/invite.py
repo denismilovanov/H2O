@@ -67,7 +67,9 @@ class Invite:
     @raw_queries()
     def get_invite_codes_by_user_id(user_id, scope, db):
         codes = db.select_table('''
-            SELECT ''' + Invite.scope(scope) + ''' FROM main.get_invite_codes_by_user_id(%(user_id)s);
+            SELECT  ''' + Invite.scope(scope) + ''',
+                    CASE WHEN status != 'free' THEN now()::timestamptz ELSE NULL END AS invited_at
+                 FROM main.get_invite_codes_by_user_id(%(user_id)s);
         ''', user_id=user_id)
 
         # add invited user

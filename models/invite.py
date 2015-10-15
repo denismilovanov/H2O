@@ -59,7 +59,7 @@ class Invite:
     @staticmethod
     def scope(scope):
         if scope == 'public_invite_codes':
-            return ', '.join(['invite_code', 'status', 'email', 'entrance_gift'])
+            return ', '.join(['invite_code', 'status', 'email', 'entrance_gift', 'invited_user_id'])
         else:
             return '*'
 
@@ -69,6 +69,16 @@ class Invite:
         codes = db.select_table('''
             SELECT ''' + Invite.scope(scope) + ''' FROM main.get_invite_codes_by_user_id(%(user_id)s);
         ''', user_id=user_id)
+
+        # add invited user
+        from models import User
+        for code in codes:
+            if code['invited_user_id']:
+                code['invited_user'] = User.get_by_id(code['invited_user_id'], scope='public_profile')
+            else:
+                code['invited_user'] = None
+
+            del code['invited_user_id']
 
         return codes
 

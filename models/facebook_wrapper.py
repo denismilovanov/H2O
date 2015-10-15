@@ -10,8 +10,19 @@ class FacebookWrapper:
     def get_user_data(access_token):
         logger.info(access_token)
 
-        # test cases will pass here special access token:
         import re
+
+        # for mobile client tests
+        m = re.search('TEST_TOKEN_FB_ID_(\d+)', access_token)
+        if m:
+            facebook_id = m.group(1)
+            return {
+                'name': 'Test user with facebook id ' + str(facebook_id),
+                'avatar_url': None,
+                'id': int(facebook_id),
+            }
+
+        # test cases will pass here special access token:
         m = re.search('TEST_TOKEN_(\d+)', access_token)
         if m:
             test_user_id = m.group(1)

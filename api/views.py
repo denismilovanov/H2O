@@ -396,7 +396,7 @@ def invite_code(request, invite_code, user):
     # get again to output
     invite = Invite.get_invite_code(invite_code, scope='public')
 
-    return ok(email=email, invite=invite)
+    return ok_raw(invite)
 
 # add, get, or delete follow
 @api_view(['GET', 'POST', 'DELETE'])

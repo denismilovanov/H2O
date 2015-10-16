@@ -44,6 +44,7 @@ class Notification:
             # do I follow this user?
             if data_for_result['user']:
                 data_for_result['user']['i_follow'] = UserFollow.does_user_follow_user(user_id, record['counter_user_id'])
+                data_for_result['user']['follows_count'] = UserFollow.get_user_follows_count(record['counter_user_id'])
 
         # remove counter_user_id
         del record['counter_user_id']

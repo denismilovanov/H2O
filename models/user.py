@@ -242,9 +242,9 @@ class User:
         if scope == 'public_profile_with_i_follow':
             from models import UserFollow
             for user in users:
-                user['i_follow'] = UserFollow.does_user_follow_user(
-                    viewer_id, User.extract_user_id_from_uuid(user['uuid'])
-                )
+                user_id = User.extract_user_id_from_uuid(user['uuid'])
+                user['i_follow'] = UserFollow.does_user_follow_user(viewer_id, user_id)
+                user['follows_count'] = UserFollow.get_user_follows_count(user_id)
 
         return users
 

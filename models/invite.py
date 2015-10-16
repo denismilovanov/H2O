@@ -8,13 +8,16 @@ logger = logging.getLogger(__name__)
 class Invite:
     @staticmethod
     @raw_queries()
-    def get_invite_code(invite_code, db):
+    def get_invite_code(invite_code, scope, db):
         code = db.select_record('''
-            SELECT * FROM main.get_invite_code(%(invite_code)s);
+            SELECT ''' + Invite.scope(scope) + '''
+                FROM main.get_invite_code(%(invite_code)s);
         ''', invite_code=invite_code)
 
         if not code['invite_code']:
             return None
+
+        Invite.add_invited_user(code)
 
         return code
 
@@ -27,6 +30,8 @@ class Invite:
 
         if not code['invite_code']:
             return None
+
+        Invite.add_invited_user(code)
 
         return code
 
@@ -58,10 +63,21 @@ class Invite:
 
     @staticmethod
     def scope(scope):
-        if scope == 'public_invite_codes':
+        if scope == 'public':
             return ', '.join(['invite_code', 'status', 'email', 'entrance_gift', 'invited_user_id', 'invited_at'])
         else:
             return '*'
+
+    @staticmethod
+    def add_invited_user(code):
+        # add invited user
+        from models import User
+        if code['invited_user_id']:
+            code['invited_user'] = User.get_by_id(code['invited_user_id'], scope='public_profile')
+        else:
+            code['invited_user'] = None
+
+        del code['invited_user_id']
 
     @staticmethod
     @raw_queries()
@@ -71,15 +87,8 @@ class Invite:
                  FROM main.get_invite_codes_by_user_id(%(user_id)s);
         ''', user_id=user_id)
 
-        # add invited user
-        from models import User
         for code in codes:
-            if code['invited_user_id']:
-                code['invited_user'] = User.get_by_id(code['invited_user_id'], scope='public_profile')
-            else:
-                code['invited_user'] = None
-
-            del code['invited_user_id']
+            Invite.add_invited_user(code)
 
         return codes
 

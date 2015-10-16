@@ -43,7 +43,7 @@ class SendInviteTask:
             invite_code = self.invite_code
 
             #
-            invite = Invite.get_invite_code(invite_code)
+            invite = Invite.get_invite_code(invite_code, scope='all')
             owner = User.get_by_id(invite['owner_id'], scope='all')
             owner_name = owner['name']
             owner_avatar_url = owner['avatar_url']

@@ -355,7 +355,7 @@ def profile(request, user):
 def invite_codes(request, user):
     logger.info('METHOD: invite_codes')
 
-    return ok_raw(Invite.get_invite_codes_by_user_id(user['id'], scope='public_invite_codes'))
+    return ok_raw(Invite.get_invite_codes_by_user_id(user['id'], scope='public'))
 
 
 # update invite code
@@ -372,7 +372,7 @@ def invite_code(request, invite_code, user):
         return bad_request(BadRequestException(e), email)
 
     # get code
-    code = Invite.get_invite_code(invite_code)
+    code = Invite.get_invite_code(invite_code, scope='all')
     logger.info(code)
 
     if not code or code['status'] != 'free':
@@ -393,7 +393,10 @@ def invite_code(request, invite_code, user):
     except YouHaveInvitedThisEmailException, e:
         return not_acceptable(e, email)
 
-    return ok(email=email)
+    # get again to output
+    invite = Invite.get_invite_code(invite_code, scope='public')
+
+    return ok(email=email, invite=invite)
 
 # add, get, or delete follow
 @api_view(['GET', 'POST', 'DELETE'])

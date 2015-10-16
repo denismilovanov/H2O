@@ -15,7 +15,8 @@ BEGIN
     UPDATE main.invite_codes
         SET email = s_email,
             status = 'sending',
-            entrance_gift = b_entrance_gift
+            entrance_gift = b_entrance_gift,
+            invited_at = now()::timestamptz
         WHERE invite_code = s_invite_code;
 
 END

@@ -48,7 +48,7 @@ class User:
 
         if not user_id:
             # new account
-            invite = Invite.get_invite_code(invite_code)
+            invite = Invite.get_invite_code(invite_code, scope='all')
             logger.info(invite)
 
             if not invite:

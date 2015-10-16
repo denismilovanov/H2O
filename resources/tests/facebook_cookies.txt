@@ -2,8 +2,8 @@
 Set-Cookie3: c_user=100010287370678; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2038-01-19 03:14:07Z"; version=0
 Set-Cookie3: csm=2; path="/"; domain=".facebook.com"; path_spec; domain_dot; expires="2038-01-19 03:14:07Z"; version=0
 Set-Cookie3: datr=cGTMVUrJqgOw-fIPWuUGYtGo; path="/"; domain=".facebook.com"; path_spec; domain_dot; expires="2017-07-17 20:16:11Z"; version=0
-Set-Cookie3: fr="0YTYgoo3ejf0dOEjh.AWXoupY51N59otMDcju4cf-WzAI.BVzGR9.tC.AAA.0.AWWqqyWF"; path="/"; domain=".facebook.com"; path_spec; domain_dot; expires="2015-10-16 20:16:11Z"; version=0
-Set-Cookie3: lu="gg78XVR-lfrKZdvOTYBWi3Qg"; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2017-07-17 20:16:11Z"; version=0
-Set-Cookie3: s="Aa42o1Pb019McHf9.BV98pr"; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2038-01-19 03:14:07Z"; version=0
-Set-Cookie3: xs="110%3A6-GO2m7YKBLsTw%3A2%3A1442302571%3A-1"; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2038-01-19 03:14:07Z"; version=0
+Set-Cookie3: fr="0YTYgoo3ejf0dOEjh.AWUbIoiUOi0moRD4A_kZzdMhybM.BVzGR9.tC.FYT.0.AWWF3hLg"; path="/"; domain=".facebook.com"; path_spec; domain_dot; expires="2015-10-16 20:16:11Z"; version=0
+Set-Cookie3: lu="gg-_IwXSAqGSuB52Nm085e9A"; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2017-07-17 20:16:11Z"; version=0
+Set-Cookie3: s="Aa75ut9dntyfnvAa.BWIPzV "; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2038-01-19 03:14:07Z"; version=0
+Set-Cookie3: xs="88%3AHP7_KRNkkGtK8g%3A2%3A1445002453%3A20666"; path="/"; domain=".facebook.com"; path_spec; domain_dot; secure; expires="2038-01-19 03:14:07Z"; version=0
 

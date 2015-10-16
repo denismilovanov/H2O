@@ -16,9 +16,13 @@ class FacebookWrapper:
         m = re.search('TEST_TOKEN_FB_ID_(\d+)', access_token)
         if m:
             facebook_id = m.group(1)
+            # from 1 to 80
+            import random
+            rnd = random.randint(1, 80)
+            #
             return {
                 'name': 'Test user with facebook id ' + str(facebook_id),
-                'avatar_url': None,
+                'avatar_url': 'http://api.randomuser.me/portraits/med/women/' + str(rnd) + '.jpg',
                 'id': int(facebook_id),
             }
 

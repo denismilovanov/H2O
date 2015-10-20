@@ -25,4 +25,7 @@ CREATE UNIQUE INDEX users_generations_ukey
     ON main.users
     USING btree(generation, num_in_generation);
 
+ALTER TABLE main.users
+    ADD COLUMN push_notifications boolean NOT NULL DEFAULT TRUE;
+
 

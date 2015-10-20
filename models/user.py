@@ -161,6 +161,9 @@ class User:
         if scope in ['public_profile', 'my_personal_profile', 'public_profile_with_i_follow']:
             return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted',
                               'generation', 'num_in_generation', 'is_banned'])
+        elif scope == 'my_personal_profile':
+            return ', '.join(['uuid', 'name', 'avatar_url', 'status', 'visibility', 'facebook_id', 'is_deleted',
+                              'generation', 'num_in_generation', 'is_banned', 'push_notifications'])
         elif scope == 'public_profile_with_id':
             return ', '.join(['id', 'uuid', 'name', 'avatar_url', 'status', 'visibility',
                               'facebook_id', 'is_deleted', 'is_banned'])
@@ -187,7 +190,6 @@ class User:
         if scope == 'my_personal_profile':
             me_id = User.extract_user_id_from_uuid(user['uuid'])
             user['balance'] = float(UserAccount.get_user_account(me_id)['balance'])
-            user['push_notifications'] = True # UserSettings.get_user_settings(me_id)['push_notifications']
             user['free_invites_count'] = User.get_free_invites_count(me_id)
 
         if scope == 'all_with_balance':
@@ -271,8 +273,8 @@ class User:
         logger.info('update_profile')
 
         db.select_field('''
-            SELECT main.update_user_profile(%(user_id)s, %(visibility)s, %(status)s);
-        ''', user_id=user_id, visibility=visibility, status=status)
+            SELECT main.update_user_profile(%(user_id)s, %(visibility)s, %(status)s, %(push_notifications)s);
+        ''', user_id=user_id, visibility=visibility, status=status, push_notifications=push_notifications)
 
         if not is_deleted:
             User.undelete_profile(user_id)

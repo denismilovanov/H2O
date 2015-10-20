@@ -175,6 +175,7 @@ def deploy(service_name, branch=None):
         else:
             if env.stage == 'production':
                 run('/home/h2o_admin/releases/env/bin/pip install -r requirements.txt')
+                run('/home/h2o_admin/releases/env/bin/python manage.py migrate statistics --fake')
                 run('/home/h2o_admin/releases/env/bin/python manage.py migrate')
                 run('mkdir static')
                 run('/home/h2o_admin/releases/env/bin/python manage.py collectstatic --noinput')

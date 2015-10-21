@@ -29,7 +29,7 @@ class NotifyNewInvitesTask:
     # enqueue
     def enqueue(self):
         from components.queue import Queue
-        Queue.push('notify_new_invites_task', self.get())
+        Queue.push('notify_new_invites', self.get())
 
     # run this kind of tasks
     def run(self):

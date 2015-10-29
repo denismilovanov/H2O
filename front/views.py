@@ -8,6 +8,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def index(request):
+    return render_to_response('index.html', {
+    }, RequestContext(request))
+
 def request_ios_build(request):
     status = False
     if request.method == 'GET':
@@ -25,8 +29,7 @@ def request_ios_build(request):
         else:
             pass
 
-
-    return render_to_response('index.html', {
+    return render_to_response('ios.html', {
         'email': email,
         'invite_code': invite_code,
         'status': status,

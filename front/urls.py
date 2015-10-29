@@ -4,5 +4,7 @@ from front import views
 urlpatterns = [
     # iOS build requests
     url(r'request/ios', views.request_ios_build),
+    # index
+    url(r'', views.index),
 ]
 

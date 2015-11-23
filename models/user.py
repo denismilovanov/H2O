@@ -3,7 +3,7 @@ from models.invite import Invite
 from models.user_network import UserNetwork
 from models.user_session import UserSession
 from models.user_account import UserAccount
-from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException, FacebookException, NotImplementedException
+from models.exceptions import InviteCodeAlreadyTakenException, InviteCodeDoesNotExistException, FacebookException, NotImplementedException, NotEnoughMoneyException
 from models.facebook_wrapper import FacebookWrapper
 
 import logging
@@ -45,6 +45,7 @@ class User:
         user_id = UserNetwork.find_user_by_network(network_id, user_network_id)
 
         is_new = False
+        need_to_download_avatar = None
 
         if not user_id:
             # new account
@@ -78,12 +79,12 @@ class User:
 
                 db.select_field('''
                     SELECT main.upsert_user(
-                        %(user_id)s, %(name)s, %(avatar_url)s, %(user_uuid)s,
+                        %(user_id)s, %(name)s, %(facebook_avatar_url)s, %(user_uuid)s,
                         %(network_id)s, %(user_network_id)s,
                         %(generation)s, %(num_in_generation)s
                     );
                 ''',
-                    user_id=user_id, user_uuid=user_uuid, name=user_data['name'], avatar_url=user_data['avatar_url'],
+                    user_id=user_id, user_uuid=user_uuid, name=user_data['name'], facebook_avatar_url=user_data['avatar_url'],
                     network_id=network_id, user_network_id=user_network_id,
                     generation=generation, num_in_generation=num_in_generation
                 )
@@ -123,14 +124,23 @@ class User:
             # newness flag
             is_new = True
 
+            #
+            user = User.get_by_id(user_id, scope='all_with_balance')
+            need_to_download_avatar = user_data['avatar_url'] != None
+
         else:
+            # need to take user['facebook_avatar_url'] before it will be changed by upsert
+            user = User.get_by_id(user_id, scope='all_with_balance')
+            need_to_download_avatar = user_data['avatar_url'] and \
+                                      (user['facebook_avatar_url'] != user_data['avatar_url'] or
+                                       not user['avatar_url'])
+
             # update information
             user_uuid = db.select_field('''
-                SELECT main.upsert_user(%(user_id)s, %(name)s, %(avatar_url)s);
-            ''', user_id=user_id, name=user_data['name'], avatar_url=user_data['avatar_url'])
+                SELECT main.upsert_user(%(user_id)s, %(name)s, %(facebook_avatar_url)s);
+            ''', user_id=user_id, name=user_data['name'], facebook_avatar_url=user_data['avatar_url'])
 
-        # for is_deleted and generation in response
-        user = User.get_user_by_uuid(user_uuid, scope='all_with_balance')
+        # after this we have 'user' variable
 
         # upsert network
         UserNetwork.upsert_network(user_id, network_id, user_network_id, access_token)
@@ -139,6 +149,32 @@ class User:
         if is_new:
             from tasks import ProcessFacebookFriendsTask
             ProcessFacebookFriendsTask(user['id'], access_token, 'follow_friends').enqueue()
+
+        # download avatar if it is new or changed
+        if need_to_download_avatar:
+            import urllib, os
+            from H2O.settings import AVATARS_DIR, AVATARS_URL
+
+            # url and ext
+            avatar_url = user_data['avatar_url']
+            _, avatar_ext = os.path.splitext(avatar_url)
+
+            #
+            relative = '/' + str(user['uuid']) + avatar_ext[:avatar_ext.rfind('?')]
+            our_avatar_path = AVATARS_DIR + relative
+            our_avatar_url = AVATARS_URL + relative
+
+            # download and save
+            try:
+                urllib.urlretrieve(avatar_url, our_avatar_path)
+
+                db.select_field('''
+                    SELECT main.set_user_avatar_url(%(user_id)s, %(our_avatar_url)s);
+                ''', user_id=user_id, our_avatar_url=our_avatar_url)
+
+                logger.info(our_avatar_url)
+            except Exception, e:
+                pass
 
         # that was all
         return {
@@ -236,10 +272,13 @@ class User:
                 user['follows'] = []
 
         if scope == 'all_with_balance':
+            from models import UserFollow
             for user in users:
                 account = UserAccount.get_user_account(user['id'])
                 user['balance'] = float(account['balance'])
                 user['hold'] = float(account['hold'])
+                user['free_invites_count'] = User.get_free_invites_count(user['id'])
+                user['follows_count'] = UserFollow.get_user_follows_count(user['id'])
 
         if scope == 'public_profile_with_i_follow':
             from models import UserFollow

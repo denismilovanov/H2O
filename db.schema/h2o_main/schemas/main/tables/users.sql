@@ -28,4 +28,5 @@ CREATE UNIQUE INDEX users_generations_ukey
 ALTER TABLE main.users
     ADD COLUMN push_notifications boolean NOT NULL DEFAULT TRUE;
 
-
+ALTER TABLE main.users
+    ADD COLUMN facebook_avatar_url varchar NULL;

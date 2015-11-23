@@ -19,11 +19,27 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', '50@=z3-bw$acojx%4ans=c*y8$fn0_wii$1_071+k**o=i2sbk')
 
 DEBUG = os.environ.get('H2O_DEBUG', 'True') == 'True'
+ENVIRONMENT = os.environ.get('H2O_ENVIRONMENT', 'development')
 PRERELEASE = os.environ.get('H2O_PRERELEASE', 'False') == 'True'
 
 FACEBOOK_CLIENT_ID = '401193696737876'
 FACEBOOK_TIMEOUT = 4
 
+# paths and urls
+AVATARS_RELATIVE = '/avatars'
+if ENVIRONMENT == 'development':
+    AVATARS_DIR = '/vagrant/H2O' + AVATARS_RELATIVE
+    BASE_URL = 'http://dev.hearts2open.com'
+elif ENVIRONMENT == 'test':
+    AVATARS_DIR = '/home/h2o_front_test' + AVATARS_RELATIVE
+    BASE_URL = 'http://test.hearts2open.com'
+else:
+    AVATARS_DIR = '/home/h2o_front' + AVATARS_RELATIVE
+    BASE_URL = 'https://hearts2open.com'
+
+AVATARS_URL = BASE_URL + AVATARS_RELATIVE
+
+#
 INVITES_COUNT_FOR_NEW_USER = 0
 
 ENTRANCE_GIFT_AMOUNT = 10.0
@@ -35,9 +51,6 @@ ACCESS_TOKEN_EXPIRES_IN = 3600
 
 ANDROID_PUSH_TOKEN_EXPIRES_IN = 7 * 86400
 IOS_PUSH_TOKEN_EXPIRES_IN =  7 * 86400
-
-#
-BASE_URL = 'https://hearts2open.com'
 
 # see send_alert_task
 DEVELOPER_EMAIL = 'milovanov@octabrain.com'

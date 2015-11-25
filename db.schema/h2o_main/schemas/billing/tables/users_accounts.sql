@@ -12,3 +12,12 @@ CREATE TABLE billing.users_accounts (
     CONSTRAINT users_accounts_pkey PRIMARY KEY (user_id, currency)
 );
 
+-- проверка на неотрицательность
+ALTER TABLE billing.users_accounts
+    ADD CONSTRAINT users_accounts_positive_check
+    CHECK (
+        CASE
+            WHEN user_id > 0 THEN balance >= 0 AND hold >= 0
+            ELSE TRUE
+        END
+    );

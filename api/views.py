@@ -489,7 +489,7 @@ def post_support(request, user):
     except Exception, e:
         return bad_request(BadRequestException(e))
 
-    if amount <= 0:
+    if amount < 0.01:
         raise BadRequestException(None)
 
     supported_user = User.get_user_by_uuid(uuid, scope='all')

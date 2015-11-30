@@ -16,12 +16,22 @@ BEGIN
         RETURN;
     END IF;
 
+    -- удалим этот токен у всех пользователей, отличных от текущего
+    -- чтобы один токен был только у одного пользователя
+    -- возможно это относительно долгий запрос, хотя и по индексу
+    DELETE FROM main.users_devices
+        WHERE   user_id != i_user_id AND
+                device_type = t_device_type AND
+                push_token = s_push_token;
+
+    -- обновим токен у текущего
     UPDATE main.users_devices
         SET updated_at = now()
         WHERE   user_id = i_user_id AND
                 device_type = t_device_type AND
                 push_token = s_push_token;
 
+    -- вставим, если его еще нет
     IF NOT FOUND THEN
         INSERT INTO main.users_devices
             (user_id, device_type, push_token)

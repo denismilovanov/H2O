@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class UserFollow:
     @staticmethod
     @raw_queries()
-    def upsert_user_follow(user_id, follow_user_uuid, db):
+    def upsert_user_follow(user_id, follow_user_uuid, db, **kwargs):
         logger.info('upsert_user_follow ' + str(user_id) + ' ' + str(follow_user_uuid))
         follow_user = User.get_user_by_uuid(follow_user_uuid, scope='all')
 
@@ -33,6 +33,10 @@ class UserFollow:
                 SELECT main.upsert_user_followed_by(%(follow_user_id)s, %(user_id)s);
             ''', user_id=user_id, follow_user_id=follow_user['id'])
 
+        # skip notification
+        if not kwargs.get('do_notify', True):
+            return True
+
         # send notification
         # sending though queue
         try:
@@ -55,13 +59,19 @@ class UserFollow:
         from models import UserNetwork
         facebook_friends_our_ids = UserNetwork.find_users_by_network(1, facebook_friends_ids)
 
+        # me
+        me = User.get_by_id(user_id, scope='all')
+
         # iterate
         for facebook_friend_our_id in facebook_friends_our_ids:
             # get uuid
             facebook_friend_in_our_system = User.get_by_id(facebook_friend_our_id, scope='all')
             # follow
             if facebook_friend_in_our_system:
-                UserFollow.upsert_user_follow(user_id, facebook_friend_in_our_system['uuid'])
+                # i follow them
+                UserFollow.upsert_user_follow(user_id, facebook_friend_in_our_system['uuid'], do_notify=False)
+                # they follow me
+                UserFollow.upsert_user_follow(facebook_friend_in_our_system['id'], me['uuid'], do_notify=False)
 
     @staticmethod
     @raw_queries()
